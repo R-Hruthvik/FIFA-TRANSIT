@@ -1,0 +1,27 @@
+diff --git a/src/app/staff/page.test.tsx b/src/app/staff/page.test.tsx
+new file mode 100644
+index 0000000..e132c71
+--- /dev/null
++++ b/src/app/staff/page.test.tsx
+@@ -0,0 +1,7 @@
++import { render, screen } from '@testing-library/react';
++import Page from './page';
++
++test('renders dashboard layout structure', () => {
++  render(<Page />);
++  expect(screen.getByRole('main')).toBeInTheDocument();
++});
+diff --git a/src/app/staff/page.tsx b/src/app/staff/page.tsx
+new file mode 100644
+index 0000000..4ea0ee1
+--- /dev/null
++++ b/src/app/staff/page.tsx
+@@ -0,0 +1,8 @@
++export default function StaffDashboard() {
++  return (
++    <main className="h-screen w-screen bg-zinc-950 text-slate-100 p-4 grid grid-cols-4 gap-4">
++      <div className="col-span-1 border border-slate-700 p-4">Ticker</div>
++      <div className="col-span-3 border border-slate-700 p-4">Center Stage</div>
++    </main>
++  );
++}

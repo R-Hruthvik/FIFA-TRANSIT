@@ -1,0 +1,46 @@
+<h2>Refining for Production: Higher Fidelity HUD Options</h2>
+<p class="subtitle">Both leverage high-contrast, high-density command center aesthetics.</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>C: Layered Data HUD</h3>
+      <p>Emphasis on visual depth, typography hierarchy, and subtle color-coded alerts.</p>
+      <div class="mockup" style="background: #020617; color: #f8fafc; padding: 10px; font-size: 10px;">
+        <div class="mock-nav" style="border-bottom: 1px solid #334155; margin-bottom: 10px;">FIFA Transit Ops | Live View</div>
+        <div style="display: flex; gap: 10px;">
+          <div class="mock-sidebar" style="width: 20%; background: #0f172a; padding: 5px;">Query Log</div>
+          <div style="width: 80%; display: flex; flex-direction: column; gap: 10px;">
+             <div class="placeholder" style="height: 120px; border: 1px solid #1e293b;">[Spatial Heatmap]</div>
+             <div style="display: flex; gap: 10px;">
+               <div class="placeholder" style="flex: 1; height: 50px;">Alerts</div>
+               <div class="placeholder" style="flex: 1; height: 50px;">Metrics</div>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="d" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>D: Modular Command Grid</h3>
+      <p>Clean, card-based modular layout with dedicated status panels for each gate quadrant.</p>
+      <div class="mockup" style="background: #020617; color: #f8fafc; padding: 10px; font-size: 10px;">
+        <div style="display: grid; grid-template-columns: 20% 1fr; gap: 10px;">
+          <div style="background: #0f172a; padding: 5px;">Query Ticker</div>
+          <div style="display: grid; grid-template-rows: 1fr auto; gap: 10px;">
+            <div style="border: 1px solid #334155; padding: 5px;">[Spatial Heatmap Grid]</div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+              <div class="placeholder" style="height: 30px;">Gate A</div>
+              <div class="placeholder" style="height: 30px;">Gate B</div>
+              <div class="placeholder" style="height: 30px;">Gate C</div>
+              <div class="placeholder" style="height: 30px;">Gate D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

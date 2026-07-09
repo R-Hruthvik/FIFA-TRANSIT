@@ -16,6 +16,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Variables
+
+Create a `.env` file in the root directory with the following keys:
+
+```bash
+# AI Providers
+NVIDIA_NIM_API_KEY=your_nvidia_nim_key_here
+GEMINI_API_KEY=your_gemini_key_here
+
+# Database
+MONGODB_URI=your_mongodb_connection_string
+```
+
+## Features
+
+- **NVIDIA NIM Integration**: Primary chat engine using `meta/llama-3.1-70b-instruct`.
+- **Gemini Fallback**: Automatic failover to Gemini 2.0 Flash if NIM is unavailable.
+- **Live Telemetry**: Real-time stadium operations data grounding via MongoDB.
+- **SSE Streaming**: High-efficiency Server-Sent Events for low-latency chat updates.
+
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

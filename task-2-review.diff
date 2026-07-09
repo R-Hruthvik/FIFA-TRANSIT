@@ -1,0 +1,62 @@
+diff --git a/src/app/staff/page.tsx b/src/app/staff/page.tsx
+index 4ea0ee1..3bc6207 100644
+--- a/src/app/staff/page.tsx
++++ b/src/app/staff/page.tsx
+@@ -1,8 +1,13 @@
++import { SpatialHeatmap } from '@/components/SpatialHeatmap';
++
+ export default function StaffDashboard() {
++  const handleGateClick = (gate: string) => console.log('Clicked', gate);
+   return (
+     <main className="h-screen w-screen bg-zinc-950 text-slate-100 p-4 grid grid-cols-4 gap-4">
+       <div className="col-span-1 border border-slate-700 p-4">Ticker</div>
+-      <div className="col-span-3 border border-slate-700 p-4">Center Stage</div>
++      <div className="col-span-3 border border-slate-700 p-4">
++        <SpatialHeatmap onGateClick={handleGateClick} />
++      </div>
+     </main>
+   );
+ }
+diff --git a/src/components/SpatialHeatmap.test.tsx b/src/components/SpatialHeatmap.test.tsx
+new file mode 100644
+index 0000000..991b52b
+--- /dev/null
++++ b/src/components/SpatialHeatmap.test.tsx
+@@ -0,0 +1,12 @@
++import { render, screen, fireEvent } from '@testing-library/react';
++import { SpatialHeatmap } from './SpatialHeatmap';
++
++test('renders all gates and handles click', () => {
++  const onGateClick = jest.fn();
++  render(<SpatialHeatmap onGateClick={onGateClick} />);
++  
++  const gateA = screen.getByText('Gate A');
++  fireEvent.click(gateA);
++  
++  expect(onGateClick).toHaveBeenCalledWith('Gate A');
++});
+diff --git a/src/components/SpatialHeatmap.tsx b/src/components/SpatialHeatmap.tsx
+new file mode 100644
+index 0000000..b4ce415
+--- /dev/null
++++ b/src/components/SpatialHeatmap.tsx
+@@ -0,0 +1,19 @@
++import React from 'react';
++
++const Quadrant = ({ label, status, onClick }: { label: string; status: string; onClick: () => void }) => {
++  const colors = { Smooth: 'bg-green-900', Advised: 'bg-orange-900', Critical: 'bg-red-900' };
++  return (
++    <div className={`p-4 border ${colors[status as keyof typeof colors]} cursor-pointer`} onClick={onClick}>
++      {label}
++    </div>
++  );
++};
++
++export const SpatialHeatmap = ({ onGateClick }: { onGateClick: (gate: string) => void }) => (
++  <div className="grid grid-cols-2 gap-2">
++    <Quadrant label="Gate A" status="Smooth" onClick={() => onGateClick('Gate A')} />
++    <Quadrant label="Gate B" status="Advised" onClick={() => onGateClick('Gate B')} />
++    <Quadrant label="Gate C" status="Critical" onClick={() => onGateClick('Gate C')} />
++    <Quadrant label="Gate D" status="Smooth" onClick={() => onGateClick('Gate D')} />
++  </div>
++);
