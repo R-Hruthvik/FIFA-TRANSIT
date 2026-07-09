@@ -1,29 +1,20 @@
-# Task 2 Report: Implement SpatialHeatmap
+# Task 2 Report: Implement SpatialHeatmap Filter
 
 ## Implementation
-Implemented `SpatialHeatmap` component with interactive quadrants and integrated it into the `StaffDashboard`.
+1. Implemented `LiveQueryTicker` component for log display.
+2. Added `gateFilter` state to `StaffDashboard` (`src/app/staff/page.tsx`).
+3. Connected `SpatialHeatmap` `onGateClick` to update `gateFilter`.
+4. Configured `LiveQueryTicker` to filter log items based on `gateFilter`.
 
 ## Testing
-- Ran `npm test src/components/SpatialHeatmap.test.tsx`.
-- Result: 1/1 passed.
-
-## TDD Evidence
-- **RED**: 
-  - `npm test src/components/SpatialHeatmap.test.tsx`
-  - Output: `Cannot find module './SpatialHeatmap'` (Expected: failed because component was not yet implemented).
-- **GREEN**: 
-  - `npm test src/components/SpatialHeatmap.test.tsx`
-  - Output: `Test Suites: 1 passed, 1 total`, `Tests: 1 passed, 1 total`.
+- Ran all tests (`npm test`).
+- Result: 3/3 suites passed, 4/4 tests passed.
 
 ## Files Changed
-- `src/components/SpatialHeatmap.tsx` (new)
-- `src/components/SpatialHeatmap.test.tsx` (new)
+- `src/components/LiveQueryTicker.tsx` (new)
+- `src/components/LiveQueryTicker.test.tsx` (new)
 - `src/app/staff/page.tsx` (modified)
-
-## Self-Review
-- Full implementation matches requirements in brief.
-- Component is interactive and calls `onGateClick`.
-- Tailwind styling applied as requested.
+- `jest.config.js` (modified to fix alias issues)
 
 ## Issues/Concerns
-- None.
+- Jest configuration required update for path aliases (`@/`).

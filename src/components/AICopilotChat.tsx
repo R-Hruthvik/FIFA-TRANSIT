@@ -62,6 +62,8 @@ export function AICopilotChat({ stadiumState }: AICopilotChatProps) {
     };
     setMessages((prev) => [...prev, assistantMessage]);
 
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+
     try {
       abortRef.current = new AbortController();
 
@@ -85,7 +87,7 @@ export function AICopilotChat({ stadiumState }: AICopilotChatProps) {
       }
 
       // Stream response chunks into the assistant message
-      const reader = res.body!.getReader();
+      reader = res.body!.getReader();
       const decoder = new TextDecoder();
 
       while (true) {
@@ -113,6 +115,9 @@ export function AICopilotChat({ stadiumState }: AICopilotChatProps) {
         ),
       );
     } finally {
+      if (reader) {
+        reader.releaseLock();
+      }
       setIsLoading(false);
       abortRef.current = null;
     }

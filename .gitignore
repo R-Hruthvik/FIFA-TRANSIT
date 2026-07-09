@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local ignores
+build-output.txt
+*.diff
+.superpowers/
+.opencode/
+.clinerules/
