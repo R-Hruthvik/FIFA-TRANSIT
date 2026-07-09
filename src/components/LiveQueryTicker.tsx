@@ -1,33 +1,17 @@
-import React from 'react';
+'use client';
+import { useState } from 'react';
 
-interface LogItem {
-  id: string;
-  gate: string;
-  message: string;
-}
-
-const MOCK_LOGS: LogItem[] = [
-  { id: '1', gate: 'Gate A', message: 'Passenger flow smooth' },
-  { id: '2', gate: 'Gate B', message: 'Congestion detected' },
-  { id: '3', gate: 'Gate C', message: 'Emergency exit opened' },
-  { id: '4', gate: 'Gate A', message: 'Wait time: 5 mins' },
+const initialQueries = [
+  { id: 1, gate: 'Gate A', content: 'Entry slow', time: '10:00' },
+  { id: 2, gate: 'Gate C', content: 'Blocked aisle', time: '10:05' },
 ];
 
 export const LiveQueryTicker = ({ gateFilter }: { gateFilter: string | null }) => {
-  const filteredLogs = gateFilter 
-    ? MOCK_LOGS.filter(log => log.gate === gateFilter)
-    : MOCK_LOGS;
-
+  const [queries] = useState(initialQueries);
+  const filtered = gateFilter ? queries.filter(q => q.gate === gateFilter) : queries;
   return (
-    <div className="text-sm space-y-2">
-      <h2 className="font-bold border-b border-zinc-700 pb-1">
-        Live Log {gateFilter && `(Filtering: ${gateFilter})`}
-      </h2>
-      {filteredLogs.map(log => (
-        <div key={log.id} className="text-xs text-zinc-300">
-          <span className="font-mono text-cyan-400">[{log.gate}]</span> {log.message}
-        </div>
-      ))}
-    </div>
+    <ul className="space-y-2">
+      {filtered.map(q => <li key={q.id} className="border-b border-slate-700 p-2">{q.time} - {q.gate}: {q.content}</li>)}
+    </ul>
   );
 };

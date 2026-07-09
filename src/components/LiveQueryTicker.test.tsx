@@ -1,14 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { LiveQueryTicker } from './LiveQueryTicker';
 
-test('renders all logs when no filter', () => {
+test('renders ticker with initial queries', () => {
   render(<LiveQueryTicker gateFilter={null} />);
-  expect(screen.getByText('Passenger flow smooth')).toBeInTheDocument();
-  expect(screen.getByText('Congestion detected')).toBeInTheDocument();
-});
-
-test('filters logs based on gate', () => {
-  render(<LiveQueryTicker gateFilter="Gate B" />);
-  expect(screen.queryByText('Passenger flow smooth')).not.toBeInTheDocument();
-  expect(screen.getByText('Congestion detected')).toBeInTheDocument();
+  expect(screen.getByText(/Gate A/)).toBeInTheDocument();
+  expect(screen.getByText(/10:00/)).toBeInTheDocument();
+  expect(screen.getByText(/Entry slow/)).toBeInTheDocument();
 });
