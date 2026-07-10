@@ -23,25 +23,25 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = client.connect();
 }
 
+const DB_NAME = process.env.MONGODB_DB || 'stadium_ops';
+const TELEMETRY_COLL = process.env.MONGODB_TELEMETRY_COLLECTION || 'telemetry';
+const LOGS_COLL = process.env.MONGODB_LOGS_COLLECTION || 'query_logs';
+
 export { clientPromise };
 
-export interface StadiumState {
-  nearestGate: { label: string; status: string };
-  nearestHub: { label: string; waitTime: number };
-  weatherAdvisory: { label: string; condition: string };
-}
+import { StadiumTelemetry } from '@/types/telemetry';
 
-const DEFAULT_TELEMETRY: StadiumState = {
+const DEFAULT_TELEMETRY: StadiumTelemetry = {
   nearestGate: { label: "Gate A", status: "open" },
   nearestHub: { label: "Main Hub", waitTime: 8 },
   weatherAdvisory: { label: "Current", condition: "clear" }
 };
 
-export async function getLiveTelemetry(): Promise<StadiumState> {
+export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   try {
     const client = await clientPromise;
-    const db = client.db('stadium_ops');
-    const telemetry = db.collection('telemetry');
+    const db = client.db(DB_NAME);
+    const telemetry = db.collection(TELEMETRY_COLL);
 
     // Create a timeout promise that resolves cleanly
     const timeoutPromise = new Promise<{ isTimeout: true }>((resolve) => {
@@ -64,10 +64,26 @@ export async function getLiveTelemetry(): Promise<StadiumState> {
       return DEFAULT_TELEMETRY;
     }
 
-    return (result.data as unknown as StadiumState) || DEFAULT_TELEMETRY;
+    return (result.data as unknown as StadiumTelemetry) || DEFAULT_TELEMETRY;
   } catch (error) {
     console.error("Unexpected error in getLiveTelemetry:", error);
     return DEFAULT_TELEMETRY;
+  }
+}
+
+export async function getLatestLogs(limit = 5) {
+  try {
+    const client = await clientPromise;
+    return await client
+      .db(DB_NAME)
+      .collection(LOGS_COLL)
+      .find({})
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .toArray();
+  } catch (error) {
+    console.error('getLatestLogs error:', error);
+    return [];
   }
 }
 
@@ -76,8 +92,8 @@ export async function logFanQuery(text: string) {
     const client = await clientPromise;
     
     client
-      .db('stadium_ops')
-      .collection('query_logs')
+      .db(DB_NAME)
+      .collection(LOGS_COLL)
       .insertOne({
         text,
         timestamp: new Date(),

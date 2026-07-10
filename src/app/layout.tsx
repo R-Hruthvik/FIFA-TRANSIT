@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Stadium Egress Co-Pilot",
-  description:
-    "Real-time transit guidance for 80,000+ fans exiting a World Cup match. Gate status, hub wait times, and AI-powered routing.",
+  title: "FIFA Tournament Management Suite",
+  description: "Unified digital control system for the 2026 World Cup operations, fan engagement, and stadium logistics.",
 };
 
 export default function RootLayout({
@@ -26,9 +25,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30">
+        {children}
+      </body>
     </html>
   );
 }

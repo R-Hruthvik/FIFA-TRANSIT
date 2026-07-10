@@ -1,33 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import type { MockTransitData } from "./TransitDashboard";
+import { motion, AnimatePresence } from "motion/react";
+import { PaperPlaneRight, Sparkle, User, Robot } from "@phosphor-icons/react";
+import { useChatStream } from "@/hooks/useChatStream";
 
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
-
-interface AICopilotChatProps {
-  stadiumState: MockTransitData;
-}
-
-export function AICopilotChat({ stadiumState }: AICopilotChatProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: "Welcome! Ask me about gates, transit, or walking routes.",
-      timestamp: new Date(),
-    },
-  ]);
+export function AICopilotChat() {
+  const { messages, isLoading, sendMessage } = useChatStream();
   const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const abortRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,156 +21,85 @@ export function AICopilotChat({ stadiumState }: AICopilotChatProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
-
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: inputValue,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    const content = inputValue;
     setInputValue("");
-    setIsLoading(true);
-
-    // Build a placeholder for the streaming assistant message
-    const assistantId = crypto.randomUUID();
-    const assistantMessage: Message = {
-      id: assistantId,
-      role: "assistant",
-      content: "",
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, assistantMessage]);
-
-    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
-
-    try {
-      abortRef.current = new AbortController();
-
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            ...messages
-              .filter((m) => m.id !== "1") // skip initial greeting
-              .concat(userMessage)
-              .map((m) => ({ role: m.role, content: m.content })),
-          ],
-          stadiumState,
-        }),
-        signal: abortRef.current.signal,
-      });
-
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status}`);
-      }
-
-      // Stream response chunks into the assistant message
-      reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId
-              ? { ...m, content: m.content + chunk }
-              : m,
-          ),
-        );
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error && err.name === "AbortError") return;
-
-      // Fallback: show error in assistant message
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, content: "⚠️ Connection lost. Please try again." }
-            : m,
-        ),
-      );
-    } finally {
-      if (reader) {
-        reader.releaseLock();
-      }
-      setIsLoading(false);
-      abortRef.current = null;
-    }
+    await sendMessage(content);
   };
 
   const quickQueries = [
-    "Best gate now?",
-    "Hub wait times",
-    "Walking route",
-    "Weather check",
+    "Security status",
+    "Gate capacity",
+    "Transit alerts",
   ];
 
-  const triggerQuickQuery = (q: string) => {
-    setInputValue(q);
-    setTimeout(() => {
-      handleSubmit({ preventDefault: () => {} } as React.FormEvent);
-    }, 0);
-  };
-
   return (
-    <div className="flex flex-col h-[320px] bg-zinc-950 border-t border-zinc-800">
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div
-              className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${
-                msg.role === "user"
-                  ? "bg-cyan-500/20 text-cyan-300 rounded-tr-none"
-                  : "bg-zinc-800 text-zinc-200 rounded-tl-none"
-              }`}
+    <div className="flex flex-col h-full bg-zinc-950/20 backdrop-blur-sm">
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+        <AnimatePresence initial={false}>
+          {messages.map((msg) => (
+            <motion.div
+              key={msg.id}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className={`flex items-start gap-4 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
             >
-              {msg.content || (
-                <span className="animate-pulse text-zinc-400">...</span>
-              )}
-            </div>
-          </div>
-        ))}
+              <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border ${
+                msg.role === "user" 
+                  ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" 
+                  : "bg-amber-500/20 border-amber-500/30 text-amber-400"
+              }`}>
+                {msg.role === "user" ? <User size={16} weight="duotone" /> : <Robot size={16} weight="duotone" />}
+              </div>
+              
+              <div className={`relative px-4 py-3 rounded-2xl text-sm leading-relaxed max-w-[80%] ${
+                msg.role === "user"
+                  ? "bg-emerald-600/10 text-emerald-50 border border-emerald-500/20 rounded-tr-none"
+                  : "bg-zinc-800/40 text-zinc-200 border border-zinc-700/50 rounded-tl-none"
+              }`}>
+                {msg.content}
+                <div className={`absolute top-0 w-2 h-2 ${
+                  msg.role === "user" ? "-right-2 bg-emerald-600/10" : "-left-2 bg-zinc-800/40"
+                }`} style={{ clipPath: msg.role === "user" ? "polygon(0 0, 0 100%, 100% 0)" : "polygon(100% 0, 100% 100%, 0 0)" }} />
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 space-y-3 border-t border-zinc-800 bg-zinc-900/50">
-        <div className="flex gap-2 overflow-x-auto pb-2">
+      {/* Input Area */}
+      <div className="p-6 pt-0 space-y-4">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {quickQueries.map((q) => (
             <button
               key={q}
-              onClick={() => triggerQuickQuery(q)}
-              className="px-3 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-full text-zinc-300 whitespace-nowrap active:scale-95 transition-transform"
+              onClick={() => {
+                setInputValue(q);
+              }}
+              className="group flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-widest bg-zinc-900/40 border border-zinc-800 hover:border-emerald-500/50 text-zinc-400 hover:text-white transition-all rounded-xl whitespace-nowrap"
             >
-              {q}
+              <Sparkle size={12} weight="duotone" className="group-hover:text-emerald-400" />
+              {q.toUpperCase()}
             </button>
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="relative group">
           <input
-            ref={inputRef}
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask about gates, hubs, routes..."
-            className="flex-1 bg-zinc-800 border border-zinc-700 rounded-full px-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            placeholder="Query tournament database..."
+            className="w-full bg-zinc-900/60 border border-zinc-800 group-focus-within:border-emerald-500/50 px-6 py-4 rounded-2xl text-sm text-white placeholder-zinc-600 focus:outline-none transition-all shadow-inner"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="bg-cyan-500 text-black px-4 py-2 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-transform"
+            className="absolute right-2 top-2 bottom-2 px-5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:hover:bg-emerald-600 text-white rounded-xl transition-all flex items-center justify-center group-focus-within:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
-            Send
+            <PaperPlaneRight size={20} weight="bold" />
           </button>
         </form>
       </div>
