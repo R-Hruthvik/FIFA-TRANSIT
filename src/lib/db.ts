@@ -71,6 +71,9 @@ export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   }
 }
 
+// Re-export types for backward compatibility
+export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
+
 export async function getLatestLogs(limit = 5) {
   try {
     const client = await clientPromise;

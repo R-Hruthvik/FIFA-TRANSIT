@@ -1,9 +1,23 @@
 import { render, screen } from '@testing-library/react';
 import { LiveQueryTicker } from './LiveQueryTicker';
 
-test('renders ticker with initial queries', () => {
+beforeEach(() => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      logs: [
+        { _id: '1', text: 'Gate A - Entry slow', timestamp: '2026-07-12T10:00:00Z' },
+      ],
+    }),
+  } as Response);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+test('renders ticker with initial queries', async () => {
   render(<LiveQueryTicker gateFilter={null} />);
-  expect(screen.getByText(/Gate A/)).toBeInTheDocument();
-  expect(screen.getByText(/10:00/)).toBeInTheDocument();
-  expect(screen.getByText(/Entry slow/)).toBeInTheDocument();
+  expect(await screen.findByText(/Gate A/)).toBeInTheDocument();
+  expect(await screen.findByText(/Entry slow/)).toBeInTheDocument();
 });

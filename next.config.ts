@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    root: '/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app'
+  }
 };
 
 export default nextConfig;

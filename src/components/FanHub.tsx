@@ -5,6 +5,8 @@ import { motion } from "motion/react";
 import { AICopilotChat } from "./AICopilotChat";
 import { LiveQueryTicker } from "./LiveQueryTicker";
 import { LiveStatusCards } from "./LiveStatusCards";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function FanHub() {
   const [telemetry, setTelemetry] = useState({
@@ -30,34 +32,43 @@ export default function FanHub() {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-6">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800/60 rounded-3xl p-6 shadow-2xl"
       >
-        <div className="mb-6">
-          <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic mb-4">Your Matchday Status</h2>
-          <LiveStatusCards data={telemetry} />
-        </div>
-        <LiveQueryTicker />
+        <Card className="p-6">
+          <div className="mb-6">
+            <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic mb-4">
+              Your Matchday Status
+            </h2>
+            <LiveStatusCards data={telemetry} />
+          </div>
+          <LiveQueryTicker />
+        </Card>
       </motion.div>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800/60 rounded-3xl overflow-hidden min-h-[600px] flex flex-col shadow-2xl"
       >
-        <div className="p-5 border-b border-zinc-800/60 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic">Fan Support Assistant</h2>
+        <Card className="min-h-[600px] flex flex-col overflow-hidden p-0">
+          <div className="p-5 border-b border-border flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic">
+                Fan Support Assistant
+              </h2>
+            </div>
+            <Badge variant="secondary" className="text-[9px] font-mono tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse" />
+              ENCRYPTED
+            </Badge>
           </div>
-          <span className="text-[10px] font-bold text-zinc-600 font-mono">ENCRYPTED ENDPOINT: LIS-808</span>
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <AICopilotChat />
-        </div>
+          <div className="flex-1 overflow-hidden">
+            <AICopilotChat />
+          </div>
+        </Card>
       </motion.div>
     </div>
   );

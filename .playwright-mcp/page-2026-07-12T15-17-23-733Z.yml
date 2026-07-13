@@ -1,0 +1,64 @@
+- generic [ref=f6e1]:
+  - main [ref=f6e2]:
+    - generic [ref=f6e27]:
+      - navigation [ref=f6e29]:
+        - generic [ref=f6e30]:
+          - button [ref=f6e31]
+          - button [active] [ref=f6e37]
+        - button [ref=f6e43]
+      - generic [ref=f6e49]:
+        - generic [ref=f6e50]:
+          - generic [ref=f6e51]:
+            - heading "Your Matchday Status" [level=2] [ref=f6e52]
+            - generic [ref=f6e53]:
+              - generic [ref=f6e54]:
+                - generic [ref=f6e56]:
+                  - paragraph [ref=f6e57]: PRIMARY ENTRY
+                  - heading "Gate A" [level=3] [ref=f6e58]
+                - paragraph [ref=f6e64]: OPEN
+              - generic [ref=f6e65]:
+                - generic [ref=f6e67]:
+                  - paragraph [ref=f6e68]: TRANSIT NETWORK
+                  - heading "Main Hub" [level=3] [ref=f6e69]
+                - generic [ref=f6e74]:
+                  - paragraph [ref=f6e75]: 8 MIN
+                  - generic [ref=f6e76]: NEXT SHUTTLE IN 2M
+              - generic [ref=f6e79]:
+                - generic [ref=f6e81]:
+                  - paragraph [ref=f6e82]: ENVIRONMENT
+                  - heading "Current" [level=3] [ref=f6e83]
+                - paragraph [ref=f6e89]: OPTIMAL
+          - generic [ref=f6e90]:
+            - heading "Fan Query Stream" [level=3] [ref=f6e96]
+            - generic [ref=f6e97]:
+              - generic [ref=f6e98]:
+                - generic [ref=f6e99]: 08:39:13 PM
+                - paragraph [ref=f6e102]: test
+              - generic [ref=f6e107]:
+                - generic [ref=f6e108]: 08:37:41 PM
+                - paragraph [ref=f6e111]: test
+              - generic [ref=f6e116]:
+                - generic [ref=f6e117]: 08:30:27 PM
+                - paragraph [ref=f6e120]: Gate capacity
+              - generic [ref=f6e125]:
+                - generic [ref=f6e126]: 06:23:01 PM
+                - paragraph [ref=f6e129]: Gate capacity
+              - generic [ref=f6e134]:
+                - generic [ref=f6e135]: 06:19:09 PM
+                - paragraph [ref=f6e138]: Security status
+        - generic [ref=f6e143]:
+          - generic [ref=f6e144]:
+            - heading "Fan Support Assistant" [level=2] [ref=f6e146]
+            - generic [ref=f6e147]: "ENCRYPTED ENDPOINT: LIS-808"
+          - generic [ref=f6e149]:
+            - generic [ref=f6e150]: System online. How can I assist with tournament logistics today?
+            - generic [ref=f6e157]:
+              - generic [ref=f6e158]:
+                - button "SECURITY STATUS" [ref=f6e159]
+                - button "GATE CAPACITY" [ref=f6e163]
+                - button "TRANSIT ALERTS" [ref=f6e167]
+              - generic [ref=f6e171]:
+                - textbox "Query tournament database..." [ref=f6e172]
+                - button [disabled] [ref=f6e173]
+  - button "Open Next.js Dev Tools" [ref=f6e22] [cursor=pointer]
+  - alert [ref=f6e26]

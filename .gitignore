@@ -46,3 +46,11 @@ build-output.txt
 .superpowers/
 .opencode/
 .clinerules/
+
+# temporary build files
+tmp*
+*.crt
+*.rsa
+*.pem
+*.key
+**.node

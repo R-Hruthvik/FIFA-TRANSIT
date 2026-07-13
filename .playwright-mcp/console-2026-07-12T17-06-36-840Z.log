@@ -1,0 +1,62 @@
+[     281ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     358ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     702ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     728ms] [LOG] [Fast Refresh] done in 127ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    7423ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7425ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7426ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7426ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7427ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7428ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7429ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7430ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7431ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7432ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7433ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7434ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7435ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7435ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7436ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7437ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7438ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7439ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7440ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7441ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7442ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7443ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7444ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7444ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7445ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7446ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7447ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7448ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7481ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7481ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7481ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7481ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7481ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7482ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7483ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7484ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7484ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    7484ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_motion_dist_es_08jt_5r._.js:4462
+[    8988ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    9021ms] [LOG] [Fast Refresh] done in 133ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477

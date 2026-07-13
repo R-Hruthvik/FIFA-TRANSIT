@@ -1,0 +1,8 @@
+- generic [active] [ref=f6e1]:
+  - main [ref=f6e2]:
+    - generic [ref=f6e3]:
+      - generic [ref=f6e9]:
+        - heading "FIFA TOURNAMENT MANAGEMENT SUITE" [level=1] [ref=f6e10]: FIFA TOURNAMENTMANAGEMENT SUITE
+        - paragraph [ref=f6e11]: Unified digital control system for the 2026 World Cup operations, fan engagement, and stadium logistics.
+      - button [ref=f6e12]
+  - button "Open Next.js Dev Tools" [ref=f6e22] [cursor=pointer]
