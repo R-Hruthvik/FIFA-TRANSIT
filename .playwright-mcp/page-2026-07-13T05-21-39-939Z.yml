@@ -1,0 +1,86 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e29]:
+      - navigation [ref=e31]:
+        - generic [ref=e32]:
+          - button "FAN EGRESS PORTAL" [ref=e33]
+          - button "STAFF OPS DECK" [ref=e41]
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: Match Day 24
+            - generic [ref=e50]:
+              - generic [ref=e51]: USA
+              - generic [ref=e52]:
+                - generic [ref=e53]: "2"
+                - generic [ref=e54]: ":"
+                - generic [ref=e55]: "1"
+              - generic [ref=e56]: MEX
+          - generic [ref=e58]:
+            - generic [ref=e59]: 88' LIVE
+            - generic [ref=e60]: +4 MIN STOPPAGE
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - paragraph [ref=e63]: System Status
+            - paragraph [ref=e64]: OPERATIONAL
+          - button [ref=e66]
+      - generic [ref=e424]:
+        - generic [ref=e426]:
+          - generic [ref=e427]:
+            - heading "Your Matchday Status" [level=2] [ref=e428]
+            - generic [ref=e429]:
+              - generic [ref=e430]:
+                - generic [ref=e432]:
+                  - paragraph [ref=e433]: PRIMARY ENTRY
+                  - heading "Gate A" [level=3] [ref=e434]
+                - paragraph [ref=e440]: OPEN
+              - generic [ref=e441]:
+                - generic [ref=e443]:
+                  - paragraph [ref=e444]: TRANSIT NETWORK
+                  - heading "Main Hub" [level=3] [ref=e445]
+                - generic [ref=e450]:
+                  - paragraph [ref=e451]: 8 MIN
+                  - generic [ref=e452]: NEXT SHUTTLE IN 2M
+              - generic [ref=e455]:
+                - generic [ref=e457]:
+                  - paragraph [ref=e458]: ENVIRONMENT
+                  - heading "Current" [level=3] [ref=e459]
+                - paragraph [ref=e465]: OPTIMAL
+          - generic [ref=e466]:
+            - heading "Fan Query Stream" [level=3] [ref=e472]
+            - generic [ref=e476]:
+              - generic [ref=e588]:
+                - generic [ref=e589]: 10:51:36 AM
+                - paragraph [ref=e593]: Security status
+              - generic [ref=e564]:
+                - generic [ref=e565]: 10:50:49 AM
+                - paragraph [ref=e569]: What are the gate hours?
+              - generic [ref=e477]:
+                - generic [ref=e478]: 08:39:13 PM
+                - paragraph [ref=e482]: test
+              - generic [ref=e487]:
+                - generic [ref=e488]: 08:37:41 PM
+                - paragraph [ref=e492]: test
+              - generic [ref=e497]:
+                - generic [ref=e498]: 08:30:27 PM
+                - paragraph [ref=e502]: Gate capacity
+        - generic [ref=e528]:
+          - generic [ref=e529]:
+            - heading "Fan Support Assistant" [level=2] [ref=e532]
+            - generic [ref=e533]: ENCRYPTED
+          - generic [ref=e536]:
+            - generic [ref=e537]:
+              - generic [ref=e538]: System online. How can I assist with tournament logistics today?
+              - generic [ref=e574]: What are the gate hours?
+              - generic [ref=e581]: Gate A is currently open. I recommend checking the schedule for specific gate hours as they may vary, but you can proceed to Gate A for now.
+              - generic [ref=e598]: Security status
+              - generic [ref=e605]: All security checkpoints are currently operational and processing fans at a normal pace. No disruptions or alerts have been reported. Proceed to Gate A for security screening.
+            - generic [ref=e545]:
+              - generic [ref=e546]:
+                - button "SECURITY STATUS" [ref=e547]
+                - button "GATE CAPACITY" [ref=e551]
+                - button "TRANSIT ALERTS" [ref=e555]
+              - generic [ref=e559]:
+                - textbox "Query tournament database..." [ref=e560]
+                - button [disabled] [ref=e561]
+  - button "Open Next.js Dev Tools" [ref=e25] [cursor=pointer]
+  - alert [ref=e19]

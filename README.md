@@ -1,322 +1,216 @@
-# FIFA World Cup Transit Operations Dashboard
+# FIFA Command Center — 2026 World Cup Transit Management
 
-This is a sophisticated Next.js application for **live stadium operations and fan support during FIFA World Cup matches**. The platform combines real-time telemetry, AI-powered assistance, and operational dashboards for both staff administrators and matchday fans.
+![Status](https://img.shields.io/badge/status-hackathon_ready-emerald)
+![Next.js](https://img.shields.io/badge/Next.js-16.2-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Vercel](https://img.shields.io/badge/Deploy-Vercel-black)
 
-## 🎯 Project Overview
+**FIFA Command Center** is a full-stack transit management dashboard built for the 2026 FIFA World Cup. It unifies real-time stadium operations, fan engagement, AI-powered assistance, and spatial congestion monitoring into a single control center — designed for hackathon speed and production polish.
 
-The **FIFA Transit Operations Dashboard** (also called "fifa-transit-app") provides:
+---
 
-**For Staff Administrators:**
-- Real-time stadium operations dashboard with spatial heatmaps
-- Live telemetry for gates, hubs, and weather advisories
-- Fan query management and logging system
-- Multi-provider AI assistance (NVIDIA NIM + Gemini)
-- Comprehensive monitoring and tactical insights
+## 🎯 What It Does
 
-**For Matchday Fans:**
-- Live stadium status updates (nearest gates, wait times, advisories)
-- AI-powered fan support assistant for tournament logistics
-- Real-time query logging for stadium operations
-- Encrypted communication endpoints for security
+### For Staff Operators
+- **Live Stadium Pulse** — Gate status, transit hub wait times, weather advisories in real time
+- **Spatial Congestion Heatmap** — Three interchangeable visualizations (SVG stadium, thermal grid, geometric map)
+- **Fan Query Stream** — SSE-powered live ticker with gate filtering and polling fallback
+- **Tactical Insights** — Dynamic, severity-ranked operational recommendations
+- **AI Copilot** — Dual-provider AI (NVIDIA NIM primary, Gemini fallback) with streaming responses
+
+### For Matchday Fans
+- **Personal Status** — Nearest gate, transit hub wait times, weather at a glance
+- **AI Support Assistant** — Encrypted chat for tournament logistics
+- **Live Query Stream** — Real-time stadium query updates
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Framework** | Next.js 16.2 (App Router, Turbopack) |
+| **Language** | TypeScript (strict mode) |
+| **Runtime** | React 19 |
+| **Database** | MongoDB Atlas with connection caching |
+| **AI** | NVIDIA NIM (Llama 3.1 70B) + Gemini 2.0 Flash fallback |
+| **Real-Time** | Server-Sent Events (SSE) with polling fallback |
+| **UI** | shadcn/ui + Tailwind CSS |
+| **Animation** | Motion (Framer Motion) |
+| **Icons** | Phosphor Icons |
+| **Deploy** | Vercel |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- MongoDB database (Atlas or local)
-- API keys for AI providers
+- MongoDB Atlas (or local instance)
+- NVIDIA NIM API key, Gemini API key
 
 ### Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd fifa-transit-app
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Set up environment variables**:
-   Create `.env.local` file in the root directory:
-   ```bash
-   # Database
-   MONGODB_URI=your_mongodb_connection_string
-   
-   # AI Providers (NVIDIA NIM preferred)
-   NVIDIA_NIM_API_KEY=your_nvidia_nim_key_here
-   GEMINI_API_KEY=your_gemini_key_here
-   
-   # Optional
-   MONGODB_DB=stadium_ops
-   MONGODB_TELEMETRY_COLLECTION=telemetry
-   MONGODB_LOGS_COLLECTION=query_logs
-   ```
-
-4. **Run the development server**:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## 🏗️ Architecture Overview
-
-### Dual-Role Design
-The application serves two distinct user roles with specialized interfaces:
-
-**Staff Interface** (`/staff`):
-- High-density operations dashboard
-- Interactive spatial heatmap of stadium gates
-- Real-time fan query ticker with filtering
-- Tactical insights and analytics
-- Live telemetry monitoring
-
-**Fan Interface** (`/fan`):
-- Matchday status overview
-- AI-powered assistance for tournament logistics
-- Real-time stadium updates
-- Secure query submission
-
-### Key Tech Stack
-- **Framework**: Next.js 16 (App Router)
-- **Runtime**: React 19 with TypeScript
-- **Styling**: Tailwind CSS with custom theming
-- **Database**: MongoDB with custom drivers
-- **AI Integration**: NVIDIA NIM + Google Gemini (auto-failover)
-- **Streaming**: Server-Sent Events (SSE) for real-time updates
-- **State Management**: React hooks with 10-second polling intervals
-
-## 📊 Features
-
-### Staff Operations Dashboard
-- **Real-Time Telemetry**: Live updates for gates, transit hubs, and weather
-- **Interactive Heatmap**: Visual representation of gate status (Smooth/Advised/Critical)
-- **Query Management**: Filterable ticker showing fan queries with timestamps
-- **Tactical Intelligence**: Real-time analytics and insights
-- **Multi-Provider AI**: Primary NVIDIA NIM with Gemini fallback
-- **Cinematic Interface**: Smooth animations and professional dark theme
-
-### Fan Experience
-- **Status Overview**: Current gate locations, wait times, weather
-- **AI Assistant**: Chat interface for tournament logistics help
-- **Secure Logging**: Automatic query submission to operations team
-- **Live Updates**: Real-time stadium status synchronization
-
-### Backend Services
-- **Telemetry API**: Live stadium operations data
-- **Chat API**: Multi-provider AI chat with streaming responses
-- **Query Logging**: Fan query tracking and analysis
-- **Metrics API**: Staff dashboard operational metrics
-
-## 🎛️ Development Workflow
-
-### Testing
-All components follow Test-Driven Development (TDD) patterns:
-
 ```bash
-# Run all tests
-npm test
+# Clone
+git clone <your-repo-url>
+cd fifa-transit-app
 
-# Run specific test file
-npm test src/components/YourComponent.test.tsx
+# Install
+npm install
 
-# Test runner outputs detailed results with coverage information
-```
+# Environment
+cp .env.example .env.local
+# Fill in MONGODB_URI, NVIDIA_NIM_API_KEY, GEMINI_API_KEY
 
-### Component Architecture
-The system uses extracted, reusable components:
-- `LiveQueryTicker`: Filterable query display component
-- `LiveStatusCards`: Real-time telemetry display
-- `OperationalInsights`: Staff analytics interface
-- `StaffHub`: Complete staff dashboard shell
-- `FanHub`: Complete fan interface
-- `AICopilotChat`: Staff AI assistant
-
-### State Synchronization
-- **10-second polling** for all real-time data
-- **Automatic retries** on API failures
-- **Timeout protection** for database queries
-- **Graceful degradation** when services are unavailable
-
-## 🛠️ Development Conventions
-
-### Code Structure
-```
-src/
-├── app/                           # Next.js app router
-│   ├── staff/page.tsx            # Staff dashboard
-│   └── fan/page.tsx              # Fan interface
-├── components/                   # Reusable UI components
-│   ├── StaffHub.tsx              # Staff dashboard shell
-│   ├── FanHub.tsx                # Fan interface
-│   ├── LiveQueryTicker.tsx       # Extracted ticker component
-│   └── AICopilotChat.tsx         # Staff chat interface
-├── hooks/                        # Custom React hooks
-│   └── useChatStream.ts          # Streaming chat hook
-├── lib/                          # Backend services
-│   └── db.ts                     # MongoDB integration
-├── types/                        # TypeScript definitions
-│   └── telemetry.ts              # Shared data types
-├── constants/                    # Application constants
-│   └── theme.ts                  # Custom styling
-└── ...other features
-```
-
-### API Patterns
-Each API route follows a consistent pattern:
-1. **Fetch data** from external sources
-2. **Process/transform** the data
-3. **Return** as JSON with proper error handling
-
-### Error Handling
-All code uses structured error handling with:
-- **Try-catch blocks** for async operations
-- **Graceful fallbacks** to default data
-- **Detailed error logging**
-- **User-friendly messages**
-
-## 📖 API Documentation
-
-### Key Endpoints
-
-**Staff APIs**:
-- `POST /api/chat`: Multi-provider AI chat with streaming
-- `GET /api/staff/metrics`: Staff dashboard metrics
-- `GET /api/telemetry`: Live telemetry data
-
-**Fan APIs**:
-- `POST /api/fan/queries`: Log fan queries
-- `GET /api/telemetry`: Live stadium status
-
-### AI Integration
-The system uses a **dual-provider AI strategy**:
-- **Primary**: NVIDIA NIM with `meta/llama-3.1-70b-instruct`
-- **Fallback**: Google Gemini 2.0 Flash
-- **Automatic failover** when primary provider is unavailable
-
-## 🎨 Visual Design
-
-### Theme
-- **Color Scheme**: Dark slate (`bg-zinc-950`, `text-slate-100`)
-- **Status Colors**: Emerald (success), Amber (warning), Rose (critical)
-- **Typography**: Custom fonts with tactical styling
-- **Animations**: Smooth transitions and cinematic effects
-
-### Layout
-- **Staff Dashboard**: Widescreen grid with multiple data widgets
-- **Fan Interface**: Simplified layout optimized for mobile
-- **Heatmap**: Interactive SVG with gate status visualization
-- **Chat Interface**: Real-time messaging with streaming responses
-
-## 🚀 Deployment
-
-### Local Development
-```bash
+# Dev server (Turbopack)
 npm run dev
 ```
 
-### Production Build
+Open [http://localhost:3000](http://localhost:3000)
+
+### Environment Variables
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+NVIDIA_NIM_API_KEY=your_nvidia_nim_key
+GEMINI_API_KEY=your_gemini_key
+MONGODB_DB=stadium_ops
+MONGODB_TELEMETRY_COLLECTION=telemetry
+MONGODB_LOGS_COLLECTION=query_logs
+NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+```
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/                    # API routes
+│   │   ├── chat/route.ts       # Dual-provider AI chat
+│   │   ├── fan/
+│   │   │   ├── queries/        # Query logging + SSE stream
+│   │   │   └── page.tsx        # Fan portal
+│   │   ├── og/route.ts         # Dynamic OG image (SVG)
+│   │   ├── staff/
+│   │   │   └── metrics/        # Staff metrics API
+│   │   └── telemetry/          # Live telemetry API
+│   ├── layout.tsx              # Root layout + OG meta
+│   ├── page.tsx                # Landing + demo controller
+│   └── staff/page.tsx          # Staff dashboard
+├── components/
+│   ├── StaffHub.tsx            # Staff dashboard shell
+│   ├── FanHub.tsx              # Fan portal shell
+│   ├── LiveQueryTicker.tsx     # SSE + polling query stream
+│   ├── LiveStatusCards.tsx     # Telemetry status cards
+│   ├── OperationalInsights.tsx # Dynamic tactical insights
+│   ├── AICopilotChat.tsx       # Staff AI chat
+│   ├── HeatmapSelector.tsx     # Heatmap variant picker
+│   ├── heatmap/                # Heatmap visualization variants
+│   │   ├── StadiumSVG.tsx      # SVG stadium layout
+│   │   ├── ThermalGrid.tsx     # 2×2 thermal cards
+│   │   └── StadiumMap.tsx      # Geometric floor plan
+│   ├── DemoController.tsx      # Demo mode context + toggle
+│   └── GuidedWalkthrough.tsx   # 5-step onboarding tour
+├── hooks/
+│   └── useChatStream.ts        # Chat streaming hook (useRef guard)
+├── lib/
+│   ├── db.ts                   # MongoDB connection cache
+│   └── demo-data.ts            # Scripted demo timeline
+└── types/
+    └── telemetry.ts            # TypeScript interfaces
+```
+
+---
+
+## ✨ Key Features & Fixes
+
+### Bug Fixes
+1. **Chat Input Closure Bug** — `useCallback` was capturing stale `isLoading` state. Fixed with `useRef` guard pattern + 30s timeout safety net in `useChatStream.ts`
+2. **Hardcoded Insights** — `OperationalInsights` was static. Now accepts `GateMetrics` prop and generates dynamic, severity-ranked insights
+
+### Real-Time Streaming
+- **SSE First, Polling Fallback** — `LiveQueryTicker` tries `EventSource` for live updates, falls back to 5s polling on failure
+- **3-second connection timeout** — If SSE doesn't connect, automatically starts polling
+- **Deduplication** — Logs deduplicated by `_id`, capped at 100 entries
+
+### Heatmap System
+- **3 Variants**: `StadiumSVG` (perimeter layout), `ThermalGrid` (2×2 cards), `StadiumMap` (geometric floor plan)
+- **Click-to-filter** — Click any gate to filter the query stream
+- **localStorage persistence** — Remembers variant preference across sessions
+
+### Demo Mode
+- **60-second scripted demo** — Cycles through realistic matchday data snapshots
+- **Pre-recorded AI responses** — Contextual answers for security, capacity, transit queries
+- **Auto-dismiss** — Demo resets after 60 seconds
+
+### Guided Walkthrough
+- **5-step onboarding** — Welcome → Fan Portal → Staff Deck → AI Copilot → Heatmap
+- **Element highlighting** — Walks users through each major section
+- **localStorage** — Remembers completion, only shows once
+
+### Social Sharing
+- **Dynamic OG image** — SVG-generated at `/api/og` with FIFA branding
+- **Twitter Card** — `summary_large_image` with full metadata
+- **Open Graph** — Complete OG tags for Facebook, LinkedIn, Slack previews
+
+---
+
+## 🎛️ Development
+
+### Scripts
+```bash
+npm run dev       # Start dev server (Turbopack)
+npm run build     # Production build
+npm run lint      # ESLint
+npm test          # Jest tests
+```
+
+### Architecture Patterns
+- **Server-Sent Events** for real-time data (not WebSockets) — lighter weight, works with CDN
+- **useRef for stale closures** — Prevents race conditions in streaming hooks
+- **Component map pattern** — Heatmap variants switched via `Record<HeatmapVariant, Component>`
+- **React Context for cross-cutting state** — Demo mode available everywhere without prop drilling
+- **Connection caching** — MongoDB client reused across requests via singleton promise
+
+---
+
+## 🚢 Deployment
+
+### Vercel (Recommended)
+```bash
+# Connect your GitHub repo to Vercel
+# Set environment variables in Vercel dashboard
+# Auto-deploys on push to main
+```
+
+### Manual Build
 ```bash
 npm run build
 npm start
 ```
 
-### Deployment Options
-This application is designed for:
-- **Vercel**: Default Next.js deployment platform
-- **Docker**: Containerized deployment
-- **Kubernetes**: Production orchestration
+---
 
-## 🔧 Configuration
+## 🏆 Hackathon Submission Checklist
 
-### Environment Variables
-**Required**:
-```bash
-MONGODB_URI=your_mongodb_connection_string
-NVIDIA_NIM_API_KEY=your_nvidia_key
-GEMINI_API_KEY=your_gemini_key
-```
+- [x] Live deployed URL
+- [x] Public GitHub repository
+- [x] Social media post ready (OG image + meta tags)
+- [x] Demo mode for judges
+- [x] Feature-complete (11/11 items)
+- [x] TypeScript strict mode passing
 
-**Optional**:
-```bash
-MONGODB_DB=stadium_ops
-MONGODB_TELEMETRY_COLLECTION=telemetry
-MONGODB_LOGS_COLLECTION=query_logs
-```
-
-### Package Scripts
-```json
-{
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test": "jest"
-  }
-}
-```
-
-## 📈 Performance & Scaling
-
-### Real-Time Updates
-- **10-second polling** interval for data refresh
-- **WebSocket fallback** for critical updates
-- **Connection optimization** for low-latency responses
-
-### Database Optimization
-- **Connection pooling** with MongoDB
-- **Query timeouts** (800ms) to prevent hanging
-- **Graceful degradation** when database is unavailable
-
-## 🔒 Security Features
-
-### Authentication
-- **API keys** stored in environment variables
-- **Encrypted endpoints** for fan interactions
-- **Access control** built into route handlers
-
-### Data Protection
-- **Input validation** on all API endpoints
-- **Error masking** to prevent information leakage
-- **Rate limiting** considerations (built into Next.js)
-
-## 🎯 Future Enhancement Ideas
-
-1. **WebSocket Integration**: Replace polling with WebSocket for real-time updates
-2. **Advanced Analytics**: Predictive analytics for crowd management
-3. **Mobile App**: Native app for staff operations
-4. **Multi-language Support**: Internationalization for global matches
-5. **Video Integration**: Live camera feeds for gate monitoring
-6. **Automated Actions**: Trigger automated responses based on telemetry
-
-## 🆘 Support & Documentation
-
-### Getting Help
-- **Stack Overflow**: Tag with `fifa-transit-app`
-- **GitHub Issues**: Report bugs and request features
-- **Documentation**: Updated in this README file
-
-### Community
-This project is designed for collaborative development with:
-- **Clear coding conventions**
-- **Comprehensive test coverage**
-- **Component reusability**
-- **Scalable architecture**
+---
 
 ## 📝 Notes
 
-This is a production-ready application designed for **FIFA World Cup stadium operations**. The system handles:
-- **High-traffic scenarios** during major matches
-- **Real-time coordination** between staff and fans
-- **Complex data integration** from multiple sources
-- **Secure communications** for stadium operations
+Built with urgency and craft for the **FIFA World Cup 2026 Hackathon** (July 2026). Every component ships with error boundaries, graceful degradation, and zero-config deployment.
 
-Built with ❤️ for world-class football tournaments.
+---
+
+## License
+
+MIT — built for the beautiful game ⚽

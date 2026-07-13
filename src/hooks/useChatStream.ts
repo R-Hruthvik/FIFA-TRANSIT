@@ -9,6 +9,8 @@ export interface Message {
   timestamp: Date;
 }
 
+const STREAM_TIMEOUT_MS = 30_000;
+
 export function useChatStream() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -20,9 +22,18 @@ export function useChatStream() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const loadingRef = useRef(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearStreamTimeout = () => {
+    if (timeoutRef.current) {
+      globalThis.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
 
   const sendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || isLoading) return;
+    if (!content.trim() || loadingRef.current) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -32,6 +43,7 @@ export function useChatStream() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    loadingRef.current = true;
     setIsLoading(true);
 
     const assistantId = crypto.randomUUID();
@@ -45,6 +57,16 @@ export function useChatStream() {
 
     abortRef.current = new AbortController();
     let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+
+    // Safety timeout: if stream hangs for 30s, force-reset loading state
+    timeoutRef.current = setTimeout(() => {
+      if (loadingRef.current) {
+        loadingRef.current = false;
+        setIsLoading(false);
+        abortRef.current?.abort();
+        abortRef.current = null;
+      }
+    }, STREAM_TIMEOUT_MS);
 
     try {
       const res = await fetch("/api/chat", {
@@ -81,7 +103,19 @@ export function useChatStream() {
         );
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === "AbortError") return;
+      if (err instanceof Error && err.name === "AbortError") {
+        // If aborted by our timeout, show a message
+        if (loadingRef.current) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: "⚠️ Response timed out. Please try again." }
+                : m,
+            ),
+          );
+        }
+        return;
+      }
 
       setMessages((prev) =>
         prev.map((m) =>
@@ -91,13 +125,15 @@ export function useChatStream() {
         ),
       );
     } finally {
+      clearStreamTimeout();
       if (reader) {
         reader.releaseLock();
       }
+      loadingRef.current = false;
       setIsLoading(false);
       abortRef.current = null;
     }
-  }, [messages, isLoading]);
+  }, [messages]);
 
   const clearChat = useCallback(() => {
     setMessages([

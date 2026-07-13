@@ -1,0 +1,553 @@
+[     392ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     486ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     797ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     821ms] [LOG] [Fast Refresh] done in 126ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   92107ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92109ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92114ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92115ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92116ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92116ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92117ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92118ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92119ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92120ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92120ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92121ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92122ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92124ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92125ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92127ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92128ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92129ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92130ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92131ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92132ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92132ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92133ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92134ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92234ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92234ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92234ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92235ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92236ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92237ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92238ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92238ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92238ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92238ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[   92356ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   92703ms] [LOG] [Fast Refresh] done in 449ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   93026ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   93129ms] [LOG] [Fast Refresh] done in 203ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  117899ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  118259ms] [LOG] [Fast Refresh] done in 460ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  134420ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  134672ms] [LOG] [Fast Refresh] done in 352ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  152460ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  152826ms] [LOG] [Fast Refresh] done in 466ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  153400ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  153662ms] [LOG] [Fast Refresh] done in 363ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  154087ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  154326ms] [LOG] [Fast Refresh] done in 341ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  363163ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363165ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363166ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363167ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363167ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363168ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363169ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363169ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363170ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363170ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363171ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363171ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363172ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363173ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363173ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363174ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363175ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363175ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363176ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363176ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363177ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363178ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363178ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363179ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363180ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363181ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363181ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363182ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363214ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[  363216ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[  363216ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[  363216ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[  363241ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363242ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363243ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363244ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363244ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  363357ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  363575ms] [LOG] [Fast Refresh] done in 318ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  508605ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  508710ms] [LOG] [Fast Refresh] done in 205ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  596927ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  597035ms] [LOG] [Fast Refresh] done in 207ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  639839ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  640460ms] [LOG] [Fast Refresh] done in 721ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  717831ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717832ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717832ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717832ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717832ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717832ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717833ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717833ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717833ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717833ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717833ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717834ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717834ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717834ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717834ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717834ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717835ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717835ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717835ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717835ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717836ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717836ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717837ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717837ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717838ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717838ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717838ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717839ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717859ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717860ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717860ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717860ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717860ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717861ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717862ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717863ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717863ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717863ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717863ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  717863ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[  718433ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  718849ms] [LOG] [Fast Refresh] done in 524ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1000523ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1000546ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1000569ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1000598ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1000634ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1000639ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1071295ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071320ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071347ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071398ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1071398ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1071412ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071428ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071443ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071462ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071485ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071500ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1071508ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071532ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1071571ms] [LOG] [Fast Refresh] done in 171ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1079149ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1079404ms] [LOG] [Fast Refresh] done in 356ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1265011ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265030ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265053ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265074ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265091ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265110ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265113ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1265166ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265168ms] [LOG] [Fast Refresh] done in 156ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1265186ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265200ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265212ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265226ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265246ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265270ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265286ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265287ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1265299ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265313ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265327ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265345ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265368ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265384ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265402ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265418ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265432ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265454ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265475ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265499ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265518ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265533ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265555ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265576ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1265615ms] [LOG] [Fast Refresh] done in 427ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1335085ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335104ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335124ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335146ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335167ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335186ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335187ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1335204ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335219ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335236ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335254ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1335292ms] [LOG] [Fast Refresh] done in 206ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1499712ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1499724ms] [LOG] [Fast Refresh] done in 113ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1517939ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1517957ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1517973ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1517985ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1518001ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621020ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621042ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621061ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621086ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621111ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621122ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1621131ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621150ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621167ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621188ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621209ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621231ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621247ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621263ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621284ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621304ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621325ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621342ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621360ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621382ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621407ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621427ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621449ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621469ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621491ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621516ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621541ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621568ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621590ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621615ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621659ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621668ms] [LOG] [Fast Refresh] done in 646ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1621690ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621715ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621741ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621806ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621823ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621846ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621869ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621890ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621908ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1621911ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621927ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621943ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621970ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1621992ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622015ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622032ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622048ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622071ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622094ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622116ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622135ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622152ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622171ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622195ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622220ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622239ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622255ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622277ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622300ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622325ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622351ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622375ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622391ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622415ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622441ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622465ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622487ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622506ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622532ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622554ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622578ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622606ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622627ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622649ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622666ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622687ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622709ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622730ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622765ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622769ms] [LOG] [Fast Refresh] done in 961ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1622789ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622810ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622831ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622852ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622876ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1622878ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622898ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622919ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622934ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622950ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622962ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1622986ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623010ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623030ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623048ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623065ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623086ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623110ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623131ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623150ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623166ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623181ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623208ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623240ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623250ms] [LOG] [Fast Refresh] done in 473ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1623267ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623284ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623308ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623330ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623351ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623357ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1623377ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623398ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623425ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623448ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623470ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623489ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623509ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623529ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623553ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623574ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623591ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623615ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623633ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623657ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623678ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623709ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623732ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623757ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623784ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623807ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623831ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623852ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623882ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623911ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623914ms] [LOG] [Fast Refresh] done in 656ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1623932ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623957ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1623982ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624006ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624022ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624027ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624043ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624073ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624087ms] [LOG] [Fast Refresh] done in 167ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624108ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624134ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624150ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624173ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624196ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624211ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624217ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624236ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624265ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624287ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624316ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624369ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624401ms] [LOG] [Fast Refresh] done in 132ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624416ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624428ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624445ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624464ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624482ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624500ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624506ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1624518ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624534ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624552ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624570ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624591ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624604ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624620ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624636ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624653ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624666ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624677ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624692ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624707ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624727ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624743ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624763ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624778ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624796ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624814ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624830ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624851ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624876ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624908ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624934ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624956ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1624982ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625010ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625039ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625059ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625083ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625108ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625130ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625152ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625174ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625199ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625226ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625253ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625274ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625294ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625317ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625342ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625363ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625381ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625399ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625422ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625447ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625470ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625490ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/track/event:0
+[ 1625539ms] [LOG] [Fast Refresh] done in 1133ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1653960ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1654115ms] [LOG] [Fast Refresh] done in 257ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[ 1694014ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694018ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694019ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694020ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694020ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694022ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694023ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694023ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694024ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694026ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694027ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694028ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694029ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694030ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694030ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694032ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694033ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694033ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694034ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694035ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694037ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694038ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694038ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694039ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694040ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694041ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694042ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694043ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694075ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[ 1694076ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[ 1694076ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[ 1694077ms] [ERROR] Error: <circle> attribute r: Expected length, "undefined". @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:11876
+[ 1694109ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03388px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694109ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07179px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09937px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11838px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13032px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13656px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13824px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694110ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13639px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.13184px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.12532px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.11743px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.10866px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09942px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.09003px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694111ms] [WARNING] Invalid keyframe value for property filter: blur(-0.08072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.07171px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.06312px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.05505px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04758px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.04072px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.03451px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694112ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02893px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.02397px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01959px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01577px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.01247px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00963px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689
+[ 1694113ms] [WARNING] Invalid keyframe value for property filter: blur(-0.00723px) @ http://localhost:3000/_next/static/chunks/node_modules_0iev9vr._.js:4689

@@ -1,0 +1,84 @@
+- generic [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e29]:
+      - navigation [ref=e31]:
+        - generic [ref=e32]:
+          - button "FAN EGRESS PORTAL" [ref=e33]
+          - button "STAFF OPS DECK" [ref=e41]
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: Match Day 24
+            - generic [ref=e50]:
+              - generic [ref=e51]: USA
+              - generic [ref=e52]:
+                - generic [ref=e53]: "2"
+                - generic [ref=e54]: ":"
+                - generic [ref=e55]: "1"
+              - generic [ref=e56]: MEX
+          - generic [ref=e58]:
+            - generic [ref=e59]: 88' LIVE
+            - generic [ref=e60]: +4 MIN STOPPAGE
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - paragraph [ref=e63]: System Status
+            - paragraph [ref=e64]: OPERATIONAL
+          - button [ref=e66]
+      - generic [ref=e215]:
+        - generic [ref=e216]:
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - heading "Live Stadium Pulse" [level=2] [ref=e222]
+              - generic [ref=e223]: LIVE
+            - generic [ref=e225]:
+              - generic [ref=e226]:
+                - generic [ref=e228]:
+                  - paragraph [ref=e229]: PRIMARY ENTRY
+                  - heading "Gate A" [level=3] [ref=e413]
+                - paragraph [ref=e236]: OPEN
+              - generic [ref=e237]:
+                - generic [ref=e239]:
+                  - paragraph [ref=e240]: TRANSIT NETWORK
+                  - heading "Main Hub" [level=3] [ref=e414]
+                - generic [ref=e246]:
+                  - paragraph [ref=e247]: 8 MIN
+                  - generic [ref=e248]: NEXT SHUTTLE IN 2M
+              - generic [ref=e251]:
+                - generic [ref=e253]:
+                  - paragraph [ref=e254]: ENVIRONMENT
+                  - heading "Current" [level=3] [ref=e415]
+                - paragraph [ref=e261]: OPTIMAL
+          - generic [ref=e263]:
+            - heading "Gate Performance Metrics" [level=2] [ref=e268]
+            - generic [ref=e269]:
+              - button "Gate A NORMAL" [active] [ref=e270]:
+                - generic [ref=e271]: Gate A
+                - generic [ref=e274]: NORMAL
+              - button "Gate B NORMAL" [ref=e278]:
+                - generic [ref=e279]: Gate B
+                - generic [ref=e282]: NORMAL
+              - button "Gate C NORMAL" [ref=e286]:
+                - generic [ref=e287]: Gate C
+                - generic [ref=e290]: NORMAL
+              - button "Gate D NORMAL" [ref=e294]:
+                - generic [ref=e295]: Gate D
+                - generic [ref=e298]: NORMAL
+            - generic [ref=e302]:
+              - generic [ref=e303]:
+                - heading "Fan Query Stream" [level=3] [ref=e308]
+                - generic [ref=e416]: gateA
+              - paragraph [ref=e420]: No active logs for gateA
+        - generic [ref=e365]:
+          - heading "Tactical Insights" [level=2] [ref=e368]
+          - generic [ref=e369]:
+            - generic [ref=e376]:
+              - heading "Reserve Deployment" [level=4] [ref=e378]
+              - paragraph [ref=e380]: Deploy reserve security team to Gate C to handle peak load.
+            - generic [ref=e390]:
+              - heading "Auxiliary Entry" [level=4] [ref=e392]
+              - paragraph [ref=e394]: Open auxiliary turnstiles at Gate A for next 30 minutes.
+            - generic [ref=e404]:
+              - heading "Flow Optimized" [level=4] [ref=e406]
+              - paragraph [ref=e408]: Main Hub transit wait time stabilized at 8 minutes.
+            - button "VIEW FULL TACTICAL LOG" [ref=e412]
+  - button "Open Next.js Dev Tools" [ref=e25] [cursor=pointer]
+  - alert [ref=e19]

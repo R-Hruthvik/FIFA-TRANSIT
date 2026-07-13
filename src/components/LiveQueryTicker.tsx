@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Broadcast, Clock, Funnel } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,13 @@ interface LiveQueryTickerProps {
 
 export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
   const [logs, setLogs] = useState<Log[]>([]);
+  const [connectionType, setConnectionType] = useState<"sse" | "polling">("polling");
+  const connectionTypeRef = useRef(connectionType);
+  useEffect(() => {
+    connectionTypeRef.current = connectionType;
+  }, [connectionType]);
 
+  // Initial fetch
   useEffect(() => {
     let mounted = true;
     const fetchLogs = async () => {
@@ -32,12 +38,87 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
         console.error("Failed to fetch logs:", error);
       }
     };
-
     fetchLogs();
-    const interval = setInterval(fetchLogs, 5000);
+    return () => { mounted = false; };
+  }, []);
+
+  // SSE connection with polling fallback
+  useEffect(() => {
+    let mounted = true;
+    let eventSource: EventSource | null = null;
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
+
+    const startPolling = () => {
+      if (pollInterval) return;
+      setConnectionType("polling");
+      pollInterval = setInterval(async () => {
+        if (!mounted) return;
+        try {
+          const res = await fetch("/api/fan/queries");
+          const data = await res.json();
+          if (mounted && data.logs) {
+            setLogs(data.logs);
+          }
+        } catch {}
+      }, 5000);
+    };
+
+    const startSSE = () => {
+      try {
+        eventSource = new EventSource("/api/fan/queries/stream");
+
+        eventSource.onmessage = (event) => {
+          if (!mounted) return;
+          try {
+            const data = JSON.parse(event.data);
+            if (data.logs) {
+              setLogs((prev) => {
+                const existingIds = new Set(prev.map((l) => l._id));
+                const newLogs = data.logs.filter((l: Log) => !existingIds.has(l._id));
+                if (newLogs.length === 0) return prev;
+                return [...newLogs, ...prev].slice(0, 100); // Keep max 100
+              });
+            }
+          } catch {}
+        };
+
+        eventSource.onerror = () => {
+          // SSE failed, fall back to polling
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+          startPolling();
+        };
+
+        // If SSE opens successfully, we're good
+        eventSource.onopen = () => {
+          if (mounted) setConnectionType("sse");
+        };
+      } catch {
+        startPolling();
+      }
+    };
+
+    // Try SSE first
+    startSSE();
+
+    // If SSE doesn't connect within 3s, start polling as backup
+    const fallbackTimer = setTimeout(() => {
+      if (mounted && connectionTypeRef.current !== "sse") {
+        startPolling();
+      }
+    }, 3000);
+
     return () => {
       mounted = false;
-      clearInterval(interval);
+      clearTimeout(fallbackTimer);
+      if (eventSource) {
+        eventSource.close();
+      }
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
     };
   }, []);
 
@@ -66,6 +147,9 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
             {gateFilter}
           </Badge>
         )}
+        <Badge variant="secondary" className="text-[8px] font-mono text-zinc-500">
+          {connectionType === "sse" ? "SSE" : "POLL"}
+        </Badge>
       </div>
 
       <ScrollArea className="flex-1">

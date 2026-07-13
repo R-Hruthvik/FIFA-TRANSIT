@@ -1,0 +1,81 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e29]:
+      - navigation [ref=e31]:
+        - generic [ref=e32]:
+          - button "FAN EGRESS PORTAL" [ref=e33]
+          - button "STAFF OPS DECK" [ref=e41]
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: Match Day 24
+            - generic [ref=e50]:
+              - generic [ref=e51]: USA
+              - generic [ref=e52]:
+                - generic [ref=e53]: "2"
+                - generic [ref=e54]: ":"
+                - generic [ref=e55]: "1"
+              - generic [ref=e56]: MEX
+          - generic [ref=e58]:
+            - generic [ref=e59]: 88' LIVE
+            - generic [ref=e60]: +4 MIN STOPPAGE
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - paragraph [ref=e63]: System Status
+            - paragraph [ref=e64]: OPERATIONAL
+          - button [ref=e66]
+      - generic [ref=e72]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading "Your Matchday Status" [level=2] [ref=e76]
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - generic [ref=e80]:
+                  - paragraph [ref=e81]: PRIMARY ENTRY
+                  - heading "Gate A" [level=3] [ref=e82]
+                - paragraph [ref=e88]: OPEN
+              - generic [ref=e89]:
+                - generic [ref=e91]:
+                  - paragraph [ref=e92]: TRANSIT NETWORK
+                  - heading "Main Hub" [level=3] [ref=e93]
+                - generic [ref=e98]:
+                  - paragraph [ref=e99]: 8 MIN
+                  - generic [ref=e100]: NEXT SHUTTLE IN 2M
+              - generic [ref=e103]:
+                - generic [ref=e105]:
+                  - paragraph [ref=e106]: ENVIRONMENT
+                  - heading "Current" [level=3] [ref=e107]
+                - paragraph [ref=e113]: OPTIMAL
+          - generic [ref=e114]:
+            - heading "Fan Query Stream" [level=3] [ref=e120]
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - generic [ref=e126]: 08:39:13 PM
+                - paragraph [ref=e130]: test
+              - generic [ref=e135]:
+                - generic [ref=e136]: 08:37:41 PM
+                - paragraph [ref=e140]: test
+              - generic [ref=e145]:
+                - generic [ref=e146]: 08:30:27 PM
+                - paragraph [ref=e150]: Gate capacity
+              - generic [ref=e155]:
+                - generic [ref=e156]: 06:23:01 PM
+                - paragraph [ref=e160]: Gate capacity
+              - generic [ref=e165]:
+                - generic [ref=e166]: 06:19:09 PM
+                - paragraph [ref=e170]: Security status
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - heading "Fan Support Assistant" [level=2] [ref=e180]
+            - generic [ref=e181]: ENCRYPTED
+          - generic [ref=e184]:
+            - generic [ref=e185]: System online. How can I assist with tournament logistics today?
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - button "SECURITY STATUS" [ref=e195]
+                - button "GATE CAPACITY" [ref=e199]
+                - button "TRANSIT ALERTS" [ref=e203]
+              - generic [ref=e207]:
+                - textbox "Query tournament database..." [ref=e208]
+                - button [disabled] [ref=e209]
+  - button "Open Next.js Dev Tools" [ref=e25] [cursor=pointer]
+  - alert [ref=e19]

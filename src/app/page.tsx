@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Trophy, ShieldCheck, Users, Command, UserCircle } from "@phosphor-icons/react";
 import FanHub from "@/components/FanHub";
 import StaffHub from "@/components/StaffHub";
+import { DemoModeButton } from "@/components/DemoController";
 import { AppTab } from "@/types/telemetry";
 
 export default function Page() {
@@ -14,14 +15,14 @@ export default function Page() {
   return (
     <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
       <StadiumBackground />
-      
+
       <AnimatePresence mode="wait">
         {showHero ? (
           <HeroSection onEnter={() => setShowHero(false)} />
         ) : (
-          <DashboardContent 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab} 
+          <DashboardContent
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
           />
         )}
       </AnimatePresence>
@@ -110,17 +111,19 @@ function DashboardContent({ activeTab, onTabChange }: { activeTab: AppTab, onTab
       <header className="relative w-full flex justify-between items-center z-50 pt-6 px-4 mb-6 max-w-7xl mx-auto">
         <nav className="bg-zinc-900/40 backdrop-blur-2xl border border-zinc-800/80 p-2 rounded-3xl flex items-center justify-between shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] w-full">
           <div className="flex gap-2">
-            <TabTrigger 
-              active={activeTab === 'fan'} 
+            <TabTrigger
+              active={activeTab === 'fan'}
               onClick={() => onTabChange('fan')}
               label="FAN EGRESS PORTAL"
               icon={<Users size={20} weight="duotone" />}
+              dataTab="fan"
             />
-            <TabTrigger 
-              active={activeTab === 'staff'} 
+            <TabTrigger
+              active={activeTab === 'staff'}
               onClick={() => onTabChange('staff')}
               label="STAFF OPS DECK"
               icon={<ShieldCheck size={20} weight="duotone" />}
+              dataTab="staff"
             />
           </div>
 
@@ -145,6 +148,7 @@ function DashboardContent({ activeTab, onTabChange }: { activeTab: AppTab, onTab
           </div>
 
           <div className="flex items-center gap-4 pr-2">
+            <DemoModeButton />
             <div className="hidden md:block text-right">
               <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">System Status</p>
               <p className="text-[10px] font-medium text-emerald-400 flex items-center gap-1 justify-end">
@@ -187,15 +191,17 @@ interface TabTriggerProps {
   onClick: () => void;
   label: string;
   icon: React.ReactNode;
+  dataTab?: string;
 }
 
-function TabTrigger({ active, onClick, label, icon }: TabTriggerProps) {
+function TabTrigger({ active, onClick, label, icon, dataTab }: TabTriggerProps) {
   return (
     <button
       onClick={onClick}
+      data-tab={dataTab}
       className={`relative px-4 md:px-6 py-3 rounded-2xl text-[10px] md:text-[11px] font-black tracking-[0.15em] flex items-center gap-3 transition-all duration-300 ${
-        active 
-          ? 'text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]' 
+        active
+          ? 'text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
           : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
       }`}
     >
