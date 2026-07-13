@@ -7,6 +7,7 @@ import { LiveQueryTicker } from "./LiveQueryTicker";
 import { LiveStatusCards } from "./LiveStatusCards";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EgressPlanCard } from "./EgressPlanCard";
 
 export default function FanHub() {
   const [telemetry, setTelemetry] = useState({
@@ -52,7 +53,9 @@ export default function FanHub() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="min-h-[600px] flex flex-col overflow-hidden p-0">
+        <EgressPlanCard language="en" />
+
+        <Card data-section="ai-chat" className="min-h-[600px] flex flex-col overflow-hidden p-0">
           <div className="p-5 border-b border-border flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
