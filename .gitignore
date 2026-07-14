@@ -40,6 +40,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# python
+__pycache__/
+*.pyc
+*.pyo
+
+# vault / session data
+vault/
+
+# local-only skill files
+.claude/skills/
+
 # local ignores
 build-output.txt
 *.diff
