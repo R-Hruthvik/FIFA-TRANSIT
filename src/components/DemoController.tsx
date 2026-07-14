@@ -30,10 +30,9 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const toggleDemo = useCallback(() => {
     setIsDemoMode((prev) => {
       if (!prev) {
-        // Starting demo
+        // Starting demo — reset refs synchronously
         startTimeRef.current = Date.now();
         queryIndexRef.current = 0;
-        setDemoElapsed(0);
       } else {
         // Stopping demo
         if (intervalRef.current) clearInterval(intervalRef.current);
@@ -41,7 +40,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       }
       return !prev;
     });
-  }, []);
+    // Reset elapsed AFTER isDemoMode flips to true, so the interval
+    // effect picks up demoElapsed=0 on its first tick
+    if (!isDemoMode) {
+      setDemoElapsed(0);
+    }
+  }, [isDemoMode]);
 
   useEffect(() => {
     if (!isDemoMode) return;

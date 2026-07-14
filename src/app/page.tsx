@@ -116,14 +116,12 @@ function DashboardContent({ activeTab, onTabChange }: { activeTab: AppTab, onTab
               onClick={() => onTabChange('fan')}
               label="FAN EGRESS PORTAL"
               icon={<Users size={20} weight="duotone" />}
-              dataTab="fan"
             />
             <TabTrigger
               active={activeTab === 'staff'}
               onClick={() => onTabChange('staff')}
               label="STAFF OPS DECK"
               icon={<ShieldCheck size={20} weight="duotone" />}
-              dataTab="staff"
             />
           </div>
 
@@ -191,14 +189,12 @@ interface TabTriggerProps {
   onClick: () => void;
   label: string;
   icon: React.ReactNode;
-  dataTab?: string;
 }
 
-function TabTrigger({ active, onClick, label, icon, dataTab }: TabTriggerProps) {
+function TabTrigger({ active, onClick, label, icon }: TabTriggerProps) {
   return (
     <button
       onClick={onClick}
-      data-tab={dataTab}
       className={`relative px-4 md:px-6 py-3 rounded-2xl text-[10px] md:text-[11px] font-black tracking-[0.15em] flex items-center gap-3 transition-all duration-300 ${
         active
           ? 'text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'

@@ -175,14 +175,14 @@ class ContextTrimmer:
 
         # --- Phase 1: Drop tool-output turns ---
         surviving = []
-        for msg in candidates:
+        for i, msg in enumerate(candidates):
             if msg.get("role") == "tool":
                 saved = _estimate_message_tokens(msg)
                 total_tokens -= saved
                 logger.debug(f"Dropped tool output, saved ~{saved} tokens")
                 if total_tokens <= self.token_threshold:
                     # Keep remaining candidates as-is
-                    surviving.extend(candidates[candidates.index(msg) + 1 :])
+                    surviving.extend(candidates[i + 1 :])
                     break
             else:
                 surviving.append(msg)
@@ -193,7 +193,7 @@ class ContextTrimmer:
         # --- Phase 2: Summarize old assistant turns ---
         if total_tokens > self.token_threshold:
             compressed = []
-            for msg in surviving:
+            for i, msg in enumerate(surviving):
                 if msg.get("role") == "assistant":
                     original_tokens = _estimate_message_tokens(msg)
                     summarized = _summarize_message(msg)
@@ -208,8 +208,7 @@ class ContextTrimmer:
 
                 if total_tokens <= self.token_threshold:
                     # Keep rest as-is
-                    idx = surviving.index(msg)
-                    compressed.extend(surviving[idx + 1 :])
+                    compressed.extend(surviving[i + 1 :])
                     break
             surviving = compressed
 

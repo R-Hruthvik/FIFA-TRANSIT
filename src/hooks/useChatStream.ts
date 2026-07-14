@@ -10,11 +10,12 @@ export interface Message {
 }
 
 const STREAM_TIMEOUT_MS = 30_000;
+const SYSTEM_PROMPT_ID = "1";
 
 export function useChatStream() {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "1",
+      id: SYSTEM_PROMPT_ID,
       role: "assistant",
       content: "System online. How can I assist with tournament logistics today?",
       timestamp: new Date(),
@@ -24,6 +25,10 @@ export function useChatStream() {
   const abortRef = useRef<AbortController | null>(null);
   const loadingRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const messagesRef = useRef<Message[]>(messages);
+
+  // Keep ref in sync with state so async callbacks always read latest
+  messagesRef.current = messages;
 
   const clearStreamTimeout = () => {
     if (timeoutRef.current) {
@@ -42,10 +47,6 @@ export function useChatStream() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    loadingRef.current = true;
-    setIsLoading(true);
-
     const assistantId = crypto.randomUUID();
     const assistantMessage: Message = {
       id: assistantId,
@@ -53,12 +54,21 @@ export function useChatStream() {
       content: "",
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, assistantMessage]);
 
+    // Build the full message list for the API (exclude system prompt, append new messages)
+    const messagesForApi = messagesRef.current
+      .filter((m) => m.id !== SYSTEM_PROMPT_ID)
+      .concat(userMessage)
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    // Update state first
+    setMessages((prev) => [...prev, userMessage, assistantMessage]);
+
+    loadingRef.current = true;
+    setIsLoading(true);
     abortRef.current = new AbortController();
     let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
 
-    // Safety timeout: if stream hangs for 30s, force-reset loading state
     timeoutRef.current = setTimeout(() => {
       if (loadingRef.current) {
         loadingRef.current = false;
@@ -72,14 +82,7 @@ export function useChatStream() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            ...messages
-              .filter((m) => m.id !== "1")
-              .concat(userMessage)
-              .map((m) => ({ role: m.role, content: m.content })),
-          ],
-        }),
+        body: JSON.stringify({ messages: messagesForApi }),
         signal: abortRef.current.signal,
       });
 
@@ -133,12 +136,12 @@ export function useChatStream() {
       setIsLoading(false);
       abortRef.current = null;
     }
-  }, [messages]);
+  }, []); // messages read via messagesRef — no state dependency needed
 
   const clearChat = useCallback(() => {
     setMessages([
       {
-        id: "1",
+        id: SYSTEM_PROMPT_ID,
         role: "assistant",
         content: "System online. How can I assist with tournament logistics today?",
         timestamp: new Date(),

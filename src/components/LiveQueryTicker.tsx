@@ -47,6 +47,7 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
     let mounted = true;
     let eventSource: EventSource | null = null;
     let pollInterval: ReturnType<typeof setInterval> | null = null;
+    let sseSettled = false; // tracks whether SSE already succeeded or failed
 
     const startPolling = () => {
       if (pollInterval) return;
@@ -83,7 +84,8 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
         };
 
         eventSource.onerror = () => {
-          // SSE failed, fall back to polling
+          if (sseSettled) return; // already handled
+          sseSettled = true;
           if (eventSource) {
             eventSource.close();
             eventSource = null;
@@ -91,11 +93,12 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
           startPolling();
         };
 
-        // If SSE opens successfully, we're good
         eventSource.onopen = () => {
+          sseSettled = true; // prevent fallback timer from starting polling
           if (mounted) setConnectionType("sse");
         };
       } catch {
+        sseSettled = true;
         startPolling();
       }
     };
@@ -105,7 +108,7 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
 
     // If SSE doesn't connect within 3s, start polling as backup
     const fallbackTimer = setTimeout(() => {
-      if (mounted && connectionTypeRef.current !== "sse") {
+      if (mounted && !sseSettled) {
         startPolling();
       }
     }, 3000);
@@ -122,9 +125,18 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
     };
   }, []);
 
+  const GATE_LABELS: Record<string, string> = {
+    gateA: "Gate A",
+    gateB: "Gate B",
+    gateC: "Gate C",
+    gateD: "Gate D",
+  };
+
   const filteredLogs = useMemo(() => {
     if (!gateFilter) return logs;
-    const regex = new RegExp(gateFilter, "i");
+    // gateFilter is a gate key (e.g. "gateA"), match against display label ("Gate A")
+    const label = GATE_LABELS[gateFilter] || gateFilter;
+    const regex = new RegExp(label, "i");
     return logs.filter((log) => regex.test(log.text));
   }, [logs, gateFilter]);
 

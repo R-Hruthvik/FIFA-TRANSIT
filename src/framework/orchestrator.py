@@ -378,7 +378,7 @@ class Orchestrator:
 
         state["plan"] = [
             {"task_id": "1", "tool": "list_vault", "status": "pending"},
-            {"task_id": "2", "tool": "execute_bash", "status": "pending", "fail_mock": True},
+            {"task_id": "2", "tool": "execute_bash", "status": "pending"},
         ]
         return state
 
@@ -471,11 +471,6 @@ class Orchestrator:
 
             # ── Execute the tool ──
             try:
-                if task.get("fail_mock"):
-                    raise RuntimeError(
-                        f"Sandbox constraint violation in {task['tool']}"
-                    )
-
                 # Real tool execution routing:
                 if task["tool"] == "read_file":
                     validated_args = task.get("validated_args", {})
