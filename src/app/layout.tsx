@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SessionProvider } from "@/components/auth/SessionProvider";
 import { DemoProvider } from "@/components/DemoController";
 import { GuidedWalkthrough } from "@/components/GuidedWalkthrough";
 import "./globals.css";
@@ -87,10 +88,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30">
-        <DemoProvider>
-          {children}
-          <GuidedWalkthrough />
-        </DemoProvider>
+        <SessionProvider>
+          <DemoProvider>
+            {children}
+            <GuidedWalkthrough />
+          </DemoProvider>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import type { StadiumTelemetry } from '@/types/telemetry';
 
 const uri = process.env.MONGODB_URI;
 if (!uri) throw new Error('Please add your Mongo URI to .env');
@@ -26,16 +27,23 @@ if (process.env.NODE_ENV === 'development') {
 const DB_NAME = process.env.MONGODB_DB || 'stadium_ops';
 const TELEMETRY_COLL = process.env.MONGODB_TELEMETRY_COLLECTION || 'telemetry';
 const LOGS_COLL = process.env.MONGODB_LOGS_COLLECTION || 'query_logs';
+export const USERS_COLL = process.env.MONGODB_USERS_COLLECTION || 'users';
 
 export { clientPromise };
-
-import { StadiumTelemetry } from '@/types/telemetry';
 
 const DEFAULT_TELEMETRY: StadiumTelemetry = {
   nearestGate: { label: "Gate A", status: "open" },
   nearestHub: { label: "Main Hub", waitTime: 8 },
-  weatherAdvisory: { label: "Current", condition: "clear" }
+  weatherAdvisory: { label: "Current", condition: "clear" },
 };
+
+export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
+
+export async function getUserCollection() {
+  const client = await clientPromise;
+  const db = client.db(DB_NAME);
+  return db.collection(USERS_COLL);
+}
 
 export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   try {
@@ -71,9 +79,6 @@ export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   }
 }
 
-// Re-export types for backward compatibility
-export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
-
 export async function getLatestLogs(limit = 5) {
   try {
     const client = await clientPromise;
@@ -93,7 +98,7 @@ export async function getLatestLogs(limit = 5) {
 export async function logFanQuery(text: string) {
   try {
     const client = await clientPromise;
-    
+
     client
       .db(DB_NAME)
       .collection(LOGS_COLL)

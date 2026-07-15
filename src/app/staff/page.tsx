@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 type GateStatus = 'low' | 'medium' | 'high';
 
@@ -26,7 +27,7 @@ const gateLabels: Record<string, string> = {
   gateD: 'Gate D',
 };
 
-export default function StaffDashboard() {
+function StaffDashboardContent() {
   const [metrics, setMetrics] = useState<Metrics>({
     gateA: 'low',
     gateB: 'low',
@@ -116,5 +117,13 @@ export default function StaffDashboard() {
         </Card>
       </aside>
     </main>
+  );
+}
+
+export default function StaffDashboard() {
+  return (
+    <ProtectedRoute allowedRoles={["staff", "admin"]}>
+      <StaffDashboardContent />
+    </ProtectedRoute>
   );
 }
