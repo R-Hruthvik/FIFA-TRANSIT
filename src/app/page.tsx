@@ -1,208 +1,238 @@
 "use client";
 
-import { useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Trophy, ShieldCheck, Users, Command, UserCircle } from "@phosphor-icons/react";
+import { Loader2 } from "lucide-react";
 import FanHub from "@/components/FanHub";
 import StaffHub from "@/components/StaffHub";
 import { DemoModeButton } from "@/components/DemoController";
 import { AppTab } from "@/types/telemetry";
+import { UserMenu } from "@/components/auth/UserMenu";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function Page() {
-  const [showHero, setShowHero] = useState(true);
-  const [activeTab, setActiveTab] = useState<AppTab>('fan');
+  const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
-      <StadiumBackground />
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-      <AnimatePresence mode="wait">
-        {showHero ? (
-          <HeroSection onEnter={() => setShowHero(false)} />
-        ) : (
-          <DashboardContent
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
-        )}
-      </AnimatePresence>
-    </main>
-  );
-}
-
-function StadiumBackground() {
-  return (
-    <>
-      <div className="fixed inset-0 opacity-[0.05] pointer-events-none z-0" 
-           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm66 3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-46-45c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm10-41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }} />
-      <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-emerald-900/10 blur-[120px] rounded-full pointer-events-none" />
-    </>
-  );
-}
-
-function HeroSection({ onEnter }: { onEnter: () => void }) {
-  return (
-    <motion.section
-      key="hero"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0.5, opacity: 0, rotateY: 180 }}
-        animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-8 relative"
-      >
-        <div className="absolute inset-0 bg-amber-400/20 blur-3xl rounded-full animate-pulse" />
-        <div className="relative z-10 p-6 bg-zinc-900/20 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl">
-          <Trophy size={100} weight="duotone" className="text-amber-400" />
+  // Show loading state while checking session
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
+        <StadiumBackground />
+        <div className="min-h-screen flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+            <p className="text-zinc-400 text-sm font-medium tracking-wider">
+              Loading...
+            </p>
+          </motion.div>
         </div>
-      </motion.div>
+      </main>
+    );
+  }
 
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-      >
-        <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-white mb-4 uppercase italic leading-none">
-          FIFA TOURNAMENT<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-white to-amber-400">
-            MANAGEMENT SUITE
-          </span>
-        </h1>
-        <p className="text-zinc-400 max-w-[600px] mx-auto text-lg mb-10 leading-relaxed font-light tracking-wide">
-          Unified digital control system for the 2026 World Cup operations, fan engagement, and stadium logistics.
-        </p>
-      </motion.div>
-
-      <motion.button
-        whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(16,185,129,0.4)" }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onEnter}
-        className="group relative px-10 py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-      >
-        <span className="relative z-10 flex items-center gap-3 tracking-[0.2em] text-sm">
-          ENTER COMMAND CENTER
-          <Command size={20} weight="bold" />
-        </span>
+  // If not authenticated, show landing page
+  if (!session?.user) {
+    return (
+      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
+        <StadiumBackground />
         <motion.div
-          animate={{ x: ["-100%", "200%"] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-        />
-        <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/40 transition-colors" />
-      </motion.button>
-    </motion.section>
-  );
-}
-
-function DashboardContent({ activeTab, onTabChange }: { activeTab: AppTab, onTabChange: (t: AppTab) => void }) {
-  return (
-    <motion.div
-      key="dashboard"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="relative z-20 min-h-screen flex flex-col"
-    >
-      <header className="relative w-full flex justify-between items-center z-50 pt-6 px-4 mb-6 max-w-7xl mx-auto">
-        <nav className="bg-zinc-900/40 backdrop-blur-2xl border border-zinc-800/80 p-2 rounded-3xl flex items-center justify-between shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] w-full">
-          <div className="flex gap-2">
-            <TabTrigger
-              active={activeTab === 'fan'}
-              onClick={() => onTabChange('fan')}
-              label="FAN EGRESS PORTAL"
-              icon={<Users size={20} weight="duotone" />}
-            />
-            <TabTrigger
-              active={activeTab === 'staff'}
-              onClick={() => onTabChange('staff')}
-              label="STAFF OPS DECK"
-              icon={<ShieldCheck size={20} weight="duotone" />}
-            />
-          </div>
-
-          <div className="hidden lg:flex items-center gap-6 px-8 border-x border-zinc-800/50">
-            <div className="flex flex-col items-center">
-              <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Match Day 24</span>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-black italic">USA</span>
-                <div className="flex items-center gap-1.5 bg-zinc-950 px-2 py-0.5 rounded-md border border-zinc-800">
-                  <span className="text-xs font-black text-emerald-400">2</span>
-                  <span className="text-[10px] font-bold text-zinc-600">:</span>
-                  <span className="text-xs font-black text-zinc-400">1</span>
-                </div>
-                <span className="text-xs font-black italic text-zinc-500">MEX</span>
-              </div>
+          key="landing"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0, rotateY: 180 }}
+            animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8 relative"
+          >
+            <div className="absolute inset-0 bg-amber-400/20 blur-3xl rounded-full animate-pulse" />
+            <div className="relative z-10 p-6 bg-zinc-900/20 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl">
+              <Trophy size={100} weight="duotone" className="text-amber-400" />
             </div>
-            <div className="w-px h-8 bg-zinc-800/50" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-1 animate-pulse">88&apos; LIVE</span>
-              <span className="text-[10px] font-bold text-white tracking-tight italic">+4 MIN STOPPAGE</span>
-            </div>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-4 pr-2">
-            <DemoModeButton />
-            <div className="hidden md:block text-right">
-              <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">System Status</p>
-              <p className="text-[10px] font-medium text-emerald-400 flex items-center gap-1 justify-end">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                OPERATIONAL
-              </p>
-            </div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-white mb-4 uppercase italic leading-none">
+              FIFA TOURNAMENT<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-white to-amber-400">
+                MANAGEMENT SUITE
+              </span>
+            </h1>
+            <p className="text-zinc-400 max-w-[600px] mx-auto text-lg mb-10 leading-relaxed font-light tracking-wide">
+              Unified digital control system for the 2026 World Cup operations, fan engagement, and stadium logistics.
+            </p>
+          </motion.div>
+
+          <div className="flex gap-4 mb-8">
             <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => onTabChange(activeTab === 'fan' ? 'staff' : 'fan')}
-              className="w-10 h-10 rounded-2xl bg-zinc-800/50 flex items-center justify-center text-emerald-400 border border-white/5 hover:border-emerald-500/50 transition-colors"
+              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(16,185,129,0.4)" }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="group relative px-10 py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
             >
-              <UserCircle size={24} weight="duotone" />
+              <span className="relative z-10 flex items-center gap-3 tracking-[0.2em] text-sm">
+                CONTINUE WITH GOOGLE
+                <Command size={20} weight="bold" />
+              </span>
+              <motion.div
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              />
+              <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/40 transition-colors" />
             </motion.button>
+
+            <a
+              href="/signup"
+              className="group relative px-10 py-5 bg-zinc-800/50 hover:bg-zinc-800 text-white font-black rounded-2xl overflow-hidden transition-all duration-300 border border-zinc-700/50"
+            >
+              <span className="relative z-10 flex items-center gap-3 tracking-[0.2em] text-sm">
+                CREATE ACCOUNT
+                <UserCircle size={20} weight="duotone" />
+              </span>
+              <motion.div
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              />
+              <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/40 transition-colors" />
+            </a>
+          </div>
+
+          <p className="text-zinc-500 text-sm mt-6">
+            By continuing, you agree to our{" "}
+            <a href="#" className="text-emerald-400 hover:underline">
+              Terms of Service
+            </a>{" "}
+          </p>
+        </motion.div>
+      </main>
+    );
+  }
+
+  // Authenticated user - show dashboard
+  const [activeTab, setActiveTab] = useState<AppTab>("fan");
+
+  return (
+    <ProtectedRoute allowedRoles={["fan", "staff", "admin"]}>
+      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
+        <StadiumBackground />
+
+        {/* Top Bar */}
+        <header className="relative z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-white/5 bg-zinc-950/50 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="p-2 bg-emerald-600/20 rounded-xl border border-emerald-500/30"
+            >
+              <Trophy size={28} weight="duotone" className="text-emerald-400" />
+            </motion.div>
+            <div>
+              <h1 className="text-xl font-black tracking-widest text-white uppercase">FIFA TRANSIT</h1>
+              <p className="text-[10px] text-zinc-500 tracking-widest uppercase">2026 WORLD CUP OPERATIONS</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <DemoModeButton />
+            <UserMenu />
+          </div>
+        </header>
+
+        {/* Tab Navigation */}
+        <nav className="relative z-10 px-4 md:px-6 py-2 border-b border-white/5 bg-zinc-950/30 backdrop-blur-sm">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            {tabs.map((tab) => (
+              <TabButton
+                key={tab.id}
+                icon={tab.icon}
+                label={tab.label}
+                active={activeTab === tab.id}
+                onClick={() => setActiveTab(tab.id)}
+              />
+            ))}
           </div>
         </nav>
-      </header>
 
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 pb-12">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, x: activeTab === 'fan' ? -20 : 20, filter: "blur(10px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: activeTab === 'fan' ? 20 : -20, filter: "blur(10px)" }}
-            transition={{ type: "spring", stiffness: 260, damping: 26 }}
-            className="w-full"
-          >
-            {activeTab === 'fan' ? <FanHub /> : <StaffHub />}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </motion.div>
+        {/* Dashboard Content */}
+        <div className="flex-1 p-4 md:p-6">
+          <AnimatePresence mode="wait">
+            {activeTab === "fan" ? (
+              <motion.div
+                key="fan"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FanHub />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="staff"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ProtectedRoute allowedRoles={["staff", "admin"]}>
+                  <StaffHub />
+                </ProtectedRoute>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </main>
+    </ProtectedRoute>
   );
 }
 
-interface TabTriggerProps {
+// Components
+const tabs = [
+  { id: "fan" as AppTab, icon: Users, label: "FAN HUB" },
+  { id: "staff" as AppTab, icon: ShieldCheck, label: "STAFF HUB" },
+];
+
+function TabButton({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ComponentType<Record<string, unknown>>;
+  label: string;
   active: boolean;
   onClick: () => void;
-  label: string;
-  icon: React.ReactNode;
-}
-
-function TabTrigger({ active, onClick, label, icon }: TabTriggerProps) {
+}) {
   return (
     <button
       onClick={onClick}
       className={`relative px-4 md:px-6 py-3 rounded-2xl text-[10px] md:text-[11px] font-black tracking-[0.15em] flex items-center gap-3 transition-all duration-300 ${
         active
-          ? 'text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
-          : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
+          ? "text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
+          : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
       }`}
     >
-      <span className={active ? 'text-emerald-400 scale-110 transition-transform' : ''}>
-        {icon}
+      <span className={active ? "text-emerald-400 scale-110 transition-transform" : ""}>
+        <Icon size={14} weight="bold" />
       </span>
       <span className="hidden sm:inline">{label}</span>
       {active && (
@@ -216,5 +246,17 @@ function TabTrigger({ active, onClick, label, icon }: TabTriggerProps) {
         </motion.div>
       )}
     </button>
+  );
+}
+
+function StadiumBackground() {
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-b from-emerald-500/5 via-zinc-950/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-t from-amber-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[300px]" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[300px]" />
+    </div>
   );
 }
