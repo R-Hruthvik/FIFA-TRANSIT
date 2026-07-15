@@ -47,6 +47,20 @@ export const authOptions = {
           throw new Error("Your staff application is pending approval. Please wait for an administrator to review it.");
         }
 
+        // Update lastSignIn and updatedAt on successful login
+        const mongoClient = await clientPromise;
+        const db = mongoClient.db(DB_NAME);
+        const now = new Date();
+        await db.collection("users").updateOne(
+          { id: user.id },
+          {
+            $set: {
+              lastSignIn: now,
+              updatedAt: now,
+            },
+          }
+        );
+
         // @ts-ignore — module augmentation handles the extra fields at runtime
         return {
           id: user.id,
@@ -71,10 +85,47 @@ export const authOptions = {
       // @ts-ignore
       if (account?.provider === "google") {
         // @ts-ignore
-        const profile = account as { email?: string; name?: string; picture?: string; sub?: string };
+        const profile = account as { email?: string; name?: string; picture?: string; sub?: string; email_verified?: boolean };
+
+        // Check if email is verified
+        if (!profile.email_verified) {
+          // Returning null will cause the Google OAuth flow to fail
+          return null;
+        }
+
         const email = (profile.email || "").toLowerCase();
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
+          const mongoClient = await clientPromise;
+          const db = mongoClient.db(DB_NAME);
+          const now = new Date();
+
+          // Update existing user: ensure googleId is set, update timestamps
+          await db.collection("users").updateOne(
+            { id: existingUser.id },
+            {
+              $set: {
+                googleId: profile.sub || existingUser.googleId || "",
+                lastSignIn: now,
+                updatedAt: now,
+              },
+              $setOnInsert: {
+                // Only set on insert (shouldn't happen for existing user)
+                id: existingUser.id,
+                email,
+                name: profile.name || existingUser.name || "",
+                image: profile.picture || existingUser.image || null,
+                passwordHash: existingUser.passwordHash,
+                role: existingUser.role,
+                staffStatus: existingUser.staffStatus,
+                staffRequestedAt: existingUser.staffRequestedAt,
+                approvedAt: existingUser.approvedAt,
+                approvedBy: existingUser.approvedBy,
+                createdAt: existingUser.createdAt,
+              }
+            }
+          );
+
           token.id = existingUser.id;
           token.email = existingUser.email;
           token.role = existingUser.role;
