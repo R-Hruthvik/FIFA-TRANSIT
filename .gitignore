@@ -49,7 +49,8 @@ __pycache__/
 vault/
 
 # local-only skill files
-.claude/skills/
+.claude/
+
 
 # local ignores
 build-output.txt
@@ -75,3 +76,19 @@ playwright-report/
 
 # temp files from local commands
 2026-07-17-*
+
+# .gstack
+.gstack/
+
+# graphify output
+graphify-out/
+
+# txt files
+*.txt
+
+# user ideas
+usr-ideas/
+
+# all markdown except README
+*.md
+!README.md
