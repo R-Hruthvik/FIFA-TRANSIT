@@ -101,5 +101,8 @@ docs/
 # playwright config
 playwright.config.ts
 
+# images
+images/
+
 # skills lock
 skills-lock.json
