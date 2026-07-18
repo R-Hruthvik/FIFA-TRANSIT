@@ -70,6 +70,8 @@ tmp*
 # Playwright / MCP artifacts
 .playwright-mcp/
 playwright-report/
+playwright/
+test-results/
 
 # audit screenshots
 *audit.png
