@@ -22,6 +22,7 @@
 import { NextResponse } from "next/server";
 import { clientPromise } from "@/lib/db";
 import { aggregateCrowd, hasCriticalGates } from "@/lib/crowd-aggregator";
+import { aggregateClusters } from "@/lib/crowd-clusters";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const POLL_INTERVAL_MS = 2_000;
@@ -53,22 +54,25 @@ export async function GET() {
 
   const stream = new ReadableStream({
     async start(controller) {
-      // Send initial state
-      try {
-        const { gateCrowds } = await aggregateCrowd();
-        for (const gc of gateCrowds) {
-          lastGateCounts[gc.gateId] = gc.count;
-        }
-        sendEvent(controller, { type: "crowd_update", gates: gateCrowds });
-      } catch {
-        // Ignore initial fetch errors
-      }
+       // Send initial state
+       try {
+         const { gateCrowds, clusters } = await aggregateCrowd();
+         for (const gc of gateCrowds) {
+           lastGateCounts[gc.gateId] = gc.count;
+         }
+         sendEvent(controller, { type: "crowd_update", gates: gateCrowds, clusters });
+       } catch {
+         // Ignore initial fetch errors
+       }
 
       // Polling loop
       const poll = async () => {
+        let errorLogged = false;
         while (isActive) {
+          let currentInterval = POLL_INTERVAL_MS;
           try {
             const { gateCrowds } = await aggregateCrowd();
+            errorLogged = false;
 
             // Check for changes
             let changed = false;
@@ -80,8 +84,9 @@ export async function GET() {
             }
 
             if (changed) {
-              sendEvent(controller, { type: "crowd_update", gates: gateCrowds });
-            }
+               const clusters = await aggregateClusters();
+               sendEvent(controller, { type: "crowd_update", gates: gateCrowds, clusters });
+             }
 
             // Check for critical gates (D9 alert)
             const critical = gateCrowds.filter(
@@ -109,11 +114,27 @@ export async function GET() {
               });
             }
           } catch (err) {
-            console.error("SSE poll error:", err);
+            const errorName = err && typeof err === 'object' ? (err as any).name : '';
+            const errorMessage = err && typeof err === 'object' ? (err as any).message || '' : String(err);
+            const isMongoError = 
+              errorName === "MongoServerSelectionError" || 
+              errorName === "MongoNetworkError" ||
+              errorMessage.includes("ENOTFOUND") || 
+              errorMessage.includes("MongoNetworkError");
+            
+            if (isMongoError) {
+              if (!errorLogged) {
+                console.error("MongoDB unreachable — suppressing further logs.");
+                errorLogged = true;
+              }
+              currentInterval = 10_000; // Backoff to 10s
+            } else {
+              console.error("SSE poll error:", err);
+            }
           }
 
           sendHeartbeat(controller);
-          await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+          await new Promise((resolve) => setTimeout(resolve, currentInterval));
         }
       };
 

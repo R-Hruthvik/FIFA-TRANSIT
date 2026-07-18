@@ -1,0 +1,94 @@
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-41-36-199Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-42-30-929Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-42-50-522Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-44-15-464Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-47-43-975Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-59-03-076Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-59-12-357Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-59-39-990Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T07-59-57-913Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-00-16-749Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-00-41-560Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-24-25-119Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-25-05-361Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-25-15-267Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-27-11-399Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-27-22-443Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-27-35-648Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-27-45-901Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T08-52-29-150Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-30-24-560Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-32-11-683Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-37-28-050Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-38-21-330Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-49-54-990Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T09-50-14-785Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-06-34-261Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-06-52-553Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-07-00-781Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-07-38-479Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-07-56-751Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-09-20-014Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-14-32-014Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-20-31-280Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-21-32-016Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-21-54-142Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-22-10-615Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-29-18-777Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-32-39-705Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-33-03-308Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-33-23-816Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-34-10-807Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-34-52-541Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-35-11-076Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-36-55-697Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-38-10-379Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-38-37-433Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T10-38-55-406Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T11-45-55-652Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T11-46-45-469Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T11-47-39-427Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T11-48-34-635Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T11-49-19-719Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/.playwright-mcp/page-2026-07-17T12-38-03-797Z.yml
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/2026-07-17-172638-local-command-caveatcaveat-the-messages-below.txt
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/BUILD_PLAN.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/IMPLEMENTATION_REPORT-v1.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/IMPLEMENTATION_REPORT=v2.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/docs/demo-simulation-plan.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/issues.txt
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/playwright-report/index.html
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/usr-ideas/2026-07-15-session.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/usr-ideas/2026-07-15.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/usr-ideas/2026-07-16-session.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/usr-ideas/2026-07-16.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/usr-ideas/refined/2026-07-15-session.md
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/fan-hub-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/fan-hub-overview.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/manage-staff-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/playwright/screenshot_fan_hub.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/playwright/screenshot_fan_hub_query.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/playwright/screenshot_landing.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/playwright/screenshot_staff_denied.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/grid.svg
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/Australia-players-and-fans-celebrate-together.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/Austria-versus-Jordan.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/Canada-v-Bosnia-and-Herzegovina-Group-B-FIFA-World-Cup-2026.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/Cote-D-Ivoire-v-Ecuador-Group-E-FIFA-World-Cup-2026.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/Spain-v-Cabo-Verde-Group-H-FIFA-World-Cup-2026.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/public/images/bg/USA-fans-watch-the-game-against-Paraguay-in-Los-Angeles.webp
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-25-29.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-25-38.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-25-47.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-26-03.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-26-11.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-26-24.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-26-48.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-26-54.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/screenshots/Screenshot from 2026-07-18 12-27-04.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/settings-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/signup-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/staff-hub-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/staff-hub-final.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/staff-register-audit.png
+/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app/users-audit.png

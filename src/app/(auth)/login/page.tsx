@@ -9,8 +9,10 @@ function LoginFormSuspense() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin text-emerald-400" /></div>}>
-      <LoginFormSuspense />
-    </Suspense>
+    <div className="min-h-screen w-full overflow-hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin text-emerald-400" /></div>}>
+        <LoginFormSuspense />
+      </Suspense>
+    </div>
   );
 }

@@ -1,17 +1,34 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, createContext, useContext } from "react";
-import { getDemoSnapshot, getDemoAiResponse, DEMO_DURATION_MS } from "@/lib/demo-data";
 import { GateMetrics, StadiumTelemetry } from "@/types/telemetry";
+import {
+  LiveDemoEngine,
+  CrowdPosition,
+  GateEvent,
+  AdminLogEntry,
+  MatchSimulationState,
+  getLiveDemoEngine,
+} from "@/lib/live-demo-engine";
 
 interface DemoContextValue {
   isDemoMode: boolean;
   toggleDemo: () => void;
   demoElapsed: number;
   getMetrics: () => GateMetrics;
-  getTelemetry: () => StadiumTelemetry;
+  getTelemetry: () => StadiumTelemetry | null;
   getDemoAiResponse: (input: string) => string;
   injectDemoQuery: () => string | null;
+
+  // Live simulation accessors
+  getCrowdPositions: () => CrowdPosition[];
+  getCrowdCount: () => number;
+  getGateEvents: () => GateEvent[];
+  getRecentGateEvents: (minutesAge: number) => GateEvent[];
+  getAdminLogs: () => AdminLogEntry[];
+  getRecentAdminLogs: (count: number) => AdminLogEntry[];
+  getMatchState: () => MatchSimulationState;
+  setRealUserCount: (count: number) => void;
 }
 
 const DemoContext = createContext<DemoContextValue | null>(null);
@@ -23,80 +40,138 @@ export function useDemoMode() {
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [demoElapsed, setDemoElapsed] = useState(0);
-  const startTimeRef = useRef<number>(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const queryIndexRef = useRef(0);
+  const engineRef = useRef<LiveDemoEngine | null>(null);
+  const [crowdPositions, setCrowdPositions] = useState<CrowdPosition[]>([]);
+  const [gateEvents, setGateEvents] = useState<GateEvent[]>([]);
+  const [adminLogs, setAdminLogs] = useState<AdminLogEntry[]>([]);
 
   const toggleDemo = useCallback(() => {
     setIsDemoMode((prev) => {
       if (!prev) {
-        // Starting demo — reset refs synchronously
-        startTimeRef.current = Date.now();
-        queryIndexRef.current = 0;
+        // Starting demo — create and start engine
+        const engine = new LiveDemoEngine();
+        engine.start();
+        engineRef.current = engine;
       } else {
-        // Stopping demo
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        intervalRef.current = null;
+        // Stopping demo — stop and cleanup engine
+        if (engineRef.current) {
+          engineRef.current.stop();
+          engineRef.current = null;
+        }
       }
       return !prev;
     });
-    // Reset elapsed AFTER isDemoMode flips to true, so the interval
-    // effect picks up demoElapsed=0 on its first tick
     if (!isDemoMode) {
       setDemoElapsed(0);
     }
   }, [isDemoMode]);
 
+  // Update state from engine every second
   useEffect(() => {
-    if (!isDemoMode) return;
+    if (!isDemoMode || !engineRef.current) return;
 
-    intervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
-      if (elapsed >= DEMO_DURATION_MS) {
-        // Demo complete — auto-disable
-        setIsDemoMode(false);
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        return;
-      }
-      setDemoElapsed(elapsed);
-    }, 500);
+    const engine = engineRef.current;
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    // Update display state every 200ms for smooth UI
+    const updateInterval = setInterval(() => {
+      if (!engineRef.current) return;
+      setDemoElapsed(engineRef.current.getElapsed());
+      setCrowdPositions(engineRef.current.getCrowdPositions().slice());
+      setGateEvents(engineRef.current.getGateEvents().slice());
+      setAdminLogs(engineRef.current.getRecentAdminLogs(50));
+    }, 200);
+
+    return () => clearInterval(updateInterval);
   }, [isDemoMode]);
 
   const getMetrics = useCallback((): GateMetrics => {
-    if (!isDemoMode) return { gateA: "low", gateB: "low", gateC: "low", gateD: "low" };
-    return getDemoSnapshot(demoElapsed).metrics;
+    if (!isDemoMode || !engineRef.current) return {
+      gate1: "low", gate2: "low", gate3: "low", gate4: "low",
+      gate5: "low", gate6: "low", gate7: "low", gate8: "low"
+    };
+    return engineRef.current.getMetrics();
   }, [isDemoMode, demoElapsed]);
 
-  const getTelemetry = useCallback((): StadiumTelemetry => {
-    if (!isDemoMode) {
-      return {
-        nearestGate: { label: "SCANNING...", status: "open" },
-        nearestHub: { label: "SCANNING...", waitTime: 0 },
-        weatherAdvisory: { label: "SCANNING...", condition: "clear" },
-      };
-    }
-    return getDemoSnapshot(demoElapsed).telemetry;
+  const getTelemetry = useCallback((): StadiumTelemetry | null => {
+    if (!isDemoMode || !engineRef.current) return null;
+    return engineRef.current.getTelemetry();
   }, [isDemoMode, demoElapsed]);
 
   const getDemoAiResponseFn = useCallback((input: string): string => {
-    const snapshot = getDemoSnapshot(demoElapsed);
-    return getDemoAiResponse(input, snapshot);
-  }, [demoElapsed]);
+    if (!engineRef.current) return "Demo mode is off.";
+    const matchState = engineRef.current.getMatchState();
+    const inputLower = input.toLowerCase();
+    const highestGate = getHighestDensityGateFromMetrics(engineRef.current.getMetrics());
+
+    if (inputLower.includes("gate") || inputLower.includes("crowd") || inputLower.includes("security")) {
+      const metrics = engineRef.current.getMetrics();
+      return `Gate monitoring update: G1=${metrics.gate1}, G2=${metrics.gate2}, G3=${metrics.gate3}, G4=${metrics.gate4}, G5=${metrics.gate5}, G6=${metrics.gate6}, G7=${metrics.gate7}, G8=${metrics.gate8}. Highest congestion at ${highestGate}.`;
+    }
+    if (inputLower.includes("match") || inputLower.includes("score") || inputLower.includes("time")) {
+      return `Match status: ${matchState.phase}, minute ${matchState.minute}, Score ${matchState.homeScore}-${matchState.awayScore}. ${matchState.phase === "half-time" ? "Crowd movement increasing through concourse." : matchState.phase === "full-time" ? "All gates actively managing exit flow." : "Crowd density stable at all gates."}`;
+    }
+    if (inputLower.includes("staff")) {
+      return "Staff alert system active. All gates under surveillance. Gate alerts are being generated for any threshold breaches. Log entries being recorded to admin panel.";
+    }
+    return `Systems nominal. Current crowd: ${engineRef.current.getCrowdCount()} monitored individuals. Active gate alerts: ${engineRef.current.getGateEvents().length}. Match: ${matchState.homeScore}-${matchState.awayScore} (${matchState.phase}).`;
+  }, [isDemoMode, demoElapsed]);
 
   const injectDemoQuery = useCallback((): string | null => {
     if (!isDemoMode) return null;
-    const snapshot = getDemoSnapshot(demoElapsed);
-    const queries = snapshot.queries;
-    if (queries.length === 0) return null;
-    const query = queries[queryIndexRef.current % queries.length];
-    queryIndexRef.current++;
-    return query;
+    const queries = [
+      "What's the crowd situation at Gate G3?",
+      "Need shuttle schedule update",
+      "Gate G2 is getting busy",
+      "Security status at all gates",
+      "Shuttle wait time at Main Hub?",
+      "Are there any gate closures?",
+      "Half-time crowd movement update",
+      "Egress plan for Gate G5",
+    ];
+    const index = Math.floor(Math.random() * queries.length);
+    return queries[index];
+  }, [isDemoMode]);
+
+  const getCrowdPositionsFn = useCallback((): CrowdPosition[] => {
+    if (!isDemoMode || !engineRef.current) return [];
+    return engineRef.current.getCrowdPositions();
   }, [isDemoMode, demoElapsed]);
+
+  const getCrowdCountFn = useCallback((): number => {
+    if (!isDemoMode || !engineRef.current) return 0;
+    return engineRef.current.getCrowdCount();
+  }, [isDemoMode, demoElapsed]);
+
+  const getGateEventsFn = useCallback((): GateEvent[] => {
+    if (!isDemoMode || !engineRef.current) return [];
+    return engineRef.current.getGateEvents();
+  }, [isDemoMode, demoElapsed]);
+
+  const getRecentGateEventsFn = useCallback((minutesAge: number): GateEvent[] => {
+    if (!isDemoMode || !engineRef.current) return [];
+    return engineRef.current.getRecentGateEvents(minutesAge);
+  }, [isDemoMode, demoElapsed]);
+
+  const getAdminLogsFn = useCallback((): AdminLogEntry[] => {
+    if (!isDemoMode || !engineRef.current) return [];
+    return engineRef.current.getAdminLogs();
+  }, [isDemoMode, demoElapsed]);
+
+  const getRecentAdminLogsFn = useCallback((count: number): AdminLogEntry[] => {
+    if (!isDemoMode || !engineRef.current) return [];
+    return engineRef.current.getRecentAdminLogs(count);
+  }, [isDemoMode, demoElapsed]);
+
+  const getMatchStateFn = useCallback((): MatchSimulationState => {
+    if (!isDemoMode || !engineRef.current) return {
+      minute: 0, half: 1, homeScore: 0, awayScore: 0, phase: "pre-match",
+    };
+    return engineRef.current.getMatchState();
+  }, [isDemoMode, demoElapsed]);
+
+  const setRealUserCountFn = useCallback((count: number) => {
+    if (engineRef.current) engineRef.current.setRealUserCount(count);
+  }, []);
 
   return (
     <DemoContext.Provider value={{
@@ -107,18 +182,36 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       getTelemetry,
       getDemoAiResponse: getDemoAiResponseFn,
       injectDemoQuery,
+      getCrowdPositions: getCrowdPositionsFn,
+      getCrowdCount: getCrowdCountFn,
+      getGateEvents: getGateEventsFn,
+      getRecentGateEvents: getRecentGateEventsFn,
+      getAdminLogs: getAdminLogsFn,
+      getRecentAdminLogs: getRecentAdminLogsFn,
+      getMatchState: getMatchStateFn,
+      setRealUserCount: setRealUserCountFn,
     }}>
       {children}
     </DemoContext.Provider>
   );
 }
 
-// Demo Mode Toggle Button
+function getHighestDensityGateFromMetrics(metrics: GateMetrics): string {
+  const order = ["gate3", "gate2", "gate5", "gate1", "gate4", "gate6", "gate7", "gate8"];
+  for (const gate of order) {
+    if (metrics[gate as keyof GateMetrics] === "high") return gate;
+  }
+  return "gate1";
+}
+
+// Demo Mode Toggle Button — runs indefinitely, user stops manually
 export function DemoModeButton() {
   const demo = useDemoMode();
   if (!demo) return null;
 
-  const progress = demo.demoElapsed / DEMO_DURATION_MS;
+  const minutes = Math.floor(demo.demoElapsed / 60000);
+  const seconds = Math.floor((demo.demoElapsed % 60000) / 1000);
+  const elapsedStr = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
   return (
     <button
@@ -129,17 +222,11 @@ export function DemoModeButton() {
           : "bg-zinc-900/60 border border-zinc-800 hover:border-amber-500/50 text-zinc-400 hover:text-amber-400"
       }`}
     >
-      {demo.isDemoMode && (
-        <div
-          className="absolute inset-0 rounded-xl bg-amber-500/10"
-          style={{ width: `${progress * 100}%`, transition: "width 0.5s linear" }}
-        />
-      )}
       <span className="relative z-10 flex items-center gap-2">
         {demo.isDemoMode ? (
           <>
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            DEMO LIVE
+            DEMO LIVE · {elapsedStr}
           </>
         ) : (
           <>

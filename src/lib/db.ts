@@ -32,9 +32,9 @@ export const USERS_COLL = process.env.MONGODB_USERS_COLLECTION || 'users';
 export { clientPromise };
 
 const DEFAULT_TELEMETRY: StadiumTelemetry = {
-  nearestGate: { label: "Gate A", status: "open" },
-  nearestHub: { label: "Main Hub", waitTime: 8 },
-  weatherAdvisory: { label: "Current", condition: "clear" },
+  nearestGate: { label: "NO DATA", status: "open" as const },
+  nearestHub: { label: "NO DATA", waitTime: 0 },
+  weatherAdvisory: { label: "NO DATA", condition: "clear" as const },
 };
 
 export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
@@ -47,32 +47,21 @@ export async function getUserCollection() {
 
 export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   try {
-    const client = await clientPromise;
-    const db = client.db(DB_NAME);
-    const telemetry = db.collection(TELEMETRY_COLL);
-
-    // Create a timeout promise that resolves cleanly
-    const timeoutPromise = new Promise<{ isTimeout: true }>((resolve) => {
-      setTimeout(() => resolve({ isTimeout: true }), 800);
+    // Timeout after 500ms to prevent hanging
+    const timeoutPromise = new Promise<StadiumTelemetry>((resolve) => {
+      setTimeout(() => resolve(DEFAULT_TELEMETRY), 500);
     });
 
-    // Create the DB query promise that resolves cleanly
-    const telemetryPromise = telemetry.findOne({}, { sort: { _id: -1 } })
-      .then(data => ({ isTimeout: false, data }))
-      .catch(err => {
-        console.error('Database query error:', err);
-        return { isTimeout: false, data: null };
-      });
+    const telemetryPromise = (async (): Promise<StadiumTelemetry> => {
+      const client = await clientPromise;
+      const db = client.db(DB_NAME);
+      const telemetry = db.collection(TELEMETRY_COLL);
+      const data = await telemetry.findOne({}, { sort: { _id: -1 } });
+      return (data as unknown as StadiumTelemetry) || DEFAULT_TELEMETRY;
+    })();
 
-    // Race them
-    const result = await Promise.race([telemetryPromise, timeoutPromise]);
-
-    if (result.isTimeout) {
-      console.warn('Telemetry fetch timed out');
-      return DEFAULT_TELEMETRY;
-    }
-
-    return (result.data as unknown as StadiumTelemetry) || DEFAULT_TELEMETRY;
+    // Race: whoever resolves first wins
+    return await Promise.race([telemetryPromise, timeoutPromise]);
   } catch (error) {
     console.error("Unexpected error in getLiveTelemetry:", error);
     return DEFAULT_TELEMETRY;

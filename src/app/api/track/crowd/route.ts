@@ -12,8 +12,8 @@ export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const { gateCrowds } = await aggregateCrowd();
-    return NextResponse.json({ gates: gateCrowds });
+    const { gateCrowds, clusters } = await aggregateCrowd();
+    return NextResponse.json({ gates: gateCrowds, clusters });
   } catch (error) {
     console.error("Crowd aggregation error:", error);
     return NextResponse.json(

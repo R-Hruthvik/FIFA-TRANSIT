@@ -4,7 +4,7 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { signIn } from "next-auth/react";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,12 +59,15 @@ export function SignupForm() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-zinc-950/50 border-zinc-800">
+    <Card className="w-full max-w-md mx-auto bg-zinc-900 border-zinc-700/30 shadow-xl backdrop-blur-sm">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl font-black tracking-widest text-white">
+        <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3">
+          <UserPlus className="h-6 w-6 text-emerald-400" />
+        </div>
+        <CardTitle className="text-2xl font-black tracking-widest text-white uppercase">
           CREATE ACCOUNT
         </CardTitle>
-        <p className="text-zinc-400 text-sm mt-1">
+        <p className="text-emerald-400 text-sm mt-1">
           Join the FIFA Transit Operations Center
         </p>
       </CardHeader>
@@ -88,6 +91,7 @@ export function SignupForm() {
             placeholder="John Doe"
             required
             disabled={isLoading}
+            className="focus-visible:border-emerald-500 focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
 
           <Input
@@ -98,6 +102,7 @@ export function SignupForm() {
             placeholder="john@fifa.org"
             required
             disabled={isLoading}
+            className="focus-visible:border-emerald-500 focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
 
           <div className="space-y-2">
@@ -114,7 +119,7 @@ export function SignupForm() {
                 required
                 minLength={8}
                 disabled={isLoading}
-                className="w-full h-10 rounded-md border border-zinc-700 bg-zinc-900/50 px-3 py-2 text-sm text-white placeholder-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-10 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus-visible:outline-none focus-visible:border-emerald-500 focus-visible:ring-1 focus-visible:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed pr-10"
               />
               <button
                 type="button"
@@ -129,7 +134,7 @@ export function SignupForm() {
 
           <Button
             type="submit"
-            className="w-full py-3 text-sm font-black tracking-wider"
+            className="w-full py-3 text-sm font-black tracking-wider bg-emerald-600 hover:bg-emerald-500 text-zinc-950 hover:text-zinc-950 font-bold border-none transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]"
             disabled={isLoading}
           >
             {isLoading ? (

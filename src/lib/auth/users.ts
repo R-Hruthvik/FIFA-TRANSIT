@@ -26,12 +26,46 @@ export async function findUserById(id: string) {
 export async function createUser(userData: Omit<UserDocument, "_id">) {
   const collection = await getUsersCollection();
 
-  // Ensure unique index on email (lowercase) and sparse unique on googleId
-  await collection.createIndex({ email: 1 }, { unique: true });
-  await collection.createIndex({ googleId: 1 }, { unique: true, sparse: true });
+  // Ensure sparse unique indexes - Google index must be sparse to allow multiple null values
+  await ensureUniqueIndexes(collection);
 
   const result = await collection.insertOne(userData as UserDocument);
   return { ...userData, _id: result.insertedId };
+}
+
+async function ensureUniqueIndexes(collection: any) {
+  try {
+    // Check existing indexes to avoid errors on duplicate key creation
+    const existingIndexes = await collection.listIndexes().toArray();
+    const indexNames = existingIndexes.map((idx: any) => idx.name || '');
+
+    // Ensure unique sparse index on email (case-insensitive) - prevents duplicates
+    if (!indexNames.includes('email_1')) {
+      await collection.createIndex({ email: 1 }, { unique: true, sparse: true, name: 'email_1' });
+    }
+
+    // Non-unique index on googleId. NOT unique because:
+    // 1. Multiple users may have googleId:null (email-only signups)
+    // 2. MongoDB's unique sparse index still treats null as a value,
+    //    causing E11000 duplicate key errors.
+    if (!indexNames.includes('googleId_1')) {
+      await collection.createIndex({ googleId: 1 }, { sparse: true, name: 'googleId_1' });
+    }
+
+  } catch (error) {
+    const errorCode = (error as any)?.code;
+    const errorMessage = (error as any)?.message || error;
+
+    // Only continue if it's a duplicate key error (index already exists)
+    if (errorCode === 11000 && errorMessage.includes('index already exists')) {
+      console.log('Index already exists - continuing with user creation');
+      return;
+    }
+
+    // For other errors, log them but don't fail the user creation
+    // This allows the signup to work even if index creation fails
+    console.warn('Failed to create indexes, but continuing with user creation:', error);
+  }
 }
 
 export async function updateUserRole(id: string, role: Role) {

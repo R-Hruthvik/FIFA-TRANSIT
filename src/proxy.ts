@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const authPages = ["/login", "/signup", "/api/auth"];
-const adminRoutes = ["/admin", "/api/admin"];
-const staffRoutes = ["/staff", "/staff/*", "/api/track/event", "/api/track/plan", "/api/track/stream", "/api/fan/queries/stream", "/api/chat"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow auth routes and API auth callbacks
@@ -42,7 +40,7 @@ export async function middleware(request: NextRequest) {
 
   // Protect staff routes
   if (
-    pathname.startsWith("/staff") ||
+    (pathname.startsWith("/staff") && pathname !== "/staff/register") ||
     pathname.startsWith("/api/track/event") ||
     pathname.startsWith("/api/track/plan") ||
     pathname.startsWith("/api/track/stream") ||

@@ -2,17 +2,33 @@ import { GateMetrics } from "@/types/telemetry";
 
 export type HeatmapVariant = "stadium-svg" | "thermal-grid" | "stadium-map";
 
+/** Co-location cluster rendered on the stadium heatmap (real pipeline). */
+export interface HeatmapCluster {
+  id: string;
+  size: number;
+  centroidX: number; // stadium-center-relative meters
+  centroidY: number;
+  gateId: string;
+  confidence: number;
+}
+
 export interface HeatmapBaseProps {
   metrics: GateMetrics;
   gateFilter: string | null;
   onGateClick: (gate: string) => void;
+  /** Optional co-location clusters (nearby-crowd blobs). */
+  clusters?: HeatmapCluster[];
 }
 
 export const GATE_POSITIONS = {
-  gateA: { label: "Gate A", position: "top-left" as const },
-  gateB: { label: "Gate B", position: "top-right" as const },
-  gateC: { label: "Gate C", position: "bottom-left" as const },
-  gateD: { label: "Gate D", position: "bottom-right" as const },
+  gate1: { label: "Gate G1", position: "top" as const },
+  gate2: { label: "Gate G2", position: "top-right" as const },
+  gate3: { label: "Gate G3", position: "right" as const },
+  gate4: { label: "Gate G4", position: "bottom-right" as const },
+  gate5: { label: "Gate G5", position: "bottom" as const },
+  gate6: { label: "Gate G6", position: "bottom-left" as const },
+  gate7: { label: "Gate G7", position: "left" as const },
+  gate8: { label: "Gate G8", position: "top-left" as const },
 } as const;
 
 export const STATUS_COLORS = {

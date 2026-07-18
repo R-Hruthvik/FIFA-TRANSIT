@@ -39,19 +39,19 @@ describe("Phase 0: Auth System unit tests", () => {
   });
 
   it("blocks pending staff from signing in", () => {
-    const staffStatus = "pending";
+    const staffStatus: string = "pending";
     const blocked = staffStatus === "pending" || staffStatus === "rejected";
     expect(blocked).toBe(true);
   });
 
   it("blocks rejected staff from signing in", () => {
-    const staffStatus = "rejected";
+    const staffStatus: string = "rejected";
     const blocked = staffStatus === "pending" || staffStatus === "rejected";
     expect(blocked).toBe(true);
   });
 
   it("allows approved staff to sign in", () => {
-    const staffStatus = "approved";
+    const staffStatus: string = "approved";
     const blocked = staffStatus === "pending" || staffStatus === "rejected";
     expect(blocked).toBe(false);
   });

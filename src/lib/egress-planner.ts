@@ -16,6 +16,7 @@
  */
 
 import type { GateCrowd, GateSummary, EgressPlan } from "@/types/position";
+import { GATES } from "@/lib/venue-config";
 
 // ── Configuration ──────────────────────────────────────────────────────
 
@@ -29,13 +30,10 @@ const WALK_SPEED_M_PER_MIN = 80;
 /** Stadium dimensions (approximate) for distance calculations */
 const STADIUM_RADIUS_M = 250;
 
-/** Gate positions (angles in radians from center, distance from center in m) */
-const GATE_POSITIONS: Record<string, { angle: number; dist: number }> = {
-  "Gate A": { angle: -Math.PI / 4, dist: 200 },
-  "Gate B": { angle: Math.PI / 4, dist: 200 },
-  "Gate C": { angle: 3 * Math.PI / 4, dist: 200 },
-  "Gate D": { angle: -3 * Math.PI / 4, dist: 200 },
-};
+/** Gate positions derived from venue-config (stadium-center-relative meters). */
+const GATE_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
+  GATES.map((g) => [g.id, { x: g.x, y: g.y }]),
+);
 
 // ── Distance calculation ───────────────────────────────────────────────
 
@@ -60,10 +58,7 @@ function gateToPosition(gateId: string): Position2D {
     // Default to center if unknown
     return { x: 0, y: 0 };
   }
-  return {
-    x: Math.cos(pos.angle) * pos.dist,
-    y: Math.sin(pos.angle) * pos.dist,
-  };
+  return { x: pos.x, y: pos.y };
 }
 
 /**

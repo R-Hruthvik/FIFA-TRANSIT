@@ -24,7 +24,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const { gateCrowds, summary } = await aggregateCrowd();
+    const { gateCrowds, summary, clusters } = await aggregateCrowd();
 
     // Build alerts
     const alerts: Array<{
@@ -68,6 +68,7 @@ export async function GET() {
     return NextResponse.json({
       gates: gateCrowds,
       summary,
+      clusters,
       alerts,
       staggerStatus,
       enforceableGates: gateCrowds

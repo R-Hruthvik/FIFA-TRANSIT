@@ -46,6 +46,12 @@ const INDEXES: IndexDef[] = [
     keys: { gateId: 1 },
     options: { unique: true, name: "uniq_gateId" },
   },
+  // TTL on co-location clusters (privacy by design, D9)
+  {
+    collection: "crowd_clusters",
+    keys: { timestamp: 1 },
+    options: { expireAfterSeconds: 86400, name: "ttl_clusters_24h" },
+  },
 ];
 
 export async function ensureIndexes(): Promise<void> {

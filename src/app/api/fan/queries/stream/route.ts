@@ -14,7 +14,9 @@ export async function GET() {
       controller.enqueue(encoder.encode(`: heartbeat\n\n`));
 
       const poll = async () => {
+        let errorLogged = false;
         while (isActive) {
+          let currentInterval = 2000;
           try {
             const client = await clientPromise;
             const db = client.db(process.env.MONGODB_DB || "stadium_ops");
@@ -31,12 +33,29 @@ export async function GET() {
             }
 
             lastCheck = Date.now();
+            errorLogged = false;
           } catch (err) {
-            console.error("SSE poll error:", err);
+            const errorName = err && typeof err === 'object' ? (err as any).name : '';
+            const errorMessage = err && typeof err === 'object' ? (err as any).message || '' : String(err);
+            const isMongoError = 
+              errorName === "MongoServerSelectionError" || 
+              errorName === "MongoNetworkError" ||
+              errorMessage.includes("ENOTFOUND") || 
+              errorMessage.includes("MongoNetworkError");
+            
+            if (isMongoError) {
+              if (!errorLogged) {
+                console.error("MongoDB unreachable — suppressing further logs.");
+                errorLogged = true;
+              }
+              currentInterval = 10_000; // Backoff to 10s
+            } else {
+              console.error("SSE poll error:", err);
+            }
           }
 
-          // Wait 2 seconds between polls
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+          // Wait between polls
+          await new Promise((resolve) => setTimeout(resolve, currentInterval));
         }
       };
 

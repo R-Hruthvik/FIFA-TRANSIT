@@ -156,7 +156,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <Link href="/admin/manage-staff" className="group">
+        <Link href="/manage-staff" className="group">
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow group-hover:shadow-xl">
             <CardContent className="p-6 text-center">
               <ShieldCheck className="h-10 w-10 mx-auto mb-4 text-yellow-500" />
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
           </Card>
         </Link>
 
-        <Link href="/admin/settings" className="group">
+        <Link href="/settings" className="group">
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow group-hover:shadow-xl">
             <CardContent className="p-6 text-center">
               <Settings className="h-10 w-10 mx-auto mb-4 text-gray-500" />

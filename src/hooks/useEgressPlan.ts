@@ -48,7 +48,7 @@ async function getCachedPlan(): Promise<EgressPlan | null> {
   try {
     const db = await openDB();
     return new Promise((resolve) => {
-      const tx = db.transaction("plans", "readonly");
+      const tx = db.transaction("plans", "readwrite");
       const store = tx.objectStore("plans");
       const request = store.get(PLAN_CACHE_KEY);
       request.onsuccess = () => {
@@ -189,18 +189,42 @@ export function useEgressPlan(
         signal: controller.signal,
       });
 
-      if (!res.ok) throw new Error(`Plan fetch failed: ${res.status}`);
+      if (!res.ok) {
+        console.warn(`Plan fetch returned non-ok status: ${res.status}`);
+        throw new Error(`Plan fetch returned status: ${res.status}`);
+      }
 
-      const data = (await res.json()) as { plan: EgressPlan; version: number };
-      const newPlan = { ...data.plan, stale: false };
+      const data = (await res.json()) as { plan: EgressPlan | null; version: number; deferred?: boolean; reason?: string };
 
-      planRef.current = newPlan;
-      setPlan(newPlan);
-      await setCachedPlan(newPlan);
-      await setCachedVersion(data.version);
+      if (!data.plan) {
+        const cached = await getCachedPlan();
+        if (cached) {
+          const fallbackPlan = { ...cached, stale: true };
+          planRef.current = fallbackPlan;
+          setPlan(fallbackPlan);
+        } else {
+          setPlan(null);
+        }
+      } else {
+        const newPlan = { ...data.plan, stale: false };
+        planRef.current = newPlan;
+        setPlan(newPlan);
+        await setCachedPlan(newPlan);
+        await setCachedVersion(data.version);
+      }
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
-        console.error("Failed to fetch egress plan:", err);
+        console.warn("Failed to fetch egress plan, attempting cache fallback:", err);
+      }
+      try {
+        const cached = await getCachedPlan();
+        if (cached) {
+          const fallbackPlan = { ...cached, stale: true };
+          planRef.current = fallbackPlan;
+          setPlan(fallbackPlan);
+        }
+      } catch (cacheErr) {
+        console.warn("Failed to load cached plan:", cacheErr);
       }
     } finally {
       setIsLoading(false);

@@ -5,74 +5,40 @@
  * D2 — Gate crowd = phone-cluster inference
  * D9 — Confidence gating; below threshold → AI defers to stewards
  *
- * This module provides stateless, on-read aggregation that:
+ * Stateless, on-read aggregation:
  *  1. Reads recent position_events from MongoDB
- *  2. Clusters by gateId to produce crowd counts
- *  3. Applies the confidence model f(opt-in rate)
- *  4. Writes results to gate_crowd collection (latest upsert)
+ *  2. Clusters by gateId to produce crowd counts (with exit decay)
+ *  3. Applies the confidence model f(opt-in coverage × recency)
+ *  4. Upserts results into gate_crowd (single source of truth for dashboard)
  *
- * The gate_crowd collection is the single source of truth for the
- * Command Center dashboard. SSE push and API endpoints read from it.
+ * Gates, thresholds and windows all come from venue-config (single source).
  */
 
 import { clientPromise } from "@/lib/db";
+import {
+  GATES,
+  GATE_IDS,
+  LOOKBACK_WINDOW_MS,
+} from "@/lib/venue-config";
+import { computeConfidence, summarizeGate, CONFIDENCE_THRESHOLD } from "@/lib/crowd-model";
+import { aggregateClusters, type CrowdCluster } from "@/lib/crowd-clusters";
 import type { GateCrowd, GateSummary } from "@/types/position";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const EVENTS_COLL = "position_events";
 const CROWD_COLL = "gate_crowd";
 
-// ── Configuration ──────────────────────────────────────────────────────
-
-/** How far back (ms) to look for "active" events */
-const LOOKBACK_WINDOW_MS = 5 * 60_000; // 5 minutes
-
-/** Timeout for a user to be considered "in transit" after exiting a gate */
-const TRANSIT_TIMEOUT_MS = 3 * 60_000; // 3 minutes
-
-/** Confidence threshold below which we defer to stewards (D9) */
-const CONFIDENCE_THRESHOLD = 0.35;
-
-/**
- * Confidence model: f(opt-in rate).
- *
- * This is a tunable curve. The design says "exact curve + threshold tuning
- * per venue size" is an open item, so we start with a pragmatic sigmoid.
- *
- * At 0% opt-in: confidence = 0 (we know nothing)
- * At 100% opt-in: confidence = 1 (we have full coverage)
- *
- * The curve is steeper at the low end because we need a minimum critical
- * mass before the data becomes actionable.
- */
-function computeConfidence(optInRate: number): number {
-  // Simple sigmoid centered at 15% opt-in rate
-  // At 0.15 → confidence ≈ 0.5
-  // At 0.30 → confidence ≈ 0.85
-  // At 0.05 → confidence ≈ 0.15
-  if (optInRate <= 0) return 0;
-  const k = 12; // steepness
-  const midpoint = 0.15;
-  return 1 / (1 + Math.exp(-k * (optInRate - midpoint)));
-}
-
-// ── Aggregation ────────────────────────────────────────────────────────
+export { CONFIDENCE_THRESHOLD, computeConfidence, summarizeGate };
 
 export interface AggregateResult {
   gateCrowds: GateCrowd[];
   summary: GateSummary[];
+  clusters: CrowdCluster[];
 }
 
 /**
  * Run the crowd aggregation pipeline.
- *
- * Reads position_events, clusters by gateId, computes confidence,
- * and upserts results into gate_crowd.
- *
- * This is stateless and can be called on any schedule:
- *  - On-read (when someone queries /api/staff/crowd)
- *  - On-change-stream (when new events arrive)
- *  - On a timer (e.g., every 30s)
+ * Stateless — safe to call on-read, on-change, or on a timer.
  */
 export async function aggregateCrowd(): Promise<AggregateResult> {
   const client = await clientPromise;
@@ -81,69 +47,70 @@ export async function aggregateCrowd(): Promise<AggregateResult> {
   const now = Date.now();
   const since = now - LOOKBACK_WINDOW_MS;
 
-  // 1. Fetch recent events
   const events = await db
     .collection(EVENTS_COLL)
-    .find({
-      timestamp: { $gte: since },
-    })
+    .find({ timestamp: { $gte: since } })
     .toArray();
 
-  // 2. Cluster by gateId
-  // We track:
-  //  - activeUsers: users whose last event at this gate was within the window
-  //  - totalOptIn: number of distinct users who have opted in (any gate enter event)
-  const gateActive = new Map<string, Set<string>>(); // gateId → Set<userId>
+  // Per gate: set of currently-present users + newest event age.
+  const gateActive = new Map<string, Set<string>>();
+  const gateNewest = new Map<string, number>();
   const optedInUsers = new Set<string>();
 
   for (const ev of events) {
     const gateId = ev.gateId as string;
     const userId = ev.userId as string;
+    const ts = ev.timestamp as number;
+    const type = ev.eventType as string;
 
-    if (!gateActive.has(gateId)) {
-      gateActive.set(gateId, new Set());
-    }
+    if (!gateActive.has(gateId)) gateActive.set(gateId, new Set());
+    const newest = gateNewest.get(gateId) ?? 0;
+    if (ts > newest) gateNewest.set(gateId, ts);
 
-    // Only count enter + nearby as "present" at the gate
-    if (ev.eventType === "geofence_enter" || ev.eventType === "beacon_nearby") {
+    if (type === "geofence_enter" || type === "beacon_nearby") {
       gateActive.get(gateId)!.add(userId);
+    } else if (type === "geofence_exit") {
+      // Exit decay: drop the user unless a more recent enter/beacon exists.
+      const userEvents = events.filter(
+        (e) => e.userId === userId && e.gateId === gateId,
+      );
+      const exitTs = ts;
+      const reEntered = userEvents.some(
+        (e) =>
+          e.timestamp > exitTs &&
+          (e.eventType === "geofence_enter" || e.eventType === "beacon_nearby"),
+      );
+      if (!reEntered) gateActive.get(gateId)!.delete(userId);
     }
 
-    // Track opt-in users (any enter event = they opted in)
-    if (ev.eventType === "geofence_enter") {
-      optedInUsers.add(userId);
-    }
+    if (type === "geofence_enter") optedInUsers.add(userId);
   }
 
-  // 3. Known gates (from venue config)
-  const gates = ["Gate A", "Gate B", "Gate C", "Gate D"];
   const totalOptIn = optedInUsers.size;
 
-  const gateCrowds: GateCrowd[] = gates.map((gateId) => {
-    const activeUsers = gateActive.get(gateId)?.size ?? 0;
+  const gateCrowds: GateCrowd[] = GATES.map((gate) => {
+    const activeUsers = gateActive.get(gate.id)?.size ?? 0;
+    const newest = gateNewest.get(gate.id) ?? 0;
+    const ageMs = newest > 0 ? now - newest : LOOKBACK_WINDOW_MS;
 
-    // Confidence = f(opt-in rate at this gate vs total opted-in users)
-    // If no one opted in at all, confidence = 0
     let confidence: number;
     if (totalOptIn === 0) {
       confidence = 0;
     } else {
-      const usersAtGate = gateActive.get(gateId)?.size ?? 0;
-      const optInRate = usersAtGate / Math.max(totalOptIn, 1);
-      confidence = computeConfidence(optInRate);
+      const optInRate = activeUsers / Math.max(totalOptIn, 1);
+      confidence = computeConfidence(optInRate, ageMs);
     }
 
     return {
-      gateId,
+      gateId: gate.id,
       count: activeUsers,
       confidence,
       optInCount: totalOptIn,
       timestamp: now,
-      capacityThreshold: 100, // TODO: per-venue config (D10)
+      capacityThreshold: gate.capacity,
     };
   });
 
-  // 4. Upsert to gate_crowd collection
   const bulkOps = gateCrowds.map((gc) => ({
     updateOne: {
       filter: { gateId: gc.gateId },
@@ -165,81 +132,49 @@ export async function aggregateCrowd(): Promise<AggregateResult> {
     await db.collection(CROWD_COLL).bulkWrite(bulkOps);
   }
 
-  // 5. Build summary for broadcast
   const summary = buildSummary(gateCrowds);
-
-  return { gateCrowds, summary };
+  const clusters = await aggregateClusters();
+  return { gateCrowds, summary, clusters };
 }
 
 /**
  * Build a human-readable summary from gate crowd data.
- * Used for fan broadcasts and staff dashboard overview.
  */
 function buildSummary(gateCrowds: GateCrowd[]): GateSummary[] {
-  const maxCount = Math.max(...gateCrowds.map((g) => g.count), 1);
-
-  return gateCrowds.map((gc) => {
-    const pct = Math.round((gc.count / gc.capacityThreshold) * 100);
-    let status: GateSummary["status"] = "open";
-    let recommended = false;
-    let avoid = false;
-
-    if (pct >= 80) {
-      status = "critical";
-      avoid = true;
-    } else if (pct >= 50) {
-      status = "busy";
-    }
-
-    // Recommend the least crowded gate with sufficient confidence
-    if (gc.confidence >= CONFIDENCE_THRESHOLD && pct < 30 && gc.count > 0) {
-      recommended = true;
-    }
-
-    return {
-      gateId: gc.gateId,
-      capacityPct: Math.min(pct, 100),
-      status,
-      recommended,
-      avoid,
-    };
-  });
+  return gateCrowds.map((gc) =>
+    summarizeGate(gc.gateId, gc.count, gc.capacityThreshold, gc.confidence),
+  );
 }
 
 // ── Read helpers ───────────────────────────────────────────────────────
 
-/**
- * Get the latest gate crowd data (read from gate_crowd collection).
- * Used by API endpoints and SSE push.
- */
 export async function getLatestCrowd(): Promise<GateCrowd[]> {
   const client = await clientPromise;
   const db = client.db(DB_NAME);
 
   const docs = await db.collection(CROWD_COLL).find({}).toArray();
 
-  return docs.map((doc) => ({
-    gateId: doc.gateId,
-    count: doc.count ?? 0,
-    confidence: doc.confidence ?? 0,
-    optInCount: doc.optInCount ?? 0,
-    timestamp: doc.timestamp ?? Date.now(),
-    capacityThreshold: doc.capacityThreshold ?? 100,
-  }));
+  // Ensure every known gate is represented even if no aggregation ran yet.
+  const byId = new Map(docs.map((d) => [d.gateId as string, d]));
+  return GATE_IDS.map((gateId) => {
+    const doc = byId.get(gateId);
+    const cfg = GATES.find((g) => g.id === gateId)!;
+    return {
+      gateId,
+      count: doc?.count ?? 0,
+      confidence: doc?.confidence ?? 0,
+      optInCount: doc?.optInCount ?? 0,
+      timestamp: doc?.timestamp ?? Date.now(),
+      capacityThreshold: doc?.capacityThreshold ?? cfg.capacity,
+    };
+  });
 }
 
-/**
- * Get the gate summary for broadcast to fans.
- * Filters out gates with low confidence (D9: we don't guess).
- */
 export async function getGateSummary(): Promise<GateSummary[]> {
   const crowd = await getLatestCrowd();
   return buildSummary(crowd);
 }
 
-/**
- * Check if any gate is in a critical state.
- */
 export async function hasCriticalGates(): Promise<boolean> {
   const summary = await getGateSummary();
   return summary.some((g) => g.status === "critical");

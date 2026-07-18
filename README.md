@@ -1,216 +1,410 @@
-# FIFA Command Center — 2026 World Cup Transit Management
+# StadiumFlow — 2026 World Cup Transit Management
+
+> **Unified digital control system for FIFA World Cup 2026 stadium operations, fan engagement, and real-time transit management.**
 
 ![Status](https://img.shields.io/badge/status-hackathon_ready-emerald)
 ![Next.js](https://img.shields.io/badge/Next.js-16.2-black)
+![React](https://img.shields.io/badge/React-19-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black)
 
-**FIFA Command Center** is a full-stack transit management dashboard built for the 2026 FIFA World Cup. It unifies real-time stadium operations, fan engagement, AI-powered assistance, and spatial congestion monitoring into a single control center — designed for hackathon speed and production polish.
+---
+
+## What It Does
+
+### Fan Hub (Ticket Holders)
+- **Live Match Scoreboard** — Real-time match data from football-data.org / API-Football
+- **Crowd Telemetry** — Nearest gate status, transit hub wait times, weather advisories
+- **FanAssist AI Copilot** — Streaming chat with context (match, telemetry, egress plan, crowd data)
+- **Personalized Egress Plans** — Per-user leave window, gate assignment, multilingual instructions
+- **Crowd Detection Opt-In** — Geofence + BLE beacon proximity, anonymized, no GPS trail stored
+
+### Staff Hub (Operations / Security)
+- **Congestion Heatmaps** — 3 interchangeable visualizations: SVG Stadium, Thermal Grid, Geometric Map
+- **Live Gate Alerts** — Real-time crowd status changes, capacity warnings
+- **Enforcement Panel** — Steward dispatch, gate closure/opening actions
+- **Operational Insights** — Dynamic, severity-ranked tactical recommendations
+- **Admin Logs** — System events, crowd alerts, staff actions
+
+### Admin Console (Administrators)
+- **Staff Approval Queue** — Review/approve/reject staff registration requests
+- **User Management** — Searchable user table with roles and staff status
+- **Developer Settings** — Feature flags, match API provider/key/cache config
 
 ---
 
-## 🎯 What It Does
-
-### For Staff Operators
-- **Live Stadium Pulse** — Gate status, transit hub wait times, weather advisories in real time
-- **Spatial Congestion Heatmap** — Three interchangeable visualizations (SVG stadium, thermal grid, geometric map)
-- **Fan Query Stream** — SSE-powered live ticker with gate filtering and polling fallback
-- **Tactical Insights** — Dynamic, severity-ranked operational recommendations
-- **AI Copilot** — Dual-provider AI (NVIDIA NIM primary, Gemini fallback) with streaming responses
-
-### For Matchday Fans
-- **Personal Status** — Nearest gate, transit hub wait times, weather at a glance
-- **AI Support Assistant** — Encrypted chat for tournament logistics
-- **Live Query Stream** — Real-time stadium query updates
-
----
-
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
-|---|---|
+|-------|------------|
 | **Framework** | Next.js 16.2 (App Router, Turbopack) |
-| **Language** | TypeScript (strict mode) |
+| **Language** | TypeScript 5.9 (strict) |
 | **Runtime** | React 19 |
-| **Database** | MongoDB Atlas with connection caching |
-| **AI** | NVIDIA NIM (Llama 3.1 70B) + Gemini 2.0 Flash fallback |
+| **Database** | MongoDB Atlas (connection caching) |
+| **Auth** | NextAuth v4 (Google OAuth, Credentials, Google OneTap) |
+| **AI** | Google Generative AI (Gemini 1.5 Flash) + NVIDIA NIM (Llama 3.1 70B) fallback |
 | **Real-Time** | Server-Sent Events (SSE) with polling fallback |
-| **UI** | shadcn/ui + Tailwind CSS |
-| **Animation** | Motion (Framer Motion) |
-| **Icons** | Phosphor Icons |
+| **UI** | Tailwind CSS v4 + shadcn-style primitives + Phosphor Icons + Lucide |
+| **Animation** | Motion (Framer Motion 12) |
+| **Testing** | Jest + React Testing Library + Playwright |
 | **Deploy** | Vercel |
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- MongoDB Atlas (or local instance)
-- NVIDIA NIM API key, Gemini API key
-
-### Installation
+## Quick Start
 
 ```bash
-# Clone
-git clone <your-repo-url>
+# 1. Clone & install
+git clone <repo-url> fifa-transit-app
 cd fifa-transit-app
-
-# Install
 npm install
 
-# Environment
+# 2. Configure environment
 cp .env.example .env.local
-# Fill in MONGODB_URI, NVIDIA_NIM_API_KEY, GEMINI_API_KEY
+# Edit .env.local with your keys (see Environment Variables below)
 
-# Dev server (Turbopack)
+# 3. Run dev server
 npm run dev
+# → http://localhost:3000
 ```
-
-Open [http://localhost:3000](http://localhost:3000)
 
 ### Environment Variables
 
 ```env
-MONGODB_URI=your_mongodb_connection_string
-NVIDIA_NIM_API_KEY=your_nvidia_nim_key
-GEMINI_API_KEY=your_gemini_key
+# Database
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net
 MONGODB_DB=stadium_ops
-MONGODB_TELEMETRY_COLLECTION=telemetry
-MONGODB_LOGS_COLLECTION=query_logs
-NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+
+# Auth (NextAuth v4)
+NEXTAUTH_SECRET=openssl-rand-base64-32
+NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-xxx
+
+# AI
+GEMINI_API_KEY=AQ.xxx
+NVIDIA_NIM_API_KEY=nvapi-xxx
+
+# Match Data (pick one provider)
+FOOTBALL_DATA_API_KEY=xxx
+API_FOOTBALL_KEY=xxx
+MATCH_API_PROVIDER=football-data  # or "api-football"
+MATCH_API_CACHE_TTL=300
+
+# Optional: Redis for rate limiting
+RATE_LIMIT_REDIS_URL=redis://localhost:6379
 ```
 
 ---
 
-## 📁 Project Structure
+## Architecture Overview
 
 ```
 src/
-├── app/
-│   ├── api/                    # API routes
-│   │   ├── chat/route.ts       # Dual-provider AI chat
-│   │   ├── fan/
-│   │   │   ├── queries/        # Query logging + SSE stream
-│   │   │   └── page.tsx        # Fan portal
-│   │   ├── og/route.ts         # Dynamic OG image (SVG)
-│   │   ├── staff/
-│   │   │   └── metrics/        # Staff metrics API
-│   │   └── telemetry/          # Live telemetry API
-│   ├── layout.tsx              # Root layout + OG meta
-│   ├── page.tsx                # Landing + demo controller
-│   └── staff/page.tsx          # Staff dashboard
+├── app/                          # Next.js App Router
+│   ├── (admin)/                  # Admin route group (protected)
+│   │   ├── dashboard/            # Admin dashboard
+│   │   ├── manage-staff/         # Staff approval queue
+│   │   ├── settings/             # Developer settings
+│   │   └── users/                # User management
+│   ├── (auth)/                   # Auth route group
+│   │   ├── login/                # Sign-in page
+│   │   └── signup/               # Staff registration
+│   ├── api/
+│   │   ├── admin/                # Admin-only endpoints
+│   │   │   ├── settings/         # Feature flags + match API config
+│   │   │   ├── staff/[id]/approve|reject/
+│   │   │   ├── stats/            # Admin stats
+│   │   │   └── users/            # User list with search
+│   │   ├── auth/                 # NextAuth + registration
+│   │   ├── chat/                 # AI copilot streaming
+│   │   ├── config/               # Public runtime config
+│   │   ├── fan/queries/          # Fan query logging + streaming
+│   │   ├── health/               # Health check
+│   │   ├── match/                # Football-data.org / API-Football proxy
+│   │   ├── og/                   # Dynamic OG image generation
+│   │   ├── staff/                # Staff metrics, registration, status
+│   │   ├── telemetry/            # Live stadium telemetry
+│   │   └── track/                # Position events + egress planning
+│   │       ├── consent/          # Crowd detection consent
+│   │       ├── crowd/            # Nearby crowd count
+│   │       ├── event/            # Position event ingestion
+│   │       ├── nearby/           # Nearby users
+│   │       ├── plan/             # Per-user egress plan (GET/POST)
+│   │       ├── setup/            # One-tap setup
+│   │       ├── staff/            # Staff position events
+│   │       ├── stream/           # SSE for live updates
+│   │       └── summary/          # Crowd summary
+│   ├── staff/                    # Staff portal pages
+│   │   ├── page.tsx              # Staff Hub
+│   │   └── register/             # Staff registration
+│   ├── globals.css               # Tailwind v4 + design tokens
+│   ├── layout.tsx                # Root layout + providers
+│   └── page.tsx                  # Landing / Fan Hub entry
 ├── components/
-│   ├── StaffHub.tsx            # Staff dashboard shell
-│   ├── FanHub.tsx              # Fan portal shell
-│   ├── LiveQueryTicker.tsx     # SSE + polling query stream
-│   ├── LiveStatusCards.tsx     # Telemetry status cards
-│   ├── OperationalInsights.tsx # Dynamic tactical insights
-│   ├── AICopilotChat.tsx       # Staff AI chat
-│   ├── HeatmapSelector.tsx     # Heatmap variant picker
-│   ├── heatmap/                # Heatmap visualization variants
-│   │   ├── StadiumSVG.tsx      # SVG stadium layout
-│   │   ├── ThermalGrid.tsx     # 2×2 thermal cards
-│   │   └── StadiumMap.tsx      # Geometric floor plan
-│   ├── DemoController.tsx      # Demo mode context + toggle
-│   └── GuidedWalkthrough.tsx   # 5-step onboarding tour
+│   ├── admin/                    # Admin-only components
+│   ├── auth/                     # Auth UI (Google OneTap, forms, guards)
+│   ├── heatmap/                  # 3 heatmap visualizations
+│   ├── match/                    # Scoreboard, schedule
+│   ├── ui/                       # shadcn-style primitives
+│   ├── AICopilotChat.tsx         # Streaming AI chat (FanAssist)
+│   ├── ConnectionGuard.tsx       # Online/offline banner
+│   ├── DemoController.tsx        # Demo mode state + data
+│   ├── EgressPlanCard.tsx        # Personalized egress plan display
+│   ├── EnforcementPanel.tsx      # Staff enforcement actions
+│   ├── FanHub.tsx                # Fan portal composition
+│   ├── GateAlertsPanel.tsx       # Live gate alerts
+│   ├── GuidedWalkthrough.tsx     # Onboarding tour
+│   ├── HeatmapSelector.tsx       # Heatmap variant picker
+│   ├── LiveQueryTicker.tsx       # Streaming fan queries
+│   ├── LiveStatusCards.tsx       # Telemetry cards
+│   ├── MatchScoreboard.tsx       # Live match card
+│   ├── MatchSchedule.tsx         # Fixture list
+│   ├── OperationalInsights.tsx   # Staff insights panel
+│   ├── ProtectedRoute.tsx        # Role-based route guard
+│   ├── StaffHub.tsx              # Staff portal composition
+│   ├── StadiumBackground.tsx     # Animated stadium BG
+│   ├── StadiumSVG.tsx            # SVG stadium heatmap
+│   ├── ThermalGrid.tsx           # Thermal grid heatmap
+│   ├── StadiumMap.tsx            # Map-based heatmap
+│   └── TransitDashboard.tsx      # Transit overview
 ├── hooks/
-│   └── useChatStream.ts        # Chat streaming hook (useRef guard)
+│   ├── useChatStream.ts          # SSE chat streaming
+│   ├── useCrowdDetection.ts      # Geofence consent + nearby
+│   ├── useEgressPlan.ts          # SSE egress plan updates
+│   ├── useMatchData.ts           # Match polling + demo data
+│   ├── useOneTap.ts              # Google OneTap flow
+│   ├── useOnlineStatus.ts        # Navigator.onLine + ping
+│   └── useStaffStatus.ts         # Staff role/status checks
 ├── lib/
-│   ├── db.ts                   # MongoDB connection cache
-│   └── demo-data.ts            # Scripted demo timeline
-└── types/
-    └── telemetry.ts            # TypeScript interfaces
+│   ├── auth/                     # Auth utilities
+│   │   ├── auth.ts               # NextAuth options (3 providers)
+│   │   ├── session.ts            # Server session helper
+│   │   ├── users.ts              # User CRUD + indexes
+│   │   └── utils.ts              # Role helpers
+│   ├── crowd-aggregator.ts       # Gate crowd counts from events
+│   ├── crowd-clusters.ts         # DB persistence for co-location clusters
+│   ├── crowd-clusters-model.ts   # Pure clustering algorithm (DB-free)
+│   ├── crowd-model.ts            # Confidence + gate status logic
+│   ├── db.ts                     # Mongo client singleton + telemetry helpers
+│   ├── demo-data.ts              # Demo match + telemetry fixtures
+│   ├── egress-ai.ts              # AI instruction generation (Gemini + NVIDIA)
+│   ├── egress-planner.ts         # Per-user egress plan (D6–D10)
+│   ├── egress-stagger.ts         # Capacity-constrained stagger algorithm (D10)
+│   ├── email.ts                  # Nodemailer for staff approval emails
+│   ├── live-demo-engine.ts       # Demo mode deterministic data generator
+│   ├── match-api.ts              # Football-data.org / API-Football client
+│   ├── match-cache.ts            # In-memory match cache
+│   ├── mongo-indexes.ts          # Index creation helpers
+│   ├── privacy.ts                # PII hashing, consent flags
+│   ├── tracking/                 # Position tracking core
+│   │   ├── consent.ts            # Consent persistence
+│   │   └── CrowdDetector.ts      # Geofence + BLE beacon logic
+│   ├── utils.ts                  # General utilities
+│   ├── venue-config.ts           # SINGLE SOURCE OF TRUTH for gates/beacons
+│   └── bg-images.ts              # Background image rotation
+├── types/
+│   ├── auth.ts                   # UserDocument, Role, StaffStatus + NextAuth augmentation
+│   ├── position.ts               # PositionEvent, GateCrowd, EgressPlan, GateSummary
+│   └── telemetry.ts              # StadiumTelemetry, GateMetrics, AppTab
+├── constants/
+│   └── theme.ts                  # Design tokens
+└── framework/                    # Python orchestration (experimental)
+    ├── orchestrator.py
+    ├── session_manager.py
+    ├── context_trimmer.py
+    ├── tool_schemas.py
+    └── config.py
 ```
 
 ---
 
-## ✨ Key Features & Fixes
+## Core Domains
 
-### Bug Fixes
-1. **Chat Input Closure Bug** — `useCallback` was capturing stale `isLoading` state. Fixed with `useRef` guard pattern + 30s timeout safety net in `useChatStream.ts`
-2. **Hardcoded Insights** — `OperationalInsights` was static. Now accepts `GateMetrics` prop and generates dynamic, severity-ranked insights
+### Authentication & Authorization
+- **NextAuth v4** with JWT strategy
+- **3 Providers**: Google OAuth, Email/Password (Credentials), Google OneTap
+- **Roles**: `fan` (default), `staff`, `admin` — stored in MongoDB
+- **Staff Flow**: Register → `pending` → Admin approves → `approved` + `role: staff`
+- **Route Guards**: `ProtectedRoute` component (client) + `getServerSession` (API)
 
-### Real-Time Streaming
-- **SSE First, Polling Fallback** — `LiveQueryTicker` tries `EventSource` for live updates, falls back to 5s polling on failure
-- **3-second connection timeout** — If SSE doesn't connect, automatically starts polling
-- **Deduplication** — Logs deduplicated by `_id`, capped at 100 entries
+### Real-Time Crowd Detection (Design D1–D9)
+| Design | Implementation |
+|--------|----------------|
+| **D1** Real sources | Fan phones emit `geofence_enter/exit`, `beacon_nearby` via `/api/track/event` |
+| **D2** Crowd = phone clusters | DBSCAN-like clustering in `crowd-clusters-model.ts` (25m proximity radius) |
+| **D3** Events, not GPS | `PositionEvent` ingestion; stored in `position_events` with TTL |
+| **D4** Staff anchors | Staff events tagged `staff_beacon` → confidence boost |
+| **D5** 5-min lookback | `LOOKBACK_WINDOW_MS = 5 * 60_000` |
+| **D6** GenAI per-user | `egress-ai.ts` → Gemini → NVIDIA NIM fallback |
+| **D7** Post-match egress | `generateEgressPlan` + `staggerEgress` |
+| **D8** Cache on device | `/api/track/plan` returns `version`; client caches; SSE pushes updates |
+| **D9** Confidence gating | `CONFIDENCE_THRESHOLD = 0.35` → `deferToStewards: true` |
 
-### Heatmap System
-- **3 Variants**: `StadiumSVG` (perimeter layout), `ThermalGrid` (2×2 cards), `StadiumMap` (geometric floor plan)
-- **Click-to-filter** — Click any gate to filter the query stream
-- **localStorage persistence** — Remembers variant preference across sessions
+**Pipeline**:
+```
+Phone → /api/track/event → position_events collection
+                         ↓
+              aggregateClusters() (cron or on-demand)
+                         ↓
+              crowd_clusters collection (TTL 24h)
+                         ↓
+              aggregateCrowd() → GateCrowd[] { gateId, count, confidence, optInCount, capacityThreshold }
+                         ↓
+              /api/telemetry, /api/staff/metrics, /api/track/plan
+```
 
-### Demo Mode
-- **60-second scripted demo** — Cycles through realistic matchday data snapshots
-- **Pre-recorded AI responses** — Contextual answers for security, capacity, transit queries
-- **Auto-dismiss** — Demo resets after 60 seconds
+### Egress Planning (Design D6–D10)
 
-### Guided Walkthrough
-- **5-step onboarding** — Welcome → Fan Portal → Staff Deck → AI Copilot → Heatmap
-- **Element highlighting** — Walks users through each major section
-- **localStorage** — Remembers completion, only shows once
+**Per-user plan** (`GET /api/track/plan`):
+1. Parse user position → 2D coordinate
+2. Compute ETA to each gate (walk speed 80 m/min)
+3. Filter gates by confidence ≥ 0.35
+4. Score: 70% capacity weight + 30% ETA weight
+5. Pick best non-critical gate
+6. Generate leave window + transit ETA
+7. AI-enhanced instruction (Gemini → NVIDIA NIM → template fallback)
+8. Return `{ plan, version }` — client caches, SSE pushes updates
 
-### Social Sharing
-- **Dynamic OG image** — SVG-generated at `/api/og` with FIFA branding
-- **Twitter Card** — `summary_large_image` with full metadata
-- **Open Graph** — Complete OG tags for Facebook, LinkedIn, Slack previews
+**Batch stagger** (`POST /api/track/plan`):
+- Input: many users with `etaToGate`, `earliestArrival`
+- Algorithm: `staggerEgress` in `egress-stagger.ts`
+- Capacity-constrained flow assignment per gate
+- Returns `{ assignments[], deferredCount, totalEgressMinutes }`
+
+### Match Data & Demo Mode
+| Source | Implementation |
+|--------|----------------|
+| **Live** | `football-data.org` or `api-football` via `match-api.ts` (configurable in Admin) |
+| **Cache** | In-memory `match-cache.ts` (TTL configurable) |
+| **Demo** | `live-demo-engine.ts` — deterministic pseudo-live data (seeded randomness) |
+| **Hook** | `useMatchData.ts` — polls `/api/match` + `/api/match/schedule` |
+| **UI** | `MatchScoreboard`, `MatchSchedule` |
+
+### AI Copilot (FanAssist)
+- Streaming chat via `/api/chat` (SSE) → `useChatStream` hook → `AICopilotChat` component
+- Context: live match, telemetry, user's egress plan, crowd data
+- Model: Google Generative AI (Gemini 1.5 Flash)
+
+### Admin Console
+| Page | Component | API |
+|------|-----------|-----|
+| `/admin/manage-staff` | `StaffApprovalQueue` | `GET /api/admin/users?staffStatus=pending`, `POST /api/admin/staff/[id]/approve\|reject` |
+| `/admin/users` | `UserTable` | `GET /api/admin/users` |
+| `/admin/settings` | `DeveloperSettings` | `GET/POST /api/admin/settings` |
+
+**Feature flags** (stored in DB, read by `DemoController`):
+- `enableRealMatchData`
+- `enableOneTap`
+- `enableHeatmapAnimation`
 
 ---
 
-## 🎛️ Development
+## Key Algorithms
 
-### Scripts
+### Confidence Model (`lib/crowd-model.ts`)
+```typescript
+base = sigmoid(k=12, midpoint=0.15)(optInRate)
+recency = max(0.5, 1 - newestEventAgeMs / (LOOKBACK_WINDOW_MS * 2))
+confidence = min(1, base * recency)
+THRESHOLD = 0.35  // below → deferToStewards
+```
+
+### Gate Scoring (`lib/egress-planner.ts`)
+```typescript
+score = (1 - capacityPct/100) * 0.7 + (1 - min(eta, 15)/15) * 0.3
+```
+
+### Stagger Algorithm (`lib/egress-stagger.ts`)
+Greedy earliest-arrival assignment per gate, respecting `capacityThreshold` per time window.
+
+---
+
+## Scripts
+
 ```bash
-npm run dev       # Start dev server (Turbopack)
+npm run dev       # Next.js dev (Turbopack)
 npm run build     # Production build
-npm run lint      # ESLint
-npm test          # Jest tests
+npm run start     # Production server
+npm run lint      # ESLint (Next.js config)
+npm test          # Jest unit tests
+npx playwright test  # E2E tests
 ```
-
-### Architecture Patterns
-- **Server-Sent Events** for real-time data (not WebSockets) — lighter weight, works with CDN
-- **useRef for stale closures** — Prevents race conditions in streaming hooks
-- **Component map pattern** — Heatmap variants switched via `Record<HeatmapVariant, Component>`
-- **React Context for cross-cutting state** — Demo mode available everywhere without prop drilling
-- **Connection caching** — MongoDB client reused across requests via singleton promise
 
 ---
 
-## 🚢 Deployment
+## Testing
+
+| Layer | Command |
+|-------|---------|
+| Unit | `npm test` (Jest + ts-jest + jsdom) |
+| E2E | `npx playwright test` |
+| Coverage | `npm test -- --coverage` |
+
+**Test files** (co-located or in `src/`):
+- `lib/auth.test.ts`, `lib/auth/users.test.ts`
+- `lib/crowd-aggregator.test.ts`, `lib/crowd-clusters.test.ts`
+- `lib/egress-planner.test.ts`, `lib/egress-stagger.test.ts`
+- `components/LiveQueryTicker.test.tsx`
+- `app/staff/page.test.tsx`
+
+---
+
+## Deployment
 
 ### Vercel (Recommended)
 ```bash
-# Connect your GitHub repo to Vercel
-# Set environment variables in Vercel dashboard
-# Auto-deploys on push to main
+vercel link
+vercel env add MONGODB_URI
+vercel env add NEXTAUTH_SECRET
+# ... add all env vars
+vercel deploy --prod
 ```
 
-### Manual Build
-```bash
-npm run build
-npm start
+### Docker
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
 ```
+
+### MongoDB Indexes
+Created lazily on first write via `ensureUniqueIndexes()` in `lib/auth/users.ts`:
+- `users.email` — unique, sparse
+- `users.googleId` — sparse (non-unique, allows multiple nulls)
 
 ---
 
-## 🏆 Hackathon Submission Checklist
+## Design System
 
-- [x] Live deployed URL
-- [x] Public GitHub repository
-- [x] Social media post ready (OG image + meta tags)
-- [x] Demo mode for judges
-- [x] Feature-complete (11/11 items)
-- [x] TypeScript strict mode passing
+- **Colors**: Zinc/emerald/amber semantic palette (dark-first)
+- **Typography**: Geist Sans + Geist Mono (`next/font/google`)
+- **Radius**: `--radius-sm` through `--radius-4xl` (0.625rem base)
+- **Animation**: `motion/react` (Framer Motion 12)
+- **Icons**: Phosphor Icons + Lucide React
+- **UI Primitives**: Custom shadcn-style components in `components/ui/`
 
 ---
 
-## 📝 Notes
+## Known Gaps / Roadmap
 
-Built with urgency and craft for the **FIFA World Cup 2026 Hackathon** (July 2026). Every component ships with error boundaries, graceful degradation, and zero-config deployment.
+- [ ] Redis rate-limiting (stubbed in `next.config.ts`)
+- [ ] SSE reconnection with exponential backoff
+- [ ] Mobile push notifications (email only currently)
+- [ ] Multi-stadium support (single venue config now)
+- [ ] Full i18n beyond egress instructions
+- [ ] Accessibility audit (axe, Lighthouse)
+- [ ] Increase test coverage (lib ~60%, components ~20%)
+- [ ] Python orchestration framework (`src/framework/`) — experimental
 
 ---
 
 ## License
 
-MIT — built for the beautiful game ⚽
+MIT — Built for the 2026 FIFA World Cup hackathon track.

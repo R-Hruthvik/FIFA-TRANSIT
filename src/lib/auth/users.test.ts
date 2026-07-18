@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { findUserByEmail, findUserById, createUser, updateUserRole } from "@/lib/auth/users";
 import { clientPromise } from "@/lib/db";
 

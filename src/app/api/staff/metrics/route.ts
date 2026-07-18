@@ -14,23 +14,35 @@ export async function GET() {
       .toArray();
 
     const counts = {
-      gateA: 0,
-      gateB: 0,
-      gateC: 0,
-      gateD: 0,
+      gate1: 0,
+      gate2: 0,
+      gate3: 0,
+      gate4: 0,
+      gate5: 0,
+      gate6: 0,
+      gate7: 0,
+      gate8: 0,
     };
 
-    const regexA = /Gate A/i;
-    const regexB = /Gate B/i;
-    const regexC = /Gate C/i;
-    const regexD = /Gate D/i;
+    const regex1 = /Gate (G1|1)/i;
+    const regex2 = /Gate (G2|2)/i;
+    const regex3 = /Gate (G3|3)/i;
+    const regex4 = /Gate (G4|4)/i;
+    const regex5 = /Gate (G5|5)/i;
+    const regex6 = /Gate (G6|6)/i;
+    const regex7 = /Gate (G7|7)/i;
+    const regex8 = /Gate (G8|8)/i;
 
     logs.forEach((log) => {
       const text = log.text || "";
-      if (regexA.test(text)) counts.gateA++;
-      if (regexB.test(text)) counts.gateB++;
-      if (regexC.test(text)) counts.gateC++;
-      if (regexD.test(text)) counts.gateD++;
+      if (regex1.test(text)) counts.gate1++;
+      if (regex2.test(text)) counts.gate2++;
+      if (regex3.test(text)) counts.gate3++;
+      if (regex4.test(text)) counts.gate4++;
+      if (regex5.test(text)) counts.gate5++;
+      if (regex6.test(text)) counts.gate6++;
+      if (regex7.test(text)) counts.gate7++;
+      if (regex8.test(text)) counts.gate8++;
     });
 
     const getStatus = (hits: number): "low" | "medium" | "high" => {
@@ -41,10 +53,14 @@ export async function GET() {
 
     return NextResponse.json({
       metrics: {
-        gateA: getStatus(counts.gateA),
-        gateB: getStatus(counts.gateB),
-        gateC: getStatus(counts.gateC),
-        gateD: getStatus(counts.gateD),
+        gate1: getStatus(counts.gate1),
+        gate2: getStatus(counts.gate2),
+        gate3: getStatus(counts.gate3),
+        gate4: getStatus(counts.gate4),
+        gate5: getStatus(counts.gate5),
+        gate6: getStatus(counts.gate6),
+        gate7: getStatus(counts.gate7),
+        gate8: getStatus(counts.gate8),
       },
       totalLogsAnalyzed: logs.length,
     });
@@ -52,10 +68,14 @@ export async function GET() {
     console.error("Metrics API error:", error);
     return NextResponse.json({
       metrics: {
-        gateA: "low",
-        gateB: "low",
-        gateC: "low",
-        gateD: "low",
+        gate1: "low",
+        gate2: "low",
+        gate3: "low",
+        gate4: "low",
+        gate5: "low",
+        gate6: "low",
+        gate7: "low",
+        gate8: "low",
       },
       totalLogsAnalyzed: 0,
     });

@@ -25,16 +25,14 @@
  */
 
 import type { GateCrowd } from "@/types/position";
+import { GATES } from "@/lib/venue-config";
 
 // Re-used constants from egress-planner (gate geometry + walk speed)
 const WALK_SPEED_M_PER_MIN = 80;
 
-const GATE_POSITIONS: Record<string, { angle: number; dist: number }> = {
-  "Gate A": { angle: -Math.PI / 4, dist: 200 },
-  "Gate B": { angle: Math.PI / 4, dist: 200 },
-  "Gate C": { angle: 3 * Math.PI / 4, dist: 200 },
-  "Gate D": { angle: -3 * Math.PI / 4, dist: 200 },
-};
+const GATE_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
+  GATES.map((g) => [g.id, { x: g.x, y: g.y }]),
+);
 
 // ── Configuration ──────────────────────────────────────────────────────
 
@@ -46,10 +44,14 @@ export const EGRESS_DURATION_MIN = 45;
 
 /** Gate throughput: bodies per minute (physical flow rate) */
 export const GATE_THROUGHPUT: Record<string, number> = {
-  "Gate A": 150, // bodies/min
-  "Gate B": 150,
-  "Gate C": 120, // narrower gate
-  "Gate D": 150,
+  "Gate G1": 150, // bodies/min
+  "Gate G2": 150,
+  "Gate G3": 120, // narrower gate
+  "Gate G4": 150,
+  "Gate G5": 150,
+  "Gate G6": 150,
+  "Gate G7": 150,
+  "Gate G8": 150,
 };
 
 /** Transit hub absorption rate: people per minute */
@@ -249,8 +251,8 @@ export function generateMockUsers(count: number): UserEarliest[] {
     const earliestArrival: Record<string, number> = {};
 
     for (const [gateId, gatePos] of Object.entries(GATE_POSITIONS)) {
-      const gx = Math.cos(gatePos.angle) * gatePos.dist;
-      const gy = Math.sin(gatePos.angle) * gatePos.dist;
+      const gx = gatePos.x;
+      const gy = gatePos.y;
       const distM = Math.sqrt((userPos.x - gx) ** 2 + (userPos.y - gy) ** 2);
       const etaMin = Math.ceil(distM / WALK_SPEED_M_PER_MIN);
       etaToGate[gateId] = etaMin;

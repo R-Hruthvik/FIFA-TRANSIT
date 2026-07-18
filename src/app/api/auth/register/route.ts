@@ -33,15 +33,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
+    // Hash password using the bcryptjs utility
     const passwordHash = await bcryptjs.hash(password, 12);
 
     // Create user
+    const now = new Date();
     const newUser = await createUser({
       id: crypto.randomUUID(),
       email: lowerEmail,
-      emailVerified: null,
       name,
+      emailVerified: null,
       image: null,
       googleId: null,
       passwordHash,
@@ -50,19 +51,20 @@ export async function POST(request: NextRequest) {
       staffRequestedAt: null,
       approvedAt: null,
       approvedBy: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastSignIn: new Date(),
+      createdAt: now,
+      updatedAt: now,
+      lastSignIn: now,
     });
 
     return NextResponse.json(
       { success: true, userId: newUser.id },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Registration error:", message, error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", detail: message },
       { status: 500 }
     );
   }

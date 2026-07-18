@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { useDemoMode } from "@/components/DemoController";
 
 export interface Message {
   id: string;
@@ -13,14 +14,10 @@ const STREAM_TIMEOUT_MS = 30_000;
 const SYSTEM_PROMPT_ID = "1";
 
 export function useChatStream() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: SYSTEM_PROMPT_ID,
-      role: "assistant",
-      content: "System online. How can I assist with tournament logistics today?",
-      timestamp: new Date(),
-    },
-  ]);
+  const demoContext = useDemoMode();
+  const isDemoMode = demoContext?.isDemoMode ?? false;
+
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const loadingRef = useRef(false);
@@ -63,6 +60,35 @@ export function useChatStream() {
 
     // Update state first
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
+
+    if (isDemoMode && demoContext) {
+      loadingRef.current = true;
+      setIsLoading(true);
+
+      setTimeout(() => {
+        const responseText = demoContext.getDemoAiResponse(content);
+        let currentText = "";
+        const words = responseText.split(" ");
+        let wordIndex = 0;
+
+        const streamInterval = setInterval(() => {
+          if (wordIndex < words.length) {
+            currentText += (wordIndex === 0 ? "" : " ") + words[wordIndex];
+            wordIndex++;
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId ? { ...m, content: currentText } : m
+              )
+            );
+          } else {
+            clearInterval(streamInterval);
+            loadingRef.current = false;
+            setIsLoading(false);
+          }
+        }, 60);
+      }, 500);
+      return;
+    }
 
     loadingRef.current = true;
     setIsLoading(true);
@@ -139,14 +165,7 @@ export function useChatStream() {
   }, []); // messages read via messagesRef — no state dependency needed
 
   const clearChat = useCallback(() => {
-    setMessages([
-      {
-        id: SYSTEM_PROMPT_ID,
-        role: "assistant",
-        content: "System online. How can I assist with tournament logistics today?",
-        timestamp: new Date(),
-      },
-    ]);
+    setMessages([]);
   }, []);
 
   return { messages, isLoading, sendMessage, clearChat };

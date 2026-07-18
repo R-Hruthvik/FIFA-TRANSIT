@@ -4,10 +4,14 @@ import { motion } from "motion/react";
 import { HeatmapBaseProps, STATUS_COLORS } from "./index";
 
 const GATES = [
-  { key: "gateA", label: "Gate A", x: 100, y: 40, angle: 0 },
-  { key: "gateB", label: "Gate B", x: 300, y: 40, angle: 90 },
-  { key: "gateC", label: "Gate C", x: 100, y: 360, angle: 270 },
-  { key: "gateD", label: "Gate D", x: 300, y: 360, angle: 180 },
+  { key: "gate1", label: "Gate G1", x: 200, y: 35 },
+  { key: "gate2", label: "Gate G2", x: 345, y: 80 },
+  { key: "gate3", label: "Gate G3", x: 370, y: 200 },
+  { key: "gate4", label: "Gate G4", x: 345, y: 320 },
+  { key: "gate5", label: "Gate G5", x: 200, y: 365 },
+  { key: "gate6", label: "Gate G6", x: 55, y: 320 },
+  { key: "gate7", label: "Gate G7", x: 30, y: 200 },
+  { key: "gate8", label: "Gate G8", x: 55, y: 80 },
 ] as const;
 
 function HeatGradient({ x1, y1, x2, y2, color1, color2 }: {
@@ -23,7 +27,7 @@ function HeatGradient({ x1, y1, x2, y2, color1, color2 }: {
           <stop offset="100%" stopColor={color2} stopOpacity="0.05" />
         </linearGradient>
       </defs>
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={`url(#${id})`} strokeWidth="40" strokeLinecap="round" />
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={`url(#${id})`} strokeWidth="30" strokeLinecap="round" />
     </>
   );
 }
@@ -42,114 +46,79 @@ export function StadiumMap({ metrics, gateFilter, onGateClick }: HeatmapBaseProp
           </radialGradient>
         </defs>
 
-        {/* Stadium outline — rounded rectangle */}
-        <rect x="30" y="30" width="340" height="340" rx="60"
-          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+        {/* Stadium outline */}
+        <ellipse
+          cx={centerX} cy={centerY} rx="180" ry="175"
+          fill="url(#fieldGlow)"
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="2"
+          strokeDasharray="8 4"
+        />
 
-        {/* Heat gradient connections between gates */}
-        {GATES.map((g, i) => {
-          const next = GATES[(i + 1) % GATES.length];
-          const s1 = metrics[g.key as keyof typeof metrics];
-          const s2 = metrics[next.key as keyof typeof metrics];
+        {/* Inner field */}
+        <ellipse
+          cx={centerX} cy={centerY} rx="100" ry="70"
+          fill="rgba(16, 185, 129, 0.05)"
+          stroke="rgba(16, 185, 129, 0.15)"
+          strokeWidth="1"
+        />
+        <text x={centerX} y={centerY - 5} textAnchor="middle" className="fill-zinc-400 text-[10px] font-black tracking-[0.2em] uppercase">
+          Field of Play
+        </text>
+        <text x={centerX} y={centerY + 12} textAnchor="middle" className="fill-zinc-500 text-[8px] font-medium">
+          2026 FIFA World Cup
+        </text>
+
+        {/* Heat gradient lines */}
+        {GATES.map(({ key, x, y }) => {
+          const status = metrics[key as keyof typeof metrics] || "low";
+          const color = STATUS_COLORS[status];
           return (
             <HeatGradient
-              key={`heat-${i}`}
-              x1={g.x} y1={g.y} x2={next.x} y2={next.y}
-              color1={STATUS_COLORS[s1].fill}
-              color2={STATUS_COLORS[s2].fill}
-            />
-          );
-        })}
-
-        {/* Diagonal heat lines */}
-        <HeatGradient
-          x1={GATES[0].x} y1={GATES[0].y} x2={GATES[3].x} y2={GATES[3].y}
-          color1={STATUS_COLORS[metrics.gateA].fill} color2={STATUS_COLORS[metrics.gateD].fill}
-        />
-        <HeatGradient
-          x1={GATES[1].x} y1={GATES[1].y} x2={GATES[2].x} y2={GATES[2].y}
-          color1={STATUS_COLORS[metrics.gateB].fill} color2={STATUS_COLORS[metrics.gateC].fill}
-        />
-
-        {/* Center field */}
-        <circle cx={centerX} cy={centerY} r="50"
-          fill="url(#fieldGlow)" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1" />
-        <text x={centerX} y={centerY - 4} textAnchor="middle" className="fill-zinc-500 text-[9px] font-black tracking-[0.15em] uppercase">
-          Field
-        </text>
-        <text x={centerX} y={centerY + 10} textAnchor="middle" className="fill-zinc-600 text-[7px]">
-          CENTER
-        </text>
-
-        {/* Animated particles along heat lines */}
-        {GATES.map((g, i) => {
-          const s = metrics[g.key as keyof typeof metrics];
-          if (s === "low") return null;
-          const next = GATES[(i + 1) % GATES.length];
-          return (
-            <motion.circle
-              key={`particle-${i}`}
-              r={s === "high" ? 3 : 2}
-              fill={STATUS_COLORS[s].fill}
-              opacity={0.7}
-              animate={{
-                cx: [g.x, (g.x + next.x) / 2, next.x],
-                cy: [g.y, (g.y + next.y) / 2, next.y],
-              }}
-              transition={{
-                duration: s === "high" ? 2 : 4,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              key={`grad-${key}`}
+              x1={centerX} y1={centerY}
+              x2={x} y2={y}
+              color1={color.fill}
+              color2="transparent"
             />
           );
         })}
 
         {/* Gate nodes */}
         {GATES.map(({ key, label, x, y }) => {
-          const status = metrics[key as keyof typeof metrics];
+          const status = metrics[key as keyof typeof metrics] || "low";
           const color = STATUS_COLORS[status];
           const isActive = gateFilter === key;
 
           return (
-            <g key={key} onClick={() => onGateClick(key)} className="cursor-pointer">
-              {/* Outer glow */}
+            <g
+              key={key}
+              onClick={() => onGateClick(key)}
+              className="cursor-pointer"
+            >
               <motion.circle
-                cx={x} cy={y} r={isActive ? 34 : 28}
+                cx={x} cy={y} r={isActive ? 32 : 26}
                 fill={color.glow}
-                animate={
-                  status === "high"
-                    ? { opacity: [0.3, 0.7, 0.3], r: [28, 34, 28] }
-                    : status === "medium"
-                    ? { opacity: [0.2, 0.4, 0.2] }
-                    : { opacity: 0.15 }
-                }
-                transition={{ duration: status === "high" ? 1.2 : 2.5, repeat: Infinity }}
+                animate={{
+                  opacity: status === "high" ? [0.3, 0.5, 0.3] : 0.2,
+                }}
+                transition={{
+                  duration: status === "high" ? 1.5 : 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               />
 
-              {/* Gate circle */}
-              <motion.circle
-                cx={x} cy={y} r={22}
-                fill="rgba(0,0,0,0.7)"
-                stroke={color.fill}
-                strokeWidth={isActive ? 3 : 1.5}
-                whileHover={{ scale: 1.15 }}
-              />
+              <circle cx={x} cy={y} r={20} fill="rgba(0,0,0,0.7)" stroke={color.fill} strokeWidth={isActive ? 2.5 : 1.5} />
 
-              {/* Status indicator */}
-              <motion.circle
-                cx={x} cy={y - 5} r={3}
-                fill={color.fill}
-                animate={status === "high" ? { scale: [1, 1.5, 1] } : {}}
-                transition={{ duration: 0.8, repeat: Infinity }}
-              />
-
-              {/* Label */}
-              <text x={x} y={y + 6} textAnchor="middle" className="fill-white text-[9px] font-black tracking-wider">
-                {label.replace("Gate ", "G")}
+              <text x={x} y={y + 1} textAnchor="middle" className="fill-white text-[8px] font-black uppercase">
+                {key.slice(-1)}
               </text>
-              <text x={x} y={y + 15} textAnchor="middle" fill={color.fill} className="text-[7px] font-bold">
-                {status === "high" ? "CRIT" : status === "medium" ? "WARN" : "OK"}
+
+              <circle cx={x} cy={y - 5} r={2.5} fill={color.fill} />
+
+              <text x={x} y={y + 36} textAnchor="middle" className="fill-zinc-400 text-[7px] font-medium uppercase tracking-wider">
+                {label}
               </text>
             </g>
           );

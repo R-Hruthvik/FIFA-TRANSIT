@@ -13,11 +13,10 @@
 
 import { clientPromise } from "../src/lib/db";
 import { aggregateCrowd } from "../src/lib/crowd-aggregator";
+import { GATES } from "../src/lib/venue-config";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const EVENTS_COLL = "position_events";
-
-const GATES = ["Gate A", "Gate B", "Gate C", "Gate D"];
 
 async function main() {
   const count = parseInt(process.argv[2] || "200", 10);
@@ -33,11 +32,25 @@ async function main() {
   const events = [];
   const now = Date.now();
 
+  // Stable per-user position near their assigned gate (so clusters form).
+  const userPos = new Map<string, { x: number; y: number }>();
+
   for (let i = 0; i < count; i++) {
-    const gateId = GATES[i % GATES.length]; // even distribution
+    const gate = GATES[i % GATES.length]; // even distribution
+    const gateId = gate.id;
     const userId = `seed-user-${i % 50}`; // 50 distinct users
+    if (!userPos.has(userId)) {
+      // Jitter within ~22m of the gate so co-location clusters form.
+      const ang = Math.random() * 2 * Math.PI;
+      const rad = Math.random() * 22;
+      userPos.set(userId, {
+        x: gate.x + Math.cos(ang) * rad,
+        y: gate.y + Math.sin(ang) * rad,
+      });
+    }
     const eventType =
       i % 3 === 0 ? "geofence_enter" : i % 3 === 1 ? "beacon_nearby" : "geofence_exit";
+    const pos = userPos.get(userId)!;
 
     events.push({
       eventId: `seed-event-${i}`,
@@ -45,7 +58,9 @@ async function main() {
       gateId,
       eventType,
       timestamp: now - Math.floor(Math.random() * 5 * 60 * 1000), // within 5 min
-      beaconId: eventType === "beacon_nearby" ? `beacon-${gateId}` : undefined,
+      x: Math.round(pos.x),
+      y: Math.round(pos.y),
+      beaconId: eventType === "beacon_nearby" ? `beacon-${gateId.replace(/\s+/g, "").toLowerCase()}` : undefined,
       rssi: eventType === "beacon_nearby" ? -60 + Math.floor(Math.random() * 20) : undefined,
       distanceMeters:
         eventType === "beacon_nearby" ? 5 + Math.floor(Math.random() * 15) : undefined,

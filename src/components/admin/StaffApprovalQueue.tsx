@@ -12,6 +12,10 @@ interface StaffRequest {
   staffStatus: 'pending' | 'approved' | 'rejected' | 'none';
   createdAt: Date;
   staffRequestedAt?: Date;
+  staffId?: string;
+  organization?: string;
+  staffRole?: string;
+  staffReason?: string;
 }
 
 export default function StaffApprovalQueue() {
@@ -86,10 +90,16 @@ export default function StaffApprovalQueue() {
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Name
+                Name / Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Email
+                Department & Role
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Staff ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Reason
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Requested At
@@ -102,11 +112,19 @@ export default function StaffApprovalQueue() {
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {requests.map((request) => (
               <tr key={request.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                  {request.name}
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{request.name}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{request.email}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                  {request.email}
+                  <div className="text-sm">{request.organization || '-'}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">{request.staffRole || '-'}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 dark:text-gray-100">
+                  {request.staffId || '-'}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate" title={request.staffReason}>
+                  {request.staffReason || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {request.staffRequestedAt ? new Date(request.staffRequestedAt).toLocaleString() : '-'}

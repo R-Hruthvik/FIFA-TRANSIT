@@ -8,10 +8,14 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 type GateStatus = 'low' | 'medium' | 'high';
 
 interface Metrics {
-  gateA: GateStatus;
-  gateB: GateStatus;
-  gateC: GateStatus;
-  gateD: GateStatus;
+  gate1: GateStatus;
+  gate2: GateStatus;
+  gate3: GateStatus;
+  gate4: GateStatus;
+  gate5: GateStatus;
+  gate6: GateStatus;
+  gate7: GateStatus;
+  gate8: GateStatus;
 }
 
 const statusColors: Record<GateStatus, { fill: string; bg: string; border: string; text: string; label: string }> = {
@@ -21,18 +25,26 @@ const statusColors: Record<GateStatus, { fill: string; bg: string; border: strin
 };
 
 const gateLabels: Record<string, string> = {
-  gateA: 'Gate A',
-  gateB: 'Gate B',
-  gateC: 'Gate C',
-  gateD: 'Gate D',
+  gate1: 'Gate G1',
+  gate2: 'Gate G2',
+  gate3: 'Gate G3',
+  gate4: 'Gate G4',
+  gate5: 'Gate G5',
+  gate6: 'Gate G6',
+  gate7: 'Gate G7',
+  gate8: 'Gate G8',
 };
 
 function StaffDashboardContent() {
   const [metrics, setMetrics] = useState<Metrics>({
-    gateA: 'low',
-    gateB: 'low',
-    gateC: 'low',
-    gateD: 'low',
+    gate1: 'low',
+    gate2: 'low',
+    gate3: 'low',
+    gate4: 'low',
+    gate5: 'low',
+    gate6: 'low',
+    gate7: 'low',
+    gate8: 'low',
   });
 
   useEffect(() => {
@@ -40,7 +52,9 @@ function StaffDashboardContent() {
       try {
         const res = await fetch('/api/staff/metrics');
         const data = await res.json();
-        setMetrics(data.metrics);
+        if (data.metrics) {
+          setMetrics(data.metrics);
+        }
       } catch (err) {
         console.error('Polling error:', err);
       }
@@ -52,7 +66,7 @@ function StaffDashboardContent() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100 p-6 flex gap-6">
+    <main className="min-h-screen bg-zinc-950 text-zinc-100 p-6 flex flex-col lg:flex-row gap-6">
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Operational Telemetry</h1>
@@ -64,32 +78,36 @@ function StaffDashboardContent() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Gate Congestion Map</CardTitle>
-            <CardDescription>Real-time status of all stadium entry gates</CardDescription>
+            <CardTitle>Gate Congestion Grid</CardTitle>
+            <CardDescription>Real-time status of all 8 stadium entry gates</CardDescription>
           </CardHeader>
           <CardContent>
-            <svg viewBox="0 0 400 400" className="w-full max-w-md mx-auto">
-              <rect x="0" y="0" width="190" height="190" className={`${statusColors[metrics.gateA].fill} ${statusColors[metrics.gateA].border}`} rx="8" />
-              <text x="95" y="100" textAnchor="middle" className="fill-zinc-100 font-bold">Gate A</text>
-              <text x="95" y="120" textAnchor="middle" className={`${statusColors[metrics.gateA].text} text-[10px]`}>{statusColors[metrics.gateA].label}</text>
-
-              <rect x="210" y="0" width="190" height="190" className={`${statusColors[metrics.gateB].fill} ${statusColors[metrics.gateB].border}`} rx="8" />
-              <text x="305" y="100" textAnchor="middle" className="fill-zinc-100 font-bold">Gate B</text>
-              <text x="305" y="120" textAnchor="middle" className={`${statusColors[metrics.gateB].text} text-[10px]`}>{statusColors[metrics.gateB].label}</text>
-
-              <rect x="0" y="210" width="190" height="190" className={`${statusColors[metrics.gateC].fill} ${statusColors[metrics.gateC].border}`} rx="8" />
-              <text x="95" y="310" textAnchor="middle" className="fill-zinc-100 font-bold">Gate C</text>
-              <text x="95" y="330" textAnchor="middle" className={`${statusColors[metrics.gateC].text} text-[10px]`}>{statusColors[metrics.gateC].label}</text>
-
-              <rect x="210" y="210" width="190" height="190" className={`${statusColors[metrics.gateD].fill} ${statusColors[metrics.gateD].border}`} rx="8" />
-              <text x="305" y="310" textAnchor="middle" className="fill-zinc-100 font-bold">Gate D</text>
-              <text x="305" y="330" textAnchor="middle" className={`${statusColors[metrics.gateD].text} text-[10px]`}>{statusColors[metrics.gateD].label}</text>
-            </svg>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(metrics).map(([gate, status]) => {
+                const s = status as GateStatus;
+                return (
+                  <div
+                    key={gate}
+                    className={`p-4 rounded-xl border flex flex-col items-center justify-center text-center ${
+                      statusColors[s].bg
+                    } ${statusColors[s].border}`}
+                  >
+                    <span className="text-sm font-bold text-zinc-100">{gateLabels[gate]}</span>
+                    <Badge
+                      variant={s === 'high' ? 'destructive' : s === 'medium' ? 'secondary' : 'outline'}
+                      className="mt-2 text-[10px] px-1.5 py-0 uppercase"
+                    >
+                      {statusColors[s].label}
+                    </Badge>
+                  </div>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <aside className="w-80 space-y-6">
+      <aside className="w-full lg:w-80 space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Tactical Recommendations</CardTitle>

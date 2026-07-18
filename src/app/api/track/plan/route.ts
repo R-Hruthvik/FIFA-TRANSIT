@@ -107,7 +107,7 @@ export async function GET(request: Request) {
         reason: "Unable to generate egress plan. Please follow steward directions.",
         version: planVersion,
       },
-      { status: 500 },
+      { status: 200 },
     );
   }
 }

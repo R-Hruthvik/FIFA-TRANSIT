@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/auth/SessionProvider";
 import { DemoProvider } from "@/components/DemoController";
-import { GuidedWalkthrough } from "@/components/GuidedWalkthrough";
+
+import GoogleOneTap from "@/components/auth/GoogleOneTap";
+import { getAllBgImages } from "@/lib/bg-images";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,13 +17,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://fifa-command-center.vercel.app";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://stadiumflow.vercel.app";
+
+// Use the first image deterministically to avoid SSR hydration mismatch
+const bgImage = getAllBgImages()[0];
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "FIFA Command Center — 2026 World Cup Transit Management",
-    template: "%s | FIFA Command Center",
+    default: "StadiumFlow — 2026 World Cup Transit Management",
+    template: "%s | StadiumFlow",
   },
   description:
     "Unified digital control system for the 2026 World Cup operations, fan engagement, stadium logistics, and real-time transit management.",
@@ -35,13 +40,13 @@ export const metadata: Metadata = {
     "sports dashboard",
     "hackathon",
   ],
-  authors: [{ name: "FIFA Command Center Team" }],
+  authors: [{ name: "StadiumFlow Team" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: baseUrl,
-    siteName: "FIFA Command Center",
-    title: "FIFA Command Center — 2026 World Cup Transit Management",
+    siteName: "StadiumFlow",
+    title: "StadiumFlow — 2026 World Cup Transit Management",
     description:
       "Unified digital control system for the 2026 World Cup operations, fan engagement, stadium logistics, and real-time transit management.",
     images: [
@@ -49,14 +54,14 @@ export const metadata: Metadata = {
         url: `${baseUrl}/api/og`,
         width: 1200,
         height: 630,
-        alt: "FIFA Command Center — 2026 World Cup Transit Management Dashboard",
+        alt: "StadiumFlow — 2026 World Cup Transit Management Dashboard",
         type: "image/svg+xml",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FIFA Command Center — 2026 World Cup Transit Management",
+    title: "StadiumFlow — 2026 World Cup Transit Management",
     description:
       "Unified digital control system for the 2026 World Cup operations, fan engagement, stadium logistics, and real-time transit management.",
     images: [`${baseUrl}/api/og`],
@@ -87,11 +92,22 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30">
+      <body
+        className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30 relative"
+        style={{
+          backgroundImage: `url('${bgImage}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Dark overlay so content stays readable */}
+        <div className="fixed inset-0 bg-zinc-950/80 dark:bg-zinc-950/90 pointer-events-none" />
         <SessionProvider>
           <DemoProvider>
             {children}
-            <GuidedWalkthrough />
+
+            <GoogleOneTap />
           </DemoProvider>
         </SessionProvider>
       </body>

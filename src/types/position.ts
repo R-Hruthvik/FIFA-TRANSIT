@@ -27,6 +27,10 @@ export interface PositionEvent {
   rssi?: number;
   /** Approximate distance in meters if beacon event */
   distanceMeters?: number;
+  /** Stadium-center-relative position in meters (for co-location clustering). */
+  x?: number;
+  /** Stadium-center-relative position in meters (for co-location clustering). */
+  y?: number;
   /** Hashed device identifier for rate-limiting (not stored long-term) */
   deviceHash?: string;
 }

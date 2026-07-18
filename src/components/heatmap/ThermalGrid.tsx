@@ -5,28 +5,32 @@ import { HeatmapBaseProps, STATUS_COLORS } from "./index";
 import { STATUS_CLASSES } from "@/constants/theme";
 
 const GATES = [
-  { key: "gateA", label: "Gate A" },
-  { key: "gateB", label: "Gate B" },
-  { key: "gateC", label: "Gate C" },
-  { key: "gateD", label: "Gate D" },
+  { key: "gate1", label: "Gate G1" },
+  { key: "gate2", label: "Gate G2" },
+  { key: "gate3", label: "Gate G3" },
+  { key: "gate4", label: "Gate G4" },
+  { key: "gate5", label: "Gate G5" },
+  { key: "gate6", label: "Gate G6" },
+  { key: "gate7", label: "Gate G7" },
+  { key: "gate8", label: "Gate G8" },
 ] as const;
 
 export function ThermalGrid({ metrics, gateFilter, onGateClick }: HeatmapBaseProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 relative">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
       {/* Thermal overlay — radial gradient background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
         {GATES.map(({ key }, i) => {
-          const status = metrics[key as keyof typeof metrics];
+          const status = metrics[key as keyof typeof metrics] || "low";
           const color = STATUS_COLORS[status];
-          const row = Math.floor(i / 2);
-          const col = i % 2;
-          const cellW = 50;
+          const row = Math.floor(i / 4);
+          const col = i % 4;
+          const cellW = 25;
           const cellH = 50;
           return (
             <motion.div
               key={`thermal-${key}`}
-              className="absolute rounded-full"
+              className="absolute rounded-full hidden md:block"
               style={{
                 left: `${col * cellW + cellW / 2 - 30}%`,
                 top: `${row * cellH + cellH / 2 - 30}%`,
@@ -53,7 +57,7 @@ export function ThermalGrid({ metrics, gateFilter, onGateClick }: HeatmapBasePro
 
       {/* Gate cards */}
       {GATES.map(({ key, label }) => {
-        const status = metrics[key as keyof typeof metrics];
+        const status = metrics[key as keyof typeof metrics] || "low";
         const isActive = gateFilter === key;
 
         return (

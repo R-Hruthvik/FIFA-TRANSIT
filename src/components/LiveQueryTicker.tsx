@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Broadcast, Clock, Funnel } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useDemoMode } from "./DemoController";
 
 interface Log {
   _id: string;
@@ -17,6 +18,9 @@ interface LiveQueryTickerProps {
 }
 
 export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
+  const demoContext = useDemoMode();
+  const isDemoMode = demoContext?.isDemoMode ?? false;
+
   const [logs, setLogs] = useState<Log[]>([]);
   const [connectionType, setConnectionType] = useState<"sse" | "polling">("polling");
   const connectionTypeRef = useRef(connectionType);
@@ -24,8 +28,16 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
     connectionTypeRef.current = connectionType;
   }, [connectionType]);
 
+  // Clear logs when starting demo mode
+  useEffect(() => {
+    if (isDemoMode) {
+      setLogs([]);
+    }
+  }, [isDemoMode]);
+
   // Initial fetch
   useEffect(() => {
+    if (isDemoMode) return;
     let mounted = true;
     const fetchLogs = async () => {
       try {
@@ -40,14 +52,15 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
     };
     fetchLogs();
     return () => { mounted = false; };
-  }, []);
+  }, [isDemoMode]);
 
   // SSE connection with polling fallback
   useEffect(() => {
+    if (isDemoMode) return;
     let mounted = true;
     let eventSource: EventSource | null = null;
     let pollInterval: ReturnType<typeof setInterval> | null = null;
-    let sseSettled = false; // tracks whether SSE already succeeded or failed
+    let sseSettled = false;
 
     const startPolling = () => {
       if (pollInterval) return;
@@ -77,14 +90,14 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
                 const existingIds = new Set(prev.map((l) => l._id));
                 const newLogs = data.logs.filter((l: Log) => !existingIds.has(l._id));
                 if (newLogs.length === 0) return prev;
-                return [...newLogs, ...prev].slice(0, 100); // Keep max 100
+                return [...newLogs, ...prev].slice(0, 100);
               });
             }
           } catch {}
         };
 
         eventSource.onerror = () => {
-          if (sseSettled) return; // already handled
+          if (sseSettled) return;
           sseSettled = true;
           if (eventSource) {
             eventSource.close();
@@ -94,7 +107,7 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
         };
 
         eventSource.onopen = () => {
-          sseSettled = true; // prevent fallback timer from starting polling
+          sseSettled = true;
           if (mounted) setConnectionType("sse");
         };
       } catch {
@@ -103,10 +116,8 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
       }
     };
 
-    // Try SSE first
     startSSE();
 
-    // If SSE doesn't connect within 3s, start polling as backup
     const fallbackTimer = setTimeout(() => {
       if (mounted && !sseSettled) {
         startPolling();
@@ -123,18 +134,65 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
         clearInterval(pollInterval);
       }
     };
-  }, []);
+  }, [isDemoMode]);
+
+  // Demo queries injection — random intervals, no fixed schedule
+  useEffect(() => {
+    if (!isDemoMode || !demoContext) return;
+
+    // Inject initial query immediately
+    const initialQuery = demoContext.injectDemoQuery();
+    if (initialQuery) {
+      setLogs((prev) => {
+        const newLog: Log = {
+          _id: `demo-${Date.now()}-${Math.random()}`,
+          text: initialQuery,
+          timestamp: new Date().toISOString(),
+        };
+        return [newLog, ...prev];
+      });
+    }
+
+    // Schedule next log at a random interval (1.5s–5s)
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const scheduleNext = () => {
+      const delay = 1500 + Math.random() * 3500;
+      timeoutId = setTimeout(() => {
+        const text = demoContext.injectDemoQuery();
+        if (text) {
+          setLogs((prev) => {
+            const newLog: Log = {
+              _id: `demo-${Date.now()}-${Math.random()}`,
+              text,
+              timestamp: new Date().toISOString(),
+            };
+            return [newLog, ...prev].slice(0, 100);
+          });
+        }
+        scheduleNext();
+      }, delay);
+    };
+
+    scheduleNext();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isDemoMode, demoContext]);
 
   const GATE_LABELS: Record<string, string> = {
-    gateA: "Gate A",
-    gateB: "Gate B",
-    gateC: "Gate C",
-    gateD: "Gate D",
+    gate1: "Gate G1",
+    gate2: "Gate G2",
+    gate3: "Gate G3",
+    gate4: "Gate G4",
+    gate5: "Gate G5",
+    gate6: "Gate G6",
+    gate7: "Gate G7",
+    gate8: "Gate G8",
   };
 
   const filteredLogs = useMemo(() => {
     if (!gateFilter) return logs;
-    // gateFilter is a gate key (e.g. "gateA"), match against display label ("Gate A")
     const label = GATE_LABELS[gateFilter] || gateFilter;
     const regex = new RegExp(label, "i");
     return logs.filter((log) => regex.test(log.text));
@@ -164,7 +222,8 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
         </Badge>
       </div>
 
-      <ScrollArea className="flex-1">
+      {/* Fixed-height scrollable log area — prevents page expansion */}
+      <ScrollArea className="flex-1 max-h-[380px]">
         <div className="space-y-3 pr-2">
           <AnimatePresence mode="popLayout" initial={false}>
             {filteredLogs.length > 0 ? (
@@ -189,7 +248,7 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
                     <div className="w-px h-4 bg-zinc-800 group-hover:bg-emerald-500/30 transition-colors" />
                   </div>
 
-                  <div className="flex-1">
+                  <div className="flex-1 max-w-md">
                     <p className="text-[11px] text-zinc-400 font-medium tracking-wide line-clamp-2 group-hover:text-zinc-200 transition-colors leading-relaxed">
                       {log.text}
                     </p>

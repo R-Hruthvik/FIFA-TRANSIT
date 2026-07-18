@@ -17,6 +17,100 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
+      id: "google-one-tap",
+      name: "Google One Tap",
+      credentials: {
+        credential: { type: "text" },
+      },
+      // @ts-ignore
+      async authorize(credentials) {
+        if (!credentials?.credential) {
+          throw new Error("No credential provided");
+        }
+        
+        try {
+          const token = credentials.credential;
+          const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
+          if (!res.ok) {
+            throw new Error("Invalid Google token");
+          }
+          const profile = await res.json();
+          if (profile.email_verified !== "true" && profile.email_verified !== true) {
+            throw new Error("Google email not verified");
+          }
+          if (profile.aud !== process.env.GOOGLE_CLIENT_ID) {
+            throw new Error("Invalid client ID audience");
+          }
+
+          const email = (profile.email || "").toLowerCase();
+          const existingUser = await findUserByEmail(email);
+          const mongoClient = await clientPromise;
+          const db = mongoClient.db(DB_NAME);
+          const now = new Date();
+
+          let user;
+          if (existingUser) {
+            if (existingUser.staffStatus === "rejected") {
+              throw new Error("Your staff application was rejected. Please contact an administrator.");
+            }
+            if (existingUser.staffStatus === "pending") {
+              throw new Error("Your staff application is pending approval. Please wait for an administrator to review it.");
+            }
+
+            // Update user with googleId if missing, and refresh lastSignIn
+            await db.collection("users").updateOne(
+              { id: existingUser.id },
+              {
+                $set: {
+                  googleId: profile.sub || existingUser.googleId || "",
+                  lastSignIn: now,
+                  updatedAt: now,
+                },
+              }
+            );
+            user = existingUser;
+          } else {
+            const id = crypto.randomUUID();
+            await db.collection("users").insertOne({
+              id,
+              email,
+              name: profile.name || "",
+              image: profile.picture || null,
+              googleId: profile.sub || "",
+              passwordHash: null,
+              role: "fan",
+              staffStatus: "none",
+              staffRequestedAt: null,
+              approvedAt: null,
+              approvedBy: null,
+              createdAt: now,
+              updatedAt: now,
+              lastSignIn: now,
+            });
+            user = {
+              id,
+              email,
+              name: profile.name || "",
+              image: profile.picture || null,
+              role: "fan",
+            };
+          }
+
+          // @ts-ignore — module augmentation handles role compatibility at runtime
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            role: user.role,
+          };
+        } catch (error: any) {
+          console.error("One Tap authorization error:", error);
+          throw new Error(error.message || "Authentication failed");
+        }
+      },
+    }),
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -177,4 +271,8 @@ export const authOptions = {
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "",
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
+export const auth = () => {
+  // Import getServerSession dynamically or from next-auth/next
+  const { getServerSession } = require("next-auth/next");
+  return getServerSession(authOptions);
+};

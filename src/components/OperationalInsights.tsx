@@ -11,10 +11,14 @@ interface OperationalInsightsProps {
 }
 
 const gateLabels: Record<string, string> = {
-  gateA: "Gate A",
-  gateB: "Gate B",
-  gateC: "Gate C",
-  gateD: "Gate D",
+  gate1: "Gate G1",
+  gate2: "Gate G2",
+  gate3: "Gate G3",
+  gate4: "Gate G4",
+  gate5: "Gate G5",
+  gate6: "Gate G6",
+  gate7: "Gate G7",
+  gate8: "Gate G8",
 };
 
 interface Insight {
@@ -74,8 +78,44 @@ function generateInsights(metrics: GateMetrics, transitWaitTime: number): Insigh
   });
 }
 
+import { useDemoMode } from "./DemoController";
+
 export const OperationalInsights = ({ metrics, transitWaitTime = 8 }: OperationalInsightsProps) => {
+  const demoContext = useDemoMode();
+  const isDemoMode = demoContext?.isDemoMode ?? false;
   const insights = useMemo(() => generateInsights(metrics, transitWaitTime), [metrics, transitWaitTime]);
+
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-4">
+        {/* Raw Telemetry Overview */}
+        <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 space-y-3">
+          <h4 className="text-[9px] font-black tracking-widest text-zinc-500 uppercase">
+            Raw Gate Telemetry
+          </h4>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries(metrics).map(([gate, status]) => (
+              <div key={gate} className="flex justify-between items-center p-2 rounded bg-zinc-950/40 border border-zinc-900/60">
+                <span className="text-[10px] text-zinc-400 font-medium font-mono">{gateLabels[gate] || gate}</span>
+                <span className={`text-[10px] font-bold font-mono uppercase ${
+                  status === "high" ? "text-rose-500" :
+                  status === "medium" ? "text-amber-500" :
+                  "text-emerald-500"
+                }`}>{status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Informational Message */}
+        <div className="p-4 rounded-xl bg-zinc-900/10 border border-zinc-900 text-center py-6">
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Live analysis will appear here when operational data is available.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

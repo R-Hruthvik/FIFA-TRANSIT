@@ -5,37 +5,47 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Trophy, ShieldCheck, Users, Command, UserCircle } from "@phosphor-icons/react";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import FanHub from "@/components/FanHub";
 import StaffHub from "@/components/StaffHub";
 import { DemoModeButton } from "@/components/DemoController";
 import { AppTab } from "@/types/telemetry";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { useMatchData } from "@/hooks/useMatchData";
+import { MatchSchedule } from "@/components/match/MatchSchedule";
+import StadiumBackground from "@/components/StadiumBackground";
 
 export default function Page() {
   const { data: session, status } = useSession();
-  const [mounted, setMounted] = useState(false);
+  const { upcomingMatches, loading: matchesLoading, isMock } = useMatchData();
+  const [activeTab, setActiveTab] = useState<AppTab>("fan");
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (session?.user) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [session, activeTab]);
 
-  // Show loading state while checking session
-  if (status === "loading") {
+  // Combined loading check AFTER all hooks
+  const isLoading = matchesLoading || status === "loading";
+
+  if (isLoading) {
     return (
       <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
         <StadiumBackground />
         <div className="min-h-screen flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center gap-4"
-          >
+          <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-            <p className="text-zinc-400 text-sm font-medium tracking-wider">
-              Loading...
+            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">
+              {matchesLoading ? "Loading Match Data..." : "Loading..."}
             </p>
-          </motion.div>
+            {isMock && !matchesLoading && (
+              <p className="text-[9px] text-amber-500/70 font-mono">No API key configured — showing placeholder match data</p>
+            )}
+          </div>
         </div>
       </main>
     );
@@ -46,90 +56,142 @@ export default function Page() {
     return (
       <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
         <StadiumBackground />
-        <motion.div
-          key="landing"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6 text-center"
-        >
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0, rotateY: 180 }}
-            animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8 relative"
-          >
-            <div className="absolute inset-0 bg-amber-400/20 blur-3xl rounded-full animate-pulse" />
-            <div className="relative z-10 p-6 bg-zinc-900/20 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl">
-              <Trophy size={100} weight="duotone" className="text-amber-400" />
+        
+        {/* Navigation Header */}
+        <header className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-white/5 bg-zinc-950/20 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-600/20 rounded-xl border border-emerald-500/30">
+              <Trophy size={24} weight="duotone" className="text-emerald-400" />
             </div>
-          </motion.div>
+            <div>
+              <h1 className="text-base font-black tracking-widest text-white uppercase">StadiumFlow</h1>
+              <p className="text-[8px] text-zinc-500 tracking-widest uppercase">2026 WORLD CUP</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/staff/register" className="text-xs font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
+              Staff Access
+            </Link>
+            <Button
+              onClick={() => signIn(undefined, { callbackUrl: "/" })}
+              variant="outline"
+              className="border-zinc-800 text-xs font-bold uppercase tracking-wider hover:bg-zinc-900"
+            >
+              Sign In
+            </Button>
+          </div>
+        </header>
 
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-          >
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-white mb-4 uppercase italic leading-none">
-              FIFA TOURNAMENT<br />
+        {/* Hero Section */}
+        <div className="relative z-10 flex-1 max-w-6xl mx-auto w-full px-6 py-16 flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 space-y-6 text-left">
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-[10px] tracking-widest uppercase px-3 py-1 font-bold">
+              Operational Command System
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase italic leading-none">
+              STADIUMFLOW:<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-white to-amber-400">
-                MANAGEMENT SUITE
+                Tournament Command System
               </span>
             </h1>
-            <p className="text-zinc-400 max-w-[600px] mx-auto text-lg mb-10 leading-relaxed font-light tracking-wide">
-              Unified digital control system for the 2026 World Cup operations, fan engagement, and stadium logistics.
+            <p className="text-zinc-450 text-base md:text-lg leading-relaxed font-light tracking-wide max-w-xl">
+              Real-time CrowdPulse telemetry, spatial congestion analysis, and Matchday Mate AI-powered guidance for 2026 matchday operations.
             </p>
-          </motion.div>
-
-          <div className="flex gap-4 mb-8">
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(16,185,129,0.4)" }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => signIn("google", { callbackUrl: "/" })}
-              className="group relative px-10 py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-            >
-              <span className="relative z-10 flex items-center gap-3 tracking-[0.2em] text-sm">
-                CONTINUE WITH GOOGLE
-                <Command size={20} weight="bold" />
-              </span>
-              <motion.div
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-              />
-              <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/40 transition-colors" />
-            </motion.button>
-
-            <a
-              href="/signup"
-              className="group relative px-10 py-5 bg-zinc-800/50 hover:bg-zinc-800 text-white font-black rounded-2xl overflow-hidden transition-all duration-300 border border-zinc-700/50"
-            >
-              <span className="relative z-10 flex items-center gap-3 tracking-[0.2em] text-sm">
-                CREATE ACCOUNT
-                <UserCircle size={20} weight="duotone" />
-              </span>
-              <motion.div
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-              />
-              <div className="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/40 transition-colors" />
-            </a>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Button
+                onClick={() => signIn(undefined, { callbackUrl: "/" })}
+                className="px-8 py-6 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+              >
+                Enter Portal
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="px-8 py-6 border-zinc-800 text-zinc-300 hover:bg-zinc-900/60 font-black rounded-xl tracking-widest uppercase"
+              >
+                <Link href="/staff/register">Register as Staff</Link>
+              </Button>
+            </div>
           </div>
 
-          <p className="text-zinc-500 text-sm mt-6">
-            By continuing, you agree to our{" "}
-            <a href="#" className="text-emerald-400 hover:underline">
-              Terms of Service
-            </a>{" "}
-          </p>
-        </motion.div>
+          {/* Quick Interactive Preview panel */}
+          <div className="flex-1 w-full max-w-md">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="p-6 bg-zinc-900/30 border border-white/10 rounded-3xl backdrop-blur-md space-y-6 shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
+              <div className="flex items-center justify-between pb-4 border-b border-white/5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[9px] font-black tracking-widest text-emerald-400 uppercase italic">Live CrowdPulse</span>
+                </div>
+                <Badge className="bg-zinc-800 text-zinc-400 text-[8px] font-mono border-none">DEMO MODE</Badge>
+              </div>
+
+              {/* Live Preview Telemetry */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-850 space-y-1">
+                  <span className="text-[8px] text-zinc-500 font-mono block">NEAREST GATE</span>
+                  <span className="text-[10px] font-bold text-white block truncate">Gate G1</span>
+                  <Badge className="bg-emerald-500/10 text-emerald-400 text-[8px] border-none px-1.5 py-0">OPEN</Badge>
+                </div>
+                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-850 space-y-1">
+                  <span className="text-[8px] text-zinc-500 font-mono block">MAIN HUB WAIT</span>
+                  <span className="text-[10px] font-bold text-white block">8 min</span>
+                  <span className="text-[8px] text-zinc-400 block font-medium">Standard</span>
+                </div>
+                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-850 space-y-1">
+                  <span className="text-[8px] text-zinc-500 font-mono block">WEATHER COND</span>
+                  <span className="text-[10px] font-bold text-white block">Clear</span>
+                  <span className="text-[8px] text-emerald-400 block font-semibold">18°C</span>
+                </div>
+              </div>
+
+              {/* Informational feature snippets */}
+              <div className="space-y-3 pt-2">
+                <div className="flex gap-3 items-start">
+                  <div className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                    <Users size={16} weight="duotone" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-white tracking-wide uppercase">FanAssist</h4>
+                    <p className="text-[11px] text-zinc-450 mt-0.5">Calculates optimal egress routes and caches them directly on-device for offline transit guidance.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <div className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg">
+                    <ShieldCheck size={16} weight="duotone" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-white tracking-wide uppercase">Tactical Command Hub</h4>
+                    <p className="text-[11px] text-zinc-450 mt-0.5">Enables stadium security staff to monitor crowd congestion heatmaps and orchestrate safe routing.</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Upcoming Fixtures Section */}
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-6 py-12 border-t border-white/5 bg-zinc-950/10">
+          <h2 className="text-xs font-black tracking-[0.2em] text-zinc-500 uppercase italic mb-6">
+            Upcoming Tournament Fixtures
+          </h2>
+          <MatchSchedule matches={upcomingMatches} />
+        </div>
+
+        {/* Footer */}
+        <footer className="relative z-10 py-8 border-t border-white/5 text-center text-zinc-650 text-xs">
+          <p>© 2026 StadiumFlow Transit Management. All rights reserved.</p>
+        </footer>
       </main>
     );
   }
 
   // Authenticated user - show dashboard
-  const [activeTab, setActiveTab] = useState<AppTab>("fan");
-
   return (
     <ProtectedRoute allowedRoles={["fan", "staff", "admin"]}>
       <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-gradient-to-br from-zinc-950 via-[#01170f] to-zinc-950 text-white font-sans selection:bg-emerald-500/30 relative">
@@ -146,7 +208,7 @@ export default function Page() {
               <Trophy size={28} weight="duotone" className="text-emerald-400" />
             </motion.div>
             <div>
-              <h1 className="text-xl font-black tracking-widest text-white uppercase">FIFA TRANSIT</h1>
+              <h1 className="text-xl font-black tracking-widest text-white uppercase">StadiumFlow</h1>
               <p className="text-[10px] text-zinc-500 tracking-widest uppercase">2026 WORLD CUP OPERATIONS</p>
             </div>
           </div>
@@ -246,17 +308,5 @@ function TabButton({
         </motion.div>
       )}
     </button>
-  );
-}
-
-function StadiumBackground() {
-  return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-b from-emerald-500/5 via-zinc-950/20 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-t from-amber-500/5 via-transparent to-transparent" />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[300px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[300px]" />
-    </div>
   );
 }

@@ -65,3 +65,13 @@ tmp*
 *.pem
 *.key
 **.node
+
+# Playwright / MCP artifacts
+.playwright-mcp/
+playwright-report/
+
+# audit screenshots
+*audit.png
+
+# temp files from local commands
+2026-07-17-*

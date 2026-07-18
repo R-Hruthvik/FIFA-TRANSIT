@@ -1,0 +1,192 @@
+
+
+console error:
+## Error Type
+Console Error
+
+## Error Message
+Plan fetch failed: 500
+
+
+    at useEgressPlan.useCallback[fetchPlan] (src/hooks/useEgressPlan.ts:192:26)
+    at async load (src/hooks/useEgressPlan.ts:297:9)
+
+## Code Frame
+  190 |       });
+  191 |
+> 192 |       if (!res.ok) throw new Error(`Plan fetch failed: ${res.status}`);
+      |                          ^
+  193 |
+  194 |       const data = (await res.json()) as { plan: EgressPlan; version:...
+  195 |       const newPlan = { ...data.plan, stale: false };
+
+Next.js version: 16.2.10 (Turbopack)
+
+
+
+
+my own issues:
+no connection check to internet, no real data , many fake data placeholder in tactical insights;
+no api check ;
+no home page format;
+the first page is half scrolled to chat section, upper section already scrolled up;
+
+many fake data placeholders are present in many places;
+
+i want fake data only when doing demo;
+
+
+researching how to imitate many users connected to app, so their pos, or crowding can be detected- for ex. getting api reqs from many devices like imitations and we can set them as real devices of the users
+
+
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+        at ignore-listed frames {
+      errno: -3007,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net'
+    }
+  }
+}
+SSE poll error: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+    at ignore-listed frames {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-01.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-02.barbb7q.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-v2d8s3-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+      at ignore-listed frames {
+    errorLabelSet: Set(3) { 'SystemOverloadedError', 'RetryableError', 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+        at ignore-listed frames {
+      errno: -3007,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net'
+    }
+  }
+}
+SSE poll error: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+    at ignore-listed frames {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-01.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-02.barbb7q.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-v2d8s3-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+      at ignore-listed frames {
+    errorLabelSet: Set(3) { 'SystemOverloadedError', 'RetryableError', 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+        at ignore-listed frames {
+      errno: -3007,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net'
+    }
+  }
+}
+SSE poll error: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+    at ignore-listed frames {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-01.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-02.barbb7q.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-v2d8s3-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+      at ignore-listed frames {
+    errorLabelSet: Set(3) { 'SystemOverloadedError', 'RetryableError', 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+        at ignore-listed frames {
+      errno: -3007,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net'
+    }
+  }
+}
+SSE poll error: MongoServerSelectionError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+    at ignore-listed frames {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-01.barbb7q.mongodb.net:27017' => [ServerDescription],
+      'ac-2bz7npv-shard-00-02.barbb7q.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-v2d8s3-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+      at ignore-listed frames {
+    errorLabelSet: Set(3) { 'SystemOverloadedError', 'RetryableError', 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-2bz7npv-shard-00-00.barbb7q.mongodb.net
+        at ignore-listed frames {
+      errno: -3007,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-2bz7npv-shard-00-00.barbb7q.mongodb.net'
+    }
+  }
+}
+^C GET /api/fan/queries/stream 200 in 7.6min (next.js: 7ms, application-code: 7.6min)
+ GET /api/track/stream 200 in 7.6min (next.js: 9ms, application-code: 7.6min)
+
+
+

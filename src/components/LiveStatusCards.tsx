@@ -31,10 +31,12 @@ export function LiveStatusCards({ data }: LiveStatusCardsProps) {
         status="info"
         icon={<Bus size={24} weight="duotone" />}
         footer={
-          <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-medium">
-            <ClockClockwise size={12} />
-            NEXT SHUTTLE IN 2M
-          </div>
+          nearestHub.waitTime > 0 ? (
+            <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-medium">
+              <ClockClockwise size={12} />
+              WAIT TIME
+            </div>
+          ) : undefined
         }
       />
 
