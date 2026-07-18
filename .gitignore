@@ -94,3 +94,12 @@ usr-ideas/
 # all markdown except README
 *.md
 !README.md
+
+# docs
+docs/
+
+# playwright config
+playwright.config.ts
+
+# skills lock
+skills-lock.json
