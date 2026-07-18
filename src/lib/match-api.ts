@@ -1,4 +1,4 @@
-import { clientPromise } from "@/lib/db";
+import { clientPromise, GLOBAL_SETTINGS_ID } from "@/lib/db";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 
@@ -18,64 +18,11 @@ export interface MatchResponse {
   isMock: boolean;
 }
 
-export const MOCK_MATCHES: Match[] = [
-  {
-    id: "m-1",
-    homeTeam: "United States",
-    awayTeam: "England",
-    homeScore: 1,
-    awayScore: 1,
-    status: "live",
-    utcDate: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // started 45m ago
-    minute: 48,
-  },
-  {
-    id: "m-2",
-    homeTeam: "Mexico",
-    awayTeam: "Canada",
-    homeScore: null,
-    awayScore: null,
-    status: "scheduled",
-    utcDate: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // 4h from now
-    minute: null,
-  },
-  {
-    id: "m-3",
-    homeTeam: "Argentina",
-    awayTeam: "France",
-    homeScore: null,
-    awayScore: null,
-    status: "scheduled",
-    utcDate: new Date(Date.now() + 28 * 60 * 60 * 1000).toISOString(), // tomorrow
-    minute: null,
-  },
-  {
-    id: "m-4",
-    homeTeam: "Brazil",
-    awayTeam: "Germany",
-    homeScore: 2,
-    awayScore: 1,
-    status: "finished",
-    utcDate: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // finished
-    minute: 90,
-  },
-  {
-    id: "m-5",
-    homeTeam: "Spain",
-    awayTeam: "Italy",
-    homeScore: 0,
-    awayScore: 0,
-    status: "finished",
-    utcDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // yesterday
-    minute: 90,
-  },
-];
-
 export async function fetchLiveMatches(): Promise<MatchResponse> {
   try {
     const mongoClient = await clientPromise;
     const db = mongoClient.db(DB_NAME);
-    const settings = await db.collection("settings").findOne({ _id: "global" as any });
+    const settings = await db.collection("settings").findOne({ _id: GLOBAL_SETTINGS_ID });
 
     const enableRealMatchData = settings?.featureFlags?.enableRealMatchData ?? false;
     const matchApi = settings?.matchApi || {};
@@ -83,7 +30,7 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
     const apiKey = matchApi.apiKey;
 
     if (!enableRealMatchData || !apiKey) {
-      return { matches: MOCK_MATCHES, isMock: true };
+      return { matches: [], isMock: true };
     }
 
     if (provider === "football-data") {
@@ -92,8 +39,8 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
         headers: { "X-Auth-Token": apiKey },
       });
       if (!res.ok) {
-        console.warn("football-data.org API error, falling back to mock matches:", await res.text());
-        return { matches: MOCK_MATCHES, isMock: true };
+        console.warn("football-data.org API error, falling back to empty matches:", await res.text());
+        return { matches: [], isMock: true };
       }
       const data = await res.json();
       const matches = data.matches || [];
@@ -120,8 +67,8 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
         headers: { "x-apisports-key": apiKey },
       });
       if (!res.ok) {
-        console.warn("api-football API error, falling back to mock matches:", await res.text());
-        return { matches: MOCK_MATCHES, isMock: true };
+        console.warn("api-football API error, falling back to empty matches:", await res.text());
+        return { matches: [], isMock: true };
       }
       const data = await res.json();
       const fixtures = data.response || [];
@@ -145,9 +92,9 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
       return { matches: mapped, isMock: false };
     }
 
-    return { matches: MOCK_MATCHES, isMock: true };
+    return { matches: [], isMock: true };
   } catch (error) {
     console.error("fetchLiveMatches failed, falling back to mock matches:", error);
-    return { matches: MOCK_MATCHES, isMock: true };
+    return { matches: [], isMock: true };
   }
 }

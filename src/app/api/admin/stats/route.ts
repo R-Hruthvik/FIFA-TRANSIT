@@ -16,7 +16,7 @@ export async function GET() {
 
     const totalUsers = await usersCollection.countDocuments({});
     const pendingStaff = await usersCollection.countDocuments({ staffStatus: 'pending' });
-    const activeStaff = await usersCollection.countDocuments({ staffStatus: 'approved', role: 'staff' });
+    const activeStaff = await usersCollection.countDocuments({ staffStatus: 'approved', role: { $in: ['staff', 'admin'] } });
     const adminCount = await usersCollection.countDocuments({ role: 'admin' });
 
     return Response.json({

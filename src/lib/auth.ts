@@ -169,54 +169,56 @@ export const authOptions = {
   session: { strategy: "jwt" } as const,
   callbacks: {
     // @ts-ignore — NextAuth v4 JWT callback types are strict
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, profile }: { token: any; user: any; account: any; profile?: any }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.role = (user as Record<string, string>).role;
         token.name = user.name;
       }
-      // @ts-ignore
-      if (account?.provider === "google") {
-        // @ts-ignore
-        const profile = account as { email?: string; name?: string; picture?: string; sub?: string; email_verified?: boolean };
+      
+      if (account?.provider === "google" && profile) {
+        const googleProfile = profile as { 
+          email?: string; 
+          name?: string; 
+          picture?: string; 
+          sub?: string; 
+          email_verified?: boolean | string; 
+        };
 
-        // Check if email is verified
-        if (!profile.email_verified) {
-          // Returning null will cause the Google OAuth flow to fail
-          return null;
+        // Support both boolean and string variants returned by OAuth providers
+        const isVerified = googleProfile.email_verified === true || googleProfile.email_verified === "true";
+        if (!isVerified) {
+          throw new Error("Google email not verified");
         }
 
-        const email = (profile.email || "").toLowerCase();
-        const existingUser = await findUserByEmail(email);
-        if (existingUser) {
-          const mongoClient = await clientPromise;
-          const db = mongoClient.db(DB_NAME);
-          const now = new Date();
+        const email = (googleProfile.email || "").toLowerCase();
+        if (!email) {
+          throw new Error("No email address returned from Google account provider");
+        }
 
-          // Update existing user: ensure googleId is set, update timestamps
+        const existingUser = await findUserByEmail(email);
+        const mongoClient = await clientPromise;
+        const db = mongoClient.db(DB_NAME);
+        const now = new Date();
+
+        if (existingUser) {
+          if (existingUser.staffStatus === "rejected") {
+            throw new Error("Your staff application was rejected. Please contact an administrator.");
+          }
+          if (existingUser.staffStatus === "pending") {
+            throw new Error("Your staff application is pending approval. Please wait for an administrator to review it.");
+          }
+
+          // Update user with googleId if missing, and refresh lastSignIn
           await db.collection("users").updateOne(
             { id: existingUser.id },
             {
               $set: {
-                googleId: profile.sub || existingUser.googleId || "",
+                googleId: googleProfile.sub || existingUser.googleId || "",
                 lastSignIn: now,
                 updatedAt: now,
               },
-              $setOnInsert: {
-                // Only set on insert (shouldn't happen for existing user)
-                id: existingUser.id,
-                email,
-                name: profile.name || existingUser.name || "",
-                image: profile.picture || existingUser.image || null,
-                passwordHash: existingUser.passwordHash,
-                role: existingUser.role,
-                staffStatus: existingUser.staffStatus,
-                staffRequestedAt: existingUser.staffRequestedAt,
-                approvedAt: existingUser.approvedAt,
-                approvedBy: existingUser.approvedBy,
-                createdAt: existingUser.createdAt,
-              }
             }
           );
 
@@ -225,16 +227,13 @@ export const authOptions = {
           token.role = existingUser.role;
           token.name = existingUser.name;
         } else {
-          const mongoClient = await clientPromise;
-          const db = mongoClient.db(DB_NAME);
           const id = crypto.randomUUID();
-          const now = new Date();
           await db.collection("users").insertOne({
             id,
             email,
-            name: profile.name || "",
-            image: profile.picture || null,
-            googleId: profile.sub || "",
+            name: googleProfile.name || "",
+            image: googleProfile.picture || null,
+            googleId: googleProfile.sub || "",
             passwordHash: null,
             role: "fan",
             staffStatus: "none",
@@ -248,10 +247,12 @@ export const authOptions = {
           token.id = id;
           token.email = email;
           token.role = "fan";
-          token.name = profile.name || "";
+          token.name = googleProfile.name || "";
         }
       }
-      return token;
+      
+      // Safety guarantee: Never return null or undefined to prevent library encryption crashes
+      return token || {};
     },
     // @ts-ignore
     async session({ session, token }) {

@@ -25,13 +25,13 @@
  */
 
 import type { GateCrowd } from "@/types/position";
-import { GATES } from "@/lib/venue-config";
+import { PositionManager } from "@/lib/position-manager";
 
-// Re-used constants from egress-planner (gate geometry + walk speed)
+// Re-used constants from position-manager (gate geometry + walk speed)
 const WALK_SPEED_M_PER_MIN = 80;
 
 const GATE_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
-  GATES.map((g) => [g.id, { x: g.x, y: g.y }]),
+  PositionManager.getGateIds().map((id) => [id, PositionManager.gateToPosition(id)]),
 );
 
 // ── Configuration ──────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ function assignUser(
       gateId: candidate.gateId,
       leaveAt,
       etaMinutes: candidate.eta,
-      transitEtaMinutes: 8 + Math.floor(Math.random() * 5),
+      transitEtaMinutes: 0,
       deferred: false,
     };
   }

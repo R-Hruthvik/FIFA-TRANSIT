@@ -81,7 +81,6 @@ Rules:
  */
 export async function generateAIInstruction(
   ctx: AIPlanContext,
-  fallbackInstruction: string,
 ): Promise<string> {
   const prompt = buildEgressPrompt(ctx);
   const geminiKey = process.env.GEMINI_API_KEY;
@@ -144,7 +143,7 @@ export async function generateAIInstruction(
   }
 
   // AI unavailable — return the structured fallback
-  return fallbackInstruction;
+  return `Proceed with caution to your assigned checkpoint at ${ctx.nearestGate.gateId || 'stadium exit doors'}. Est. travel window: ${ctx.nearestGate.etaMinutes || '---'} min. Follow all active steward instructions.`;
 }
 
 /**
@@ -168,7 +167,7 @@ export async function enhancePlanWithAI(
     isEgressMode: plan.leaveAt < Date.now() + 60 * 60_000, // within 1 hour = egress mode
   };
 
-  const aiInstruction = await generateAIInstruction(ctx, plan.instruction);
+  const aiInstruction = await generateAIInstruction(ctx);
 
   return {
     ...plan,

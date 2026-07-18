@@ -12,6 +12,7 @@ import { ThermalGrid } from "./heatmap/ThermalGrid";
 import { StadiumMap } from "./heatmap/StadiumMap";
 import { HeatmapVariant } from "./heatmap";
 import { EnforcementPanel } from "./EnforcementPanel";
+import { StaffCommandBar } from "./StaffCommandBar";
 import { ChartLineUp } from "@phosphor-icons/react";
 import { GateMetrics, StadiumTelemetry } from "@/types/telemetry";
 import { Card } from "@/components/ui/card";
@@ -119,12 +120,6 @@ export default function StaffHub() {
     );
   }
 
-  // In demo mode, use demo engine data (no loading needed)
-  if (demo?.isDemoMode && demo.getMetrics) {
-    if (demo.getMetrics()) setMetrics(demo.getMetrics());
-    if (demo.getTelemetry()) setTelemetry(demo.getTelemetry() || null);
-  }
-
   // Get active data - in demo mode use demo engine, otherwise use local state
   const activeMetrics = demo?.isDemoMode && demo.getMetrics ? demo.getMetrics() : metrics;
   const activeTelemetry = demo?.isDemoMode && demo.getTelemetry ? demo.getTelemetry() : telemetry;
@@ -195,26 +190,35 @@ export default function StaffHub() {
                 </h3>
                 <Badge className="text-[9px] bg-emerald-500/20 text-emerald-400">LIVE</Badge>
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="text-center p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Total Crowd</p>
-                  <p className="text-lg font-black text-emerald-400">
-                    {demo?.getCrowdCount ? demo.getCrowdCount() : 0}
+              {metrics ? (
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Total Crowd</p>
+                    <p className="text-lg font-black text-emerald-400">
+                      {demo?.getCrowdCount ? demo.getCrowdCount() : 0}
+                    </p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Active Gates</p>
+                    <p className="text-lg font-black text-red-400">
+                      {Object.values(metrics).filter(v => v !== "low").length}
+                    </p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Crowd Density</p>
+                    <p className="text-lg font-black text-amber-400">
+                      {Math.round((Object.values(metrics).filter(v => v === "high").length / 8) * 100)}%
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-3 py-6 text-zinc-500">
+                  <div className="w-6 h-6 border-2 border-emerald-500/40 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-xs font-mono tracking-wider uppercase italic">
+                    {demo?.isDemoMode ? "Initializing Demo Scan..." : "Awaiting Inbound Crowd Scan..."}
                   </p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Active Gates</p>
-                  <p className="text-lg font-black text-red-400">
-                    {metrics ? Object.values(metrics).filter(v => v !== "low").length : 0}
-                  </p>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Crowd Density</p>
-                  <p className="text-lg font-black text-amber-400">
-                    {metrics ? Math.round((Object.values(metrics).filter(v => v === "high").length / 8) * 100) : 0}%
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
             <GateAlertsPanel />
             <AdminLogsPanel />
@@ -228,6 +232,15 @@ export default function StaffHub() {
           transition={{ delay: 0.1 }}
         >
           <EnforcementPanel />
+        </motion.div>
+
+        {/* Agentic AI Command Bar */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.12 }}
+        >
+          <StaffCommandBar />
         </motion.div>
 
         {/* Heatmap + Query Stream */}
@@ -255,8 +268,11 @@ export default function StaffHub() {
                     onGateClick={() => {}}
                   />
                 ) : (
-                  <div className="h-full flex items-center justify-center text-zinc-500 text-xs">
-                    {activeMetrics ? "Select a heatmap view" : "Heatmap data unavailable"}
+                  <div className="h-full flex flex-col items-center justify-center gap-3 text-zinc-500">
+                    <div className="w-8 h-8 border-2 border-emerald-500/40 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-xs font-mono tracking-wider uppercase italic">
+                      Awaiting Inbound Crowd Scan...
+                    </p>
                   </div>
                 )}
               </div>

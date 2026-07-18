@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import ScenarioSimulator from './ScenarioSimulator';
 
 interface FeatureFlags {
   enableRealMatchData: boolean;
@@ -25,18 +27,33 @@ export default function DeveloperSettings() {
     apiKey: null,
     cacheTTL: 300,
   });
+  const [gateOverrides, setGateOverrides] = useState<Record<string, string>>({});
+  const [clearingGate, setClearingGate] = useState<string | null>(null);
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (status !== 'authenticated' || session?.user?.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/admin/settings');
+        if (res.status === 403 || res.status === 401) {
+          setError('Administrative clearance required to view this panel.');
+          setLoading(false);
+          return;
+        }
         if (!res.ok) throw new Error('Failed to fetch settings');
         const data = await res.json();
         setFeatureFlags(data.featureFlags || featureFlags);
         setMatchApi(data.matchApi || matchApi);
+        setGateOverrides(data.gateOverrides || {});
       } catch (err) {
         console.error('Failed to fetch admin settings:', err);
       } finally {
@@ -45,7 +62,7 @@ export default function DeveloperSettings() {
     };
 
     fetchSettings();
-  }, []);
+  }, [status, session?.user?.role]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -66,62 +83,123 @@ export default function DeveloperSettings() {
     }
   };
 
+  const handleClearOverride = async (gateId: string) => {
+    setClearingGate(gateId);
+    setMessage(null);
+    try {
+      // Surgical $unset of just this gate — server strips the single key.
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clearGateId: gateId }),
+      });
+      if (!res.ok) throw new Error('Failed to clear override');
+      const next = { ...gateOverrides };
+      delete next[gateId];
+      setGateOverrides(next);
+      setMessage(`Override cleared for ${gateId} — returned to manual operation`);
+    } catch (err) {
+      setMessage('Failed to clear gate override');
+      console.error('Failed to clear gate override:', err);
+    } finally {
+      setClearingGate(null);
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-12">Loading settings...</div>;
   }
 
+  if (error) {
+    return <div className="text-center py-12 text-zinc-400">{error}</div>;
+  }
+
   return (
     <div className="space-y-8">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Feature Flags</h2>
+      <div className="bg-zinc-900/40 border border-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl text-zinc-100">
+        <h2 className="text-xl text-white font-bold mb-4">Feature Flags</h2>
         <div className="space-y-4">
           {Object.entries(featureFlags).map(([key, value]) => (
             <div key={key} className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-zinc-100">
                 {key}
               </label>
               <input
                 type="checkbox"
                 checked={value}
                 onChange={(e) => setFeatureFlags({ ...featureFlags, [key]: e.target.checked })}
-                className="h-4 w-4 text-emerald-500 focus:ring-emerald-500 border-gray-300 rounded"
+                className="h-4 w-4 text-emerald-500 focus:ring-emerald-500 border-zinc-800 rounded bg-zinc-950"
               />
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Match API Configuration</h2>
+      <div className="bg-zinc-900/40 border border-amber-800/30 backdrop-blur-md rounded-2xl p-6 shadow-xl text-zinc-100">
+        <h2 className="text-xl text-white font-bold mb-4">Active AI Gate Overrides</h2>
+        {Object.keys(gateOverrides).length === 0 ? (
+          <p className="text-sm text-zinc-500 font-mono">
+            No active AI overrides. All gates are under standard manual operation.
+          </p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {Object.entries(gateOverrides).map(([gateId, statusValue]) => (
+              <div
+                key={gateId}
+                className="flex items-center justify-between rounded-xl border border-amber-800/30 bg-amber-950/20 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-zinc-100">{gateId}</span>
+                  {statusValue === 'limited' && (
+                    <span className="inline-flex items-center rounded-md bg-amber-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-400 ring-1 ring-amber-500/40">
+                      AI RESTRICTED
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleClearOverride(gateId)}
+                  disabled={clearingGate === gateId}
+                  className="text-xs font-medium rounded-md border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+                >
+                  {clearingGate === gateId ? 'Clearing...' : 'Clear Override'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-zinc-900/40 border border-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl text-zinc-100">
+        <h2 className="text-xl text-white font-bold mb-4">Match API Configuration</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
+            <label className="block text-sm font-medium text-zinc-100">Provider</label>
             <select
               value={matchApi.provider}
               onChange={(e) => setMatchApi({ ...matchApi, provider: e.target.value as MatchApi["provider"] })}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
+              className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
             >
               <option value="football-data">football-data.org</option>
               <option value="api-football">api-football</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">API Key</label>
+            <label className="block text-sm font-medium text-zinc-100">API Key</label>
             <input
               type="password"
               value={matchApi.apiKey || ''}
               onChange={(e) => setMatchApi({ ...matchApi, apiKey: e.target.value || null })}
-              className="mt-1 focus:ring-emerald-500 focus:border-emerald-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
               placeholder="Enter API key"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cache TTL (seconds)</label>
+            <label className="block text-sm font-medium text-zinc-100">Cache TTL (seconds)</label>
             <input
               type="number"
               value={matchApi.cacheTTL}
               onChange={(e) => setMatchApi({ ...matchApi, cacheTTL: parseInt(e.target.value) || 300 })}
-              className="mt-1 focus:ring-emerald-500 focus:border-emerald-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
             />
           </div>
         </div>
@@ -136,6 +214,8 @@ export default function DeveloperSettings() {
           {saving ? 'Saving...' : 'Save Settings'}
         </button>
       </div>
+
+      <ScenarioSimulator />
 
       {message && (
         <div className={`text-center text-sm ${message.includes('success') ? 'text-emerald-500' : 'text-red-500'}`}>

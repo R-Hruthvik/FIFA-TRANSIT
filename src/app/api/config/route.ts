@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clientPromise } from "@/lib/db";
+import { clientPromise, GLOBAL_SETTINGS_ID } from "@/lib/db";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 
@@ -9,7 +9,7 @@ export async function GET() {
   try {
     const mongoClient = await clientPromise;
     const db = mongoClient.db(DB_NAME);
-    const settings = await db.collection("settings").findOne({ _id: "global" as any });
+    const settings = await db.collection("settings").findOne({ _id: GLOBAL_SETTINGS_ID });
 
     const defaultFlags = {
       enableRealMatchData: false,

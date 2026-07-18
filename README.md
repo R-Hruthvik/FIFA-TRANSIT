@@ -86,6 +86,12 @@ GOOGLE_CLIENT_SECRET=GOCSPX-xxx
 GEMINI_API_KEY=AQ.xxx
 NVIDIA_NIM_API_KEY=nvapi-xxx
 
+# City-transit grounding (Google Maps Routes API)
+GOOGLE_MAPS_API_KEY=xxx
+
+# Autonomous ops-agent cron auth (Bearer token for scheduler-triggered runs)
+CRON_SECRET=openssl-rand-base64-32
+
 # Match Data (pick one provider)
 FOOTBALL_DATA_API_KEY=xxx
 API_FOOTBALL_KEY=xxx

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Check, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,13 +20,20 @@ interface StaffRequest {
 }
 
 export default function StaffApprovalQueue() {
+  const { data: session, status } = useSession();
   const [requests, setRequests] = useState<StaffRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch pending staff requests
   const fetchRequests = async () => {
     try {
       const res = await fetch('/api/admin/users?staffStatus=pending');
+      if (res.status === 403 || res.status === 401) {
+        setError('Administrative clearance required to view this panel.');
+        setLoading(false);
+        return;
+      }
       if (!res.ok) throw new Error('Failed to fetch staff requests');
       const data = await res.json();
       setRequests(data);
@@ -63,14 +71,26 @@ export default function StaffApprovalQueue() {
   };
 
   useEffect(() => {
+    if (status !== 'authenticated' || session?.user?.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
     fetchRequests();
-  }, []);
+  }, [status, session?.user?.role]);
 
   if (loading) {
     return (
       <div className="text-center py-12">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
         <p className="text-gray-500 dark:text-gray-400">Loading staff requests...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500 dark:text-gray-400">{error}</p>
       </div>
     );
   }

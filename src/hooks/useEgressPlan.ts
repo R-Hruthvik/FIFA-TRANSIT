@@ -189,6 +189,14 @@ export function useEgressPlan(
         signal: controller.signal,
       });
 
+      if (res.status === 403) {
+        console.warn("Egress plan access restricted (403). Displaying steward fallback guidelines safely.");
+        const cached = await getCachedPlan();
+        setPlan(cached ? { ...cached, stale: true } : null);
+        setIsLoading(false);
+        return;
+      }
+
       if (!res.ok) {
         console.warn(`Plan fetch returned non-ok status: ${res.status}`);
         throw new Error(`Plan fetch returned status: ${res.status}`);

@@ -10,9 +10,9 @@ export async function GET() {
   } catch (error) {
     console.error("Telemetry API error:", error);
     return NextResponse.json({
-      nearestGate: { label: "Unknown", status: "congested" },
-      nearestHub: { label: "Unknown", waitTime: 0 },
-      weatherAdvisory: { label: "Unknown", condition: "rain" }
+      nearestGate: { label: "Awaiting Live Stream Scan...", status: "closed" },
+      nearestHub: { label: "Establishing connection...", waitTime: 0 },
+      weatherAdvisory: { label: "Fetching operational status...", condition: "clear" }
     });
   }
 }

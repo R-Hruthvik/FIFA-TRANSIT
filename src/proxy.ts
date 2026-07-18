@@ -18,6 +18,7 @@ export async function proxy(request: NextRequest) {
 
   const isAuthenticated = !!token;
   const userRole = token?.role as "fan" | "staff" | "admin" | null;
+  const isApiRoute = pathname.startsWith("/api/");
 
   // Protect admin routes
   if (
@@ -25,6 +26,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/api/admin")
   ) {
     if (!isAuthenticated) {
+      if (isApiRoute) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+      }
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
@@ -42,17 +46,36 @@ export async function proxy(request: NextRequest) {
   if (
     (pathname.startsWith("/staff") && pathname !== "/staff/register") ||
     pathname.startsWith("/api/track/event") ||
-    pathname.startsWith("/api/track/plan") ||
     pathname.startsWith("/api/track/stream") ||
     pathname.startsWith("/api/fan/queries/stream") ||
     pathname.startsWith("/api/chat")
   ) {
     if (!isAuthenticated) {
+      if (isApiRoute) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+      }
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
     if (userRole !== "staff" && userRole !== "admin") {
+      if (isApiRoute) {
+        return NextResponse.json({ error: "Staff access required" }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Protect fan egress plan calculation endpoints
+  if (pathname.startsWith("/api/track/plan")) {
+    if (!isAuthenticated) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    // Fans, staff, and admins are all authorized to access plan logic definitions
+    if (userRole !== "fan" && userRole !== "staff" && userRole !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();

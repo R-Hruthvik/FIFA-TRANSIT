@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface User {
   id: string;
@@ -17,14 +18,25 @@ interface UserTableProps {
 }
 
 export default function UserTable({ searchTerm }: UserTableProps) {
+  const { data: session, status } = useSession();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (status !== 'authenticated' || session?.user?.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
+
     const fetchUsers = async () => {
       try {
         const res = await fetch('/api/admin/users');
+        if (res.status === 403 || res.status === 401) {
+          setError('Administrative clearance required to view this panel.');
+          setLoading(false);
+          return;
+        }
         if (!res.ok) throw new Error('Failed to fetch users');
         const data = await res.json();
         setUsers(data);
@@ -37,7 +49,7 @@ export default function UserTable({ searchTerm }: UserTableProps) {
     };
 
     fetchUsers();
-  }, []);
+  }, [status, session?.user?.role]);
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

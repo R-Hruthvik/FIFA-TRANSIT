@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Match } from "@/lib/match-api";
 import { useDemoMode } from "@/components/DemoController";
 
 export function useMatchData() {
-  const { isDemoMode } = useDemoMode() || { isDemoMode: false };
+  const { isDemoMode, demoElapsed, getMatchState } = useDemoMode() || { isDemoMode: false };
   const [matches, setMatches] = useState<Match[]>([]);
   const [liveMatch, setLiveMatch] = useState<Match | null>(null);
   const [upcomingMatches, setUpcomingMatches] = useState<Match[]>([]);
@@ -20,10 +20,17 @@ export function useMatchData() {
     setError(null);
 
     if (isDemoMode) {
-      // Demo mode drives telemetry/match from the live simulation engine,
-      // not from the real API. Don't block on a fetch.
       setIsMock(true);
-      setLiveMatch(null);
+      setLiveMatch({
+        id: "demo-match-live",
+        homeTeam: "United States",
+        awayTeam: "England",
+        homeScore: 2,
+        awayScore: 1,
+        status: "live",
+        utcDate: new Date().toISOString(),
+        minute: 74
+      });
       setUpcomingMatches([]);
       setLoading(false);
       return;
@@ -99,9 +106,26 @@ export function useMatchData() {
     };
   }, [isDemoMode, fetchMatches]);
 
+  const demoMatch = useMemo<Match | null>(() => {
+    if (isDemoMode && getMatchState) {
+      const simState = getMatchState();
+      return {
+        id: "demo-match",
+        homeTeam: "United States",
+        awayTeam: "England",
+        homeScore: simState.homeScore,
+        awayScore: simState.awayScore,
+        status: simState.phase === "full-time" ? "finished" : (simState.phase === "pre-match" ? "scheduled" : "live"),
+        utcDate: new Date().toISOString(),
+        minute: simState.minute,
+      };
+    }
+    return null;
+  }, [isDemoMode, demoElapsed, getMatchState]);
+
   return {
     matches,
-    liveMatch,
+    liveMatch: isDemoMode ? demoMatch : liveMatch,
     upcomingMatches,
     loading,
     error,

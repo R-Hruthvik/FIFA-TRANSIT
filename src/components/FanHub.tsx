@@ -8,6 +8,7 @@ import { LiveStatusCards } from "./LiveStatusCards";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EgressPlanCard } from "./EgressPlanCard";
+import { ProactiveAssistantPanel } from "./ProactiveAssistantPanel";
 import { ConnectionGuard } from "@/components/ConnectionGuard";
 import { useMatchData } from "@/hooks/useMatchData";
 import { MatchScoreboard } from "./match/MatchScoreboard";
@@ -18,10 +19,57 @@ import { useCrowdDetection } from "@/hooks/useCrowdDetection";
 
 const TELEMETRY_POLL_INTERVAL = 30000; // 30 seconds, synced with match polling
 
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function FanHub() {
   const { liveMatch, loading, isMock, isDemoMode, error: matchError } = useMatchData();
   const demoContext = useDemoMode();
   const { consented, status, currentGate, nearbyDistanceM, nearbyCount, toggleConsent } = useCrowdDetection();
+
+  const reportInputRef = useRef<HTMLInputElement | null>(null);
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportConfirmed, setReportConfirmed] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+
+  const handleIncidentUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    // Reset input so the same file can be re-selected later.
+    if (reportInputRef.current) reportInputRef.current.value = "";
+    if (!file) return;
+
+    setReportError(null);
+    setReportConfirmed(false);
+    setReportSubmitting(true);
+
+    try {
+      const imageBase64 = await fileToBase64(file);
+      const res = await fetch("/api/fan/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageBase64,
+          approximateLocation: currentGate ?? "unknown",
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setReportConfirmed(true);
+      setTimeout(() => setReportConfirmed(false), 6000);
+    } catch (err) {
+      console.error("Incident report failed:", err);
+      setReportError("Report failed to send. Please try again.");
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
 
   const [telemetry, setTelemetry] = useState<StadiumTelemetry | null>(null);
   const [telemetryLoading, setTelemetryLoading] = useState(false);
@@ -107,6 +155,63 @@ export default function FanHub() {
   return (
     <ConnectionGuard>
       <div className="flex-1 w-full flex flex-col gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="p-5 bg-gradient-to-br from-emerald-950/30 to-zinc-900/40 border border-emerald-800/30">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic">
+              Report an Incident
+            </h2>
+            <Badge variant="secondary" className="text-[9px] font-mono tracking-wider">
+              AI SAFETY AGENT
+            </Badge>
+          </div>
+          <p className="text-[10px] text-zinc-500 font-mono mb-4">
+            Snap a photo of a hazard, spill, or crowd issue. Our AI Safety Agent
+            classifies it and dispatches roaming field teams instantly.
+          </p>
+
+          <input
+            ref={reportInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleIncidentUpload}
+            className="hidden"
+          />
+          <button
+            type="button"
+            disabled={reportSubmitting}
+            onClick={() => reportInputRef.current?.click()}
+            className="w-full py-3 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase italic border border-emerald-600/40 bg-emerald-950/30 text-emerald-300 hover:bg-emerald-900/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {reportSubmitting ? "Analyzing Report…" : "Snap or Upload Photo"}
+          </button>
+
+          {reportConfirmed && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-950/40"
+            >
+              <p className="text-[10px] font-black tracking-wider text-emerald-300 uppercase italic text-center">
+                AI Safety Agent has processed your report and alerted field personnel.
+              </p>
+            </motion.div>
+          )}
+
+          {reportError && (
+            <div className="mt-3 p-3 rounded-xl border border-red-900/40 bg-red-950/20">
+              <p className="text-[10px] font-mono text-red-400 text-center">
+                {reportError}
+              </p>
+            </div>
+          )}
+        </Card>
+      </motion.div>
+
       {liveMatch && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -115,6 +220,20 @@ export default function FanHub() {
           <MatchScoreboard match={liveMatch} isMock={isMock} matchError={matchError} />
         </motion.div>
       )}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.03 }}
+      >
+        <ProactiveAssistantPanel
+          language={isDemoMode ? "en" : "en"}
+          trackingEnabled={consented}
+          location={currentGate ?? undefined}
+          transitWaitTime={activeTelemetry?.nearestHub?.waitTime ?? 0}
+          weatherCondition={activeTelemetry?.weatherAdvisory?.condition ?? "clear"}
+        />
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -128,8 +247,8 @@ export default function FanHub() {
                 Your Matchday Status
               </h2>
               {!isDemoMode && isMock && (
-                <span className="text-[9px] font-mono text-amber-500/80 uppercase tracking-wider">
-                  Offline Mode
+                <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-wider">
+                  Demo Match Data
                 </span>
               )}
             </div>
@@ -217,7 +336,17 @@ export default function FanHub() {
             </Badge>
           </div>
           <div className="flex-1 overflow-hidden">
-            <AICopilotChat />
+            <AICopilotChat
+              matchStatus={liveMatch?.status}
+              matchScore={liveMatch ? {
+                homeScore: liveMatch.homeScore,
+                awayScore: liveMatch.awayScore,
+                homeTeam: liveMatch.homeTeam,
+                awayTeam: liveMatch.awayTeam,
+              } : null}
+              matchPersona="miri"
+              gateDensity={(activeTelemetry?.gateMetrics ?? null) as Record<string, string> | null}
+            />
           </div>
         </Card>
       </motion.div>

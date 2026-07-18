@@ -16,7 +16,10 @@
  */
 
 import type { GateCrowd, GateSummary, EgressPlan } from "@/types/position";
-import { GATES } from "@/lib/venue-config";
+import { PositionManager, parseUserPosition, gateToPosition, distanceBetween } from "@/lib/position-manager";
+
+// Re-export for backwards compatibility with existing callers (track/plan route).
+export { parseUserPosition } from "@/lib/position-manager";
 
 // ── Configuration ──────────────────────────────────────────────────────
 
@@ -30,79 +33,15 @@ const WALK_SPEED_M_PER_MIN = 80;
 /** Stadium dimensions (approximate) for distance calculations */
 const STADIUM_RADIUS_M = 250;
 
-/** Gate positions derived from venue-config (stadium-center-relative meters). */
-const GATE_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
-  GATES.map((g) => [g.id, { x: g.x, y: g.y }]),
-);
+// ── Distance calculation (delegated to PositionManager) ────────────────
 
-// ── Distance calculation ───────────────────────────────────────────────
-
-interface Position2D {
-  x: number; // meters from stadium center
-  y: number;
-}
+type Position2D = ReturnType<typeof PositionManager.parse>;
 
 /**
  * Calculate distance between two points in meters.
  */
 function distance(a: Position2D, b: Position2D): number {
-  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-}
-
-/**
- * Convert gate name to 2D position.
- */
-function gateToPosition(gateId: string): Position2D {
-  const pos = GATE_POSITIONS[gateId];
-  if (!pos) {
-    // Default to center if unknown
-    return { x: 0, y: 0 };
-  }
-  return { x: pos.x, y: pos.y };
-}
-
-/**
- * Convert a user's last known position (from events) to a 2D coordinate.
- * In production this would use actual GPS/BLE-derived coordinates.
- * For now we accept a simple {sector, subsection} or polar coordinate.
- */
-export function parseUserPosition(input: unknown): Position2D {
-  if (!input || typeof input !== "object") {
-    return { x: 0, y: 0 }; // Unknown → center (worst case, will pick nearest gate)
-  }
-
-  const pos = input as Record<string, unknown>;
-
-  // Accept polar coordinates (angle + radius)
-  if (typeof pos.angle === "number" && typeof pos.radius === "number") {
-    return {
-      x: Math.cos(pos.angle) * pos.radius,
-      y: Math.sin(pos.angle) * pos.radius,
-    };
-  }
-
-  // Accept {sector, subsection} — map to approximate position
-  if (typeof pos.sector === "string" && typeof pos.subsection === "number") {
-    const sectorAngles: Record<string, number> = {
-      NE: Math.PI / 4,
-      SE: -Math.PI / 4,
-      SW: -3 * Math.PI / 4,
-      NW: 3 * Math.PI / 4,
-    };
-    const angle = sectorAngles[pos.sector] ?? 0;
-    const radius = 50 + pos.subsection * 50;
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius,
-    };
-  }
-
-  // Accept {x, y} directly
-  if (typeof pos.x === "number" && typeof pos.y === "number") {
-    return { x: pos.x, y: pos.y };
-  }
-
-  return { x: 0, y: 0 };
+  return distanceBetween(a, b);
 }
 
 // ── Egress plan generation ─────────────────────────────────────────────
@@ -216,8 +155,9 @@ export function generateEgressPlan(input: EgressPlanInput): EgressPlanResult {
   const growthBuffer = best.capacityPct > CAPACITY_WARNING_PCT ? 2 : 0;
   const leaveAt = now + growthBuffer * 60_000; // leave immediately + buffer
 
-  // 5. Transit ETA (mock — in production from hub data)
-  const transitEtaMinutes = 8 + Math.floor(Math.random() * 5);
+  // 5. Transit ETA — no real hub feed wired yet, so leave as 0 (unavailable)
+  // rather than fabricating a value. The instruction string treats 0 as "unavailable".
+  const transitEtaMinutes = 0;
 
   // 6. Generate instruction
   const instruction = egressInstruction({
@@ -268,8 +208,9 @@ function egressInstruction(opts: InstructionOpts): string {
         .filter((g) => g.gateId !== o.bestGate.gateId)
         .map((g) => `${g.gateId} (${g.capacityPct}%)`)
         .join(", ");
-      const avoidText = avoid ? ` Avoid: ${avoid}.` : "";
-      return `Leave now via ${o.gateId} — ${o.etaMinutes} min walk (${o.capacityPct}% capacity). Transit ETA: ${o.transitEtaMinutes} min.${avoidText}`;
+       const avoidText = avoid ? ` Avoid: ${avoid}.` : "";
+       const transitText = o.transitEtaMinutes > 0 ? ` Transit ETA: ${o.transitEtaMinutes} min.` : " Transit ETA: calculating…";
+       return `Leave now via ${o.gateId} — ${o.etaMinutes} min walk (${o.capacityPct}% capacity).${transitText}${avoidText}`;
     },
     es: (o) => `Salga ahora por ${o.gateId} — ${o.etaMinutes} min a pie (${o.capacityPct}% de capacidad). Tiempo de tránsito: ${o.transitEtaMinutes} min.`,
     fr: (o) => `Partez maintenant par ${o.gateId} — ${o.etaMinutes} min à pied (${o.capacityPct}% de capacité). Temps de transit: ${o.transitEtaMinutes} min.`,

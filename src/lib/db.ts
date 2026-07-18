@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import type { StadiumTelemetry } from '@/types/telemetry';
+import { logDiagnosticError } from '@/lib/logger';
 
 const uri = process.env.MONGODB_URI;
 if (!uri) throw new Error('Please add your Mongo URI to .env');
@@ -31,11 +32,17 @@ export const USERS_COLL = process.env.MONGODB_USERS_COLLECTION || 'users';
 
 export { clientPromise };
 
-const DEFAULT_TELEMETRY: StadiumTelemetry = {
-  nearestGate: { label: "NO DATA", status: "open" as const },
-  nearestHub: { label: "NO DATA", waitTime: 0 },
-  weatherAdvisory: { label: "NO DATA", condition: "clear" as const },
-};
+/**
+ * Canonical `_id` of the singleton global settings document in the
+ * "settings" collection. Centralized so every reader/writer targets the
+ * same sentinel without ad-hoc `"global" as any` casts.
+ *
+ * The collection uses a string sentinel rather than an ObjectId; the cast
+ * here is the single sanctioned place for it so call sites stay clean.
+ */
+export const GLOBAL_SETTINGS_ID = "global" as unknown as import("mongodb").ObjectId;
+
+const TELEMETRY_NOT_FOUND = new Error("No real telemetry entries exist in the collection");
 
 export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
 
@@ -48,8 +55,14 @@ export async function getUserCollection() {
 export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
   try {
     // Timeout after 500ms to prevent hanging
-    const timeoutPromise = new Promise<StadiumTelemetry>((resolve) => {
-      setTimeout(() => resolve(DEFAULT_TELEMETRY), 500);
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        logDiagnosticError(
+          "TELEMETRY_TIMEOUT_TRIGGERED",
+          new Error("Database query execution window exceeded 500ms threshold"),
+        );
+        reject(new Error("Telemetry fetch timed out"));
+      }, 500);
     });
 
     const telemetryPromise = (async (): Promise<StadiumTelemetry> => {
@@ -57,14 +70,17 @@ export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
       const db = client.db(DB_NAME);
       const telemetry = db.collection(TELEMETRY_COLL);
       const data = await telemetry.findOne({}, { sort: { _id: -1 } });
-      return (data as unknown as StadiumTelemetry) || DEFAULT_TELEMETRY;
+      if (!data) throw TELEMETRY_NOT_FOUND;
+      return data as unknown as StadiumTelemetry;
     })();
 
     // Race: whoever resolves first wins
     return await Promise.race([telemetryPromise, timeoutPromise]);
   } catch (error) {
-    console.error("Unexpected error in getLiveTelemetry:", error);
-    return DEFAULT_TELEMETRY;
+    await logDiagnosticError("TELEMETRY_ENGINE_DB", error, {
+      isolation: "getLiveTelemetry catch block triggered",
+    });
+    throw TELEMETRY_NOT_FOUND;
   }
 }
 

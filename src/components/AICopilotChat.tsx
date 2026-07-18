@@ -1,14 +1,44 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { PaperPlaneRight, Sparkle, User, Robot } from "@phosphor-icons/react";
+import { PaperPlaneRight, User, Robot } from "@phosphor-icons/react";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useDemoMode } from "./DemoController";
+import { QueryBubbles } from "./QueryBubbles";
 
-export function AICopilotChat() {
-  const { messages, isLoading, sendMessage } = useChatStream();
+interface ScoreData {
+  homeScore: number | null;
+  awayScore: number | null;
+  homeTeam?: string | null;
+  awayTeam?: string | null;
+}
+
+interface GateDensity {
+  [gate: string]: string;
+}
+
+export function AICopilotChat({
+  matchStatus,
+  matchScore,
+  matchPersona,
+  gateDensity,
+}: {
+  matchStatus?: string;
+  matchScore?: ScoreData | null;
+  matchPersona?: "miri" | "torque";
+  gateDensity?: GateDensity | null;
+}) {
+  const { messages, isLoading, sendMessage } = useChatStream(
+    matchScore || gateDensity
+      ? {
+          persona: matchPersona ?? "miri",
+          matchData: matchScore ?? null,
+          gateDensity: gateDensity ?? null,
+        }
+      : undefined,
+  );
   const { isOnline } = useOnlineStatus();
   const demoContext = useDemoMode();
   const isDemoMode = demoContext?.isDemoMode ?? false;
@@ -16,6 +46,14 @@ export function AICopilotChat() {
   const [inputValue, setInputValue] = useState("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const hasMounted = useRef(false);
+
+  const handleSelectBubble = useCallback((query: string) => {
+    if (!isLoading && (isOnline || isDemoMode)) {
+      setInputValue(query);
+      // Defer submission so state settles
+      setTimeout(() => sendMessage(query), 0);
+    }
+  }, [isLoading, isOnline, isDemoMode, sendMessage]);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -38,12 +76,6 @@ export function AICopilotChat() {
     setInputValue("");
     await sendMessage(content);
   };
-
-  const quickQueries = [
-    "Security status",
-    "Gate capacity",
-    "Transit alerts",
-  ];
 
   const canChat = isOnline || isDemoMode;
 
@@ -92,21 +124,7 @@ export function AICopilotChat() {
 
       {/* Input Area */}
       <div className="p-6 pt-0 space-y-4">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {quickQueries.map((q) => (
-            <button
-              key={q}
-              onClick={() => {
-                if (canChat) setInputValue(q);
-              }}
-              disabled={!canChat}
-              className="group flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-widest bg-zinc-900/40 border border-zinc-800 hover:border-emerald-500/50 text-zinc-400 hover:text-white transition-all rounded-xl whitespace-nowrap disabled:opacity-30 disabled:pointer-events-none"
-            >
-              <Sparkle size={12} weight="duotone" className="group-hover:text-emerald-400" />
-              {q.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <QueryBubbles matchStatus={matchStatus} onSelectBubble={handleSelectBubble} />
 
         <form onSubmit={handleSubmit} className="relative group">
           <input

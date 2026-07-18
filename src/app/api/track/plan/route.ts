@@ -21,6 +21,7 @@ import { NextResponse } from "next/server";
 import { aggregateCrowd } from "@/lib/crowd-aggregator";
 import { generateEgressPlan, parseUserPosition } from "@/lib/egress-planner";
 import { enhancePlanWithAI } from "@/lib/egress-ai";
+import { computeAgenticTransitRoute } from "@/lib/maps-agent";
 import type { EgressPlan } from "@/types/position";
 
 // ── Server-side version counter ────────────────────────────────────────
@@ -90,7 +91,21 @@ export async function GET(request: Request) {
     // If AI fails, the structured fallback instruction is already in place.
     if (!plan.deferToStewards) {
       try {
-        plan = await enhancePlanWithAI(plan, gateCrowds, userPosition);
+        // 4a. Traffic-aware maps agent: override the instruction with
+        // real-world transit + gate-congestion grounded guidance.
+        const fanOriginCoordinates = positionParam || "";
+        const agenticGuidance = await computeAgenticTransitRoute(
+          fanOriginCoordinates,
+          `${plan.gateId} transit hub`,
+          gateCrowds,
+        );
+        if (agenticGuidance !== null) {
+          // Live GPS route grounding succeeded — override with traffic-aware guidance.
+          plan = { ...plan, instruction: agenticGuidance };
+        } else {
+          // Guard returned null (no valid lat/lng) — proceed to standard local enhancement.
+          plan = await enhancePlanWithAI(plan, gateCrowds, userPosition);
+        }
       } catch (err) {
         console.error("AI enhancement failed, using fallback:", err);
         // Keep the template-based instruction from generateEgressPlan

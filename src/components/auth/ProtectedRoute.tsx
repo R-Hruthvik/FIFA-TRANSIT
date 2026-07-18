@@ -21,6 +21,8 @@ export function ProtectedRoute({
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  const serializedRoles = allowedRoles.join(",");
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
@@ -30,7 +32,7 @@ export function ProtectedRoute({
         router.push("/");
       }
     }
-  }, [session, status, router, allowedRoles]);
+  }, [session, status, router, serializedRoles]);
 
   if (status === "loading") {
     return (

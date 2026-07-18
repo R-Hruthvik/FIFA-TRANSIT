@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, createContext, useContext } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, createContext, useContext } from "react";
 import { GateMetrics, StadiumTelemetry } from "@/types/telemetry";
 import {
   LiveDemoEngine,
@@ -15,7 +15,7 @@ interface DemoContextValue {
   isDemoMode: boolean;
   toggleDemo: () => void;
   demoElapsed: number;
-  getMetrics: () => GateMetrics;
+  getMetrics: () => GateMetrics | null;
   getTelemetry: () => StadiumTelemetry | null;
   getDemoAiResponse: (input: string) => string;
   injectDemoQuery: () => string | null;
@@ -66,6 +66,18 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isDemoMode]);
 
+  // Expose the live engine globally so the Admin Scenario Simulator can
+  // push Gen AI-generated drills into the running simulation.
+  useEffect(() => {
+    const w = window as unknown as {
+      __liveDemoEngine?: LiveDemoEngine | null;
+    };
+    w.__liveDemoEngine = engineRef.current;
+    return () => {
+      w.__liveDemoEngine = null;
+    };
+  }, [isDemoMode]);
+
   // Update state from engine every second
   useEffect(() => {
     if (!isDemoMode || !engineRef.current) return;
@@ -84,11 +96,8 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(updateInterval);
   }, [isDemoMode]);
 
-  const getMetrics = useCallback((): GateMetrics => {
-    if (!isDemoMode || !engineRef.current) return {
-      gate1: "low", gate2: "low", gate3: "low", gate4: "low",
-      gate5: "low", gate6: "low", gate7: "low", gate8: "low"
-    };
+  const getMetrics = useCallback((): GateMetrics | null => {
+    if (!isDemoMode || !engineRef.current) return null;
     return engineRef.current.getMetrics();
   }, [isDemoMode, demoElapsed]);
 
@@ -173,24 +182,42 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     if (engineRef.current) engineRef.current.setRealUserCount(count);
   }, []);
 
+  const contextValue = useMemo(() => ({
+    isDemoMode,
+    toggleDemo,
+    demoElapsed,
+    getMetrics,
+    getTelemetry,
+    getDemoAiResponse: getDemoAiResponseFn,
+    injectDemoQuery,
+    getCrowdPositions: getCrowdPositionsFn,
+    getCrowdCount: getCrowdCountFn,
+    getGateEvents: getGateEventsFn,
+    getRecentGateEvents: getRecentGateEventsFn,
+    getAdminLogs: getAdminLogsFn,
+    getRecentAdminLogs: getRecentAdminLogsFn,
+    getMatchState: getMatchStateFn,
+    setRealUserCount: setRealUserCountFn,
+  }), [
+    isDemoMode,
+    toggleDemo,
+    demoElapsed,
+    getMetrics,
+    getTelemetry,
+    getDemoAiResponseFn,
+    injectDemoQuery,
+    getCrowdPositionsFn,
+    getCrowdCountFn,
+    getGateEventsFn,
+    getRecentGateEventsFn,
+    getAdminLogsFn,
+    getRecentAdminLogsFn,
+    getMatchStateFn,
+    setRealUserCountFn,
+  ]);
+
   return (
-    <DemoContext.Provider value={{
-      isDemoMode,
-      toggleDemo,
-      demoElapsed,
-      getMetrics,
-      getTelemetry,
-      getDemoAiResponse: getDemoAiResponseFn,
-      injectDemoQuery,
-      getCrowdPositions: getCrowdPositionsFn,
-      getCrowdCount: getCrowdCountFn,
-      getGateEvents: getGateEventsFn,
-      getRecentGateEvents: getRecentGateEventsFn,
-      getAdminLogs: getAdminLogsFn,
-      getRecentAdminLogs: getRecentAdminLogsFn,
-      getMatchState: getMatchStateFn,
-      setRealUserCount: setRealUserCountFn,
-    }}>
+    <DemoContext.Provider value={contextValue}>
       {children}
     </DemoContext.Provider>
   );

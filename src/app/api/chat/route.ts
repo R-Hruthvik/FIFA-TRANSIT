@@ -1,7 +1,11 @@
 /**
  * NVIDIA NIM + Next.js 16 Serverless Chat Route
- * Primary: meta/llama-3.1-70b-instruct (NVIDIA NIM)
+ * Primary: meta/llama-3.1-8b-instruct (NVIDIA NIM)
  * Fallback: Gemini 2.0 Flash
+ *
+ * Dual-persona routing:
+ *   fan  → MIRI — high-energy match-day friend
+ *   staff/admin → TORQUE — witty operational co-pilot
  */
 
 import { getLiveTelemetry, logFanQuery, clientPromise, type StadiumState } from "@/lib/db";
@@ -15,7 +19,9 @@ interface Message {
   content: string;
 }
 
-// --------------- System Prompt ---------------
+type PersonaRole = "fan" | "staff" | "admin";
+
+// --------------- Helpers ---------------
 
 async function getGateMetrics() {
   try {
@@ -62,38 +68,59 @@ async function getGateMetrics() {
   }
 }
 
-function buildSystemPrompt(state: StadiumState, metrics: Record<string, string> | null): string {
-  const gateCapacityList = metrics
-    ? Object.entries(metrics)
-        .map(([gate, status]) => `- ${gate}: ${status} congestion`)
-        .join("\n")
-    : "- Gate congestion details: Not available";
+function buildMiriPrompt(state: StadiumState, metrics: Record<string, string> | null): string {
+  const gateDetail = metrics
+    ? Object.entries(metrics).map(([g, s]) => `${g}: ${s}`).join(", ")
+    : "N/A";
 
   return [
-    "You are a multilingual transit assistant for the FIFA World Cup.",
-    "STRICT: Keep answers under 3 sentences. No preamble.",
-    "Live Telemetry:",
-    `- Nearest Gate: ${state.nearestGate.label} (${state.nearestGate.status})`,
-    `- Transit Hub: ${state.nearestHub.label} (${state.nearestHub.waitTime} min wait)`,
-    `- Weather: ${state.weatherAdvisory.label} (${state.weatherAdvisory.condition})`,
-    "Gate Capacities / Congestion levels:",
-    gateCapacityList,
-    "Use this data for specific guidance. Answer questions about gate capacities and recommendations accurately using these status levels.",
+    "You are MIRI — the user's ultimate match-day friend. High-energy, expressive, and warm.",
+    "Use informal phrasing, celebrate goals with excitement, and phrase transit guidance as friendly advice.",
+    `Right now: ${state.nearestGate.label} is ${state.nearestGate.status}, ${state.nearestHub.label} wait is ${state.nearestHub.waitTime} min, weather is ${state.weatherAdvisory.condition}. Gates: ${gateDetail}.`,
+    "Ground every answer strictly in this telemetry. Max 3 sentences.",
   ].join("\n");
+}
+
+function buildTorquePrompt(state: StadiumState, metrics: Record<string, string> | null): string {
+  const gateDetail = metrics
+    ? Object.entries(metrics).map(([g, s]) => `${g}: ${s}`).join(", ")
+    : "N/A";
+
+  return [
+    "You are TORQUE — the witty operational co-pilot. An encouraging shift partner who uses light workspace humor.",
+    "Simplify technical data into actionable ops directives. Proactively draft operational recommendations.",
+    `Current feed: ${state.nearestGate.label} (${state.nearestGate.status}), ${state.nearestHub.label} wait ${state.nearestHub.waitTime} min, weather ${state.weatherAdvisory.condition}. Gates: ${gateDetail}.`,
+    "Ground every answer strictly in this telemetry. Max 3 sentences.",
+  ].join("\n");
+}
+
+function buildSystemPrompt(state: StadiumState, metrics: Record<string, string> | null, role: PersonaRole): string {
+  return role === "fan" ? buildMiriPrompt(state, metrics) : buildTorquePrompt(state, metrics);
 }
 
 // --------------- Route Handler ---------------
 
 export async function POST(req: Request): Promise<Response> {
-  const { messages }: { messages: Message[] } = await req.json();
-  const stadiumState = await getLiveTelemetry();
+  const { messages, role: rawRole }: { messages: Message[]; role?: string } = await req.json();
+  const role: PersonaRole = rawRole === "staff" || rawRole === "admin" ? rawRole : "fan";
+
+  let stadiumState: StadiumState;
+  try {
+    stadiumState = await getLiveTelemetry();
+  } catch {
+    stadiumState = {
+      nearestGate: { label: "Unavailable", status: "open" },
+      nearestHub: { label: "Unavailable", waitTime: 0 },
+      weatherAdvisory: { label: "Unavailable", condition: "clear" },
+    };
+  }
   const metrics = await getGateMetrics();
 
   // Background: log query
   const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
   if (lastUserMsg) logFanQuery(lastUserMsg.content);
 
-  const systemPrompt = buildSystemPrompt(stadiumState, metrics);
+  const systemPrompt = buildSystemPrompt(stadiumState, metrics, role);
   const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
   const geminiKey = process.env.GEMINI_API_KEY;
 
@@ -121,7 +148,12 @@ export async function POST(req: Request): Promise<Response> {
     console.warn("NVIDIA NIM Failed, falling back to Gemini", error);
 
     // 2. Gemini Execution (Fallback)
-    if (!geminiKey) return new Response("AI Providers Unavailable", { status: 503 });
+    if (!geminiKey) {
+      const localBriefing = `[StadiumFlow Assistant]: Analyzing active telemetry. Entry point ${stadiumState.nearestGate.label} is currently ${stadiumState.nearestGate.status}. The transit loop wait time is ${stadiumState.nearestHub.waitTime} minutes. Weather advisory status: ${stadiumState.weatherAdvisory.label}. Ready for your instruction.`;
+      return new Response(localBriefing, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
 
     const geminiContents = messages.map((m) => ({
       role: m.role === "assistant" ? "model" : m.role,

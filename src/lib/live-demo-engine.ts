@@ -530,6 +530,82 @@ export class LiveDemoEngine {
     });
   }
 
+  /**
+   * Load a Gen AI-generated scenario (from /api/admin/scenario) into the
+   * live simulation. Applies the first snapshot immediately and schedules
+   * subsequent snapshots across the scenario's duration.
+   */
+  loadScenario(scenario: {
+    title?: string;
+    snapshots: Array<{
+      t: number;
+      gateDensities: Record<string, number>;
+      alerts?: string[];
+      fanQueries?: string[];
+      thermal?: { hotspotGate: string; intensity: number };
+    }>;
+    broadcastMessage?: string;
+  }) {
+    if (!scenario?.snapshots?.length) return;
+
+    this.log("info", "system", `Scenario loaded: ${scenario.title ?? "Custom"}`);
+    if (scenario.broadcastMessage) {
+      this.log("info", "system", `Broadcast: ${scenario.broadcastMessage}`);
+    }
+
+    // Apply initial snapshot now, schedule the rest relative to current time.
+    const now = Date.now();
+    scenario.snapshots.forEach((snap, idx) => {
+      const apply = () => {
+        for (const [gate, density] of Object.entries(snap.gateDensities)) {
+          this.gateDensities[gate] = Math.max(0, Math.min(1, density));
+        }
+        (snap.alerts ?? []).forEach((a) => this.spawnGateAlert("gate-unknown", a));
+        this.notify();
+      };
+
+      if (idx === 0) {
+        apply();
+      } else {
+        const delayMs = snap.t * 1000;
+        setTimeout(apply, delayMs);
+      }
+    });
+
+    this.notify();
+  }
+
+  /**
+   * Apply an AI-issued gate override in the simulation (demo mode).
+   * Closes/limits a gate by pinning its density to a congested floor, or
+   * reopens it by resetting toward a nominal baseline.
+   */
+  applyGateOverride(gate: string, status: "OPEN" | "CLOSED" | "LIMITED") {
+    if (status === "CLOSED" || status === "LIMITED") {
+      this.gateDensities[gate] = status === "CLOSED" ? 0.95 : 0.8;
+    } else {
+      this.gateDensities[gate] = Math.min(0.4, this.gateDensities[gate] || 0.2);
+    }
+    this.log(
+      status === "OPEN" ? "info" : "warning",
+      "gate",
+      `AI override: ${gate} set to ${status}`,
+    );
+    this.notify();
+  }
+
+  /**
+   * Apply an AI-issued steward dispatch in the simulation (demo mode).
+   * Logged as an operational action and lightly relieves the target area.
+   */
+  applyStewardDispatch(location: string, count: number) {
+    this.log("info", "system", `AI dispatch: ${count} stewards → ${location}`);
+    if (this.gateDensities[location] !== undefined) {
+      this.gateDensities[location] = Math.max(0.1, this.gateDensities[location] - count * 0.02);
+    }
+    this.notify();
+  }
+
   private log(level: "info" | "warning" | "alert", category: "crowd" | "gate" | "system", message: string) {
     const entry: AdminLogEntry = {
       timestamp: Date.now(),

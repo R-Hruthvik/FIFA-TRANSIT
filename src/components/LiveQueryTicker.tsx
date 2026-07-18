@@ -75,6 +75,17 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
           }
         } catch {}
       }, 5000);
+
+      setTimeout(() => {
+        if (mounted && connectionTypeRef.current === "polling") {
+          if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+          sseSettled = false;
+          startSSE();
+        }
+      }, 30000);
     };
 
     const startSSE = () => {

@@ -1,5 +1,6 @@
-import { clientPromise } from "@/lib/db";
-import { fetchLiveMatches, Match, MOCK_MATCHES, MatchResponse } from "./match-api";
+import { clientPromise, GLOBAL_SETTINGS_ID } from "@/lib/db";
+import { fetchLiveMatches, Match, MatchResponse } from "./match-api";
+import { logDiagnosticError } from "@/lib/logger";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const CACHE_COLL = "match_cache";
@@ -27,7 +28,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
     const db = mongoClient.db(DB_NAME);
 
     // 1. Fetch cache settings (TTL)
-    const settings = await db.collection("settings").findOne({ _id: "global" as any });
+    const settings = await db.collection("settings").findOne({ _id: GLOBAL_SETTINGS_ID });
     const ttlSeconds = settings?.matchApi?.cacheTTL ?? 300; // default 5m
 
     // 2. Fetch cached data
@@ -42,7 +43,10 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
         // Asynchronously update in the background
         (async () => {
           try {
-            const fresh = await withTimeout(fetchLiveMatches(), FETCH_TIMEOUT).catch(() => Promise.resolve({ matches: MOCK_MATCHES, isMock: true } as MatchResponse));
+            const fresh = await withTimeout(fetchLiveMatches(), FETCH_TIMEOUT).catch(async (err) => {
+              await logDiagnosticError("MATCH_CACHE_SYNCHRONOUS_FETCH_FAILED", err);
+              return Promise.resolve({ matches: [], isMock: true } as MatchResponse);
+            });
             const client = await clientPromise;
             const database = client.db(DB_NAME);
             await database.collection(CACHE_COLL).updateOne(
@@ -58,7 +62,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
               { upsert: true }
             );
           } catch (err) {
-            console.error("Background match cache refresh failed:", err);
+            await logDiagnosticError("MATCH_CACHE_BACKGROUND_REVALIDATION_FAILED", err);
           }
         })();
       }
@@ -66,7 +70,10 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
     }
 
     // Cache missing completely — must fetch synchronously first time
-    const fresh = await withTimeout(fetchLiveMatches(), FETCH_TIMEOUT).catch(() => Promise.resolve({ matches: MOCK_MATCHES, isMock: true } as MatchResponse));
+    const fresh = await withTimeout(fetchLiveMatches(), FETCH_TIMEOUT).catch(async (err) => {
+      await logDiagnosticError("MATCH_CACHE_SYNCHRONOUS_FETCH_FAILED", err);
+      return Promise.resolve({ matches: [], isMock: true } as MatchResponse);
+    });
     await db.collection(CACHE_COLL).updateOne(
       { _id: "current_matches" as any },
       {
@@ -82,7 +89,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
 
     return { matches: fresh.matches, isMock: fresh.isMock };
   } catch (error) {
-    console.error("MongoDB match cache fetch failed, falling back to memory cache:", error);
+    await logDiagnosticError("MATCH_CACHE_MONGO_FETCH_FAILED", error, { fallback: "in-memory cache" });
 
     // Fallback to in-memory caching with Stale-while-revalidate
     const now = Date.now();
@@ -99,7 +106,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
               expiresAt: Date.now() + 300 * 1000,
             };
           } catch (err) {
-            console.error("Background memory cache refresh failed:", err);
+            await logDiagnosticError("MATCH_CACHE_MEMORY_BACKGROUND_REVALIDATION_FAILED", err);
           }
         })();
       }
@@ -116,7 +123,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[]; isMock: bo
       };
       return { matches: fresh.matches, isMock: fresh.isMock };
     } catch (fetchErr) {
-      console.error("Match fetch failed in fallback:", fetchErr);
+      await logDiagnosticError("MATCH_CACHE_CRITICAL_MEMORY_FALLBACK", fetchErr, { inMemoryCacheAvailable: !!inMemoryCache });
       return { matches: inMemoryCache ? inMemoryCache.matches : [], isMock: true };
     }
   }
