@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
   },
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
-  testPathIgnorePatterns: ['<rootDir>/.claude/', '<rootDir>/node_modules/', '<rootDir>/playwright/'],
+  testPathIgnorePatterns: ['<rootDir>/.claude/', '<rootDir>/node_modules/', '<rootDir>/playwright/', '<rootDir>/tests/'],
   transformIgnorePatterns: [
     'node_modules/(?!(bson)/)',
   ],
