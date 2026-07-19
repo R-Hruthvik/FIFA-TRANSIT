@@ -7,6 +7,18 @@ import GoogleOneTap from "@/components/auth/GoogleOneTap";
 import { getAllBgImages } from "@/lib/bg-images";
 import "./globals.css";
 
+// Initialize environment validation early in development
+if (process.env.NODE_ENV === 'development') {
+  // Only run validation on server-side to avoid client bundle bloat
+  if (typeof window === 'undefined') {
+    import('@/lib/env-validator').then(({ runEnvironmentValidation }) => {
+      runEnvironmentValidation();
+    }).catch((err) => {
+      console.error('Failed to load environment validator:', err);
+    });
+  }
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

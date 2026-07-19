@@ -5,9 +5,8 @@ const nextConfig: NextConfig = {
   // RATE_LIMIT_REDIS_URL is set. Keep it external so the build doesn't fail
   // to resolve it when the package isn't installed.
   serverExternalPackages: ["redis"],
-  turbopack: {
-    root: '/home/hruthvik9487/Documents/quizoff/FIFA-APP/fifa-transit-app'
-  }
+  // Remove hardcoded absolute path to prevent build failures on other machines/CI
+  // turbopack configuration is handled automatically by Next.js in dev mode
 };
 
 export default nextConfig;

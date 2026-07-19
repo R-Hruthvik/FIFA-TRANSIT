@@ -1,10 +1,26 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, type MongoClientOptions } from 'mongodb';
 import type { StadiumTelemetry } from '@/types/telemetry';
 
 const uri = process.env.MONGODB_URI;
-if (!uri) throw new Error('Please add your Mongo URI to .env');
+if (!uri) throw new Error('MONGODB_URI environment variable is not set. Please add your MongoDB Atlas connection string to .env.local');
 
-const options = {};
+// Production-grade MongoDB connection options
+const options: MongoClientOptions = {
+  // Connection pooling for better performance
+  maxPoolSize: parseInt(process.env.MONGODB_MAX_POOL_SIZE || '10', 10),
+  minPoolSize: parseInt(process.env.MONGODB_MIN_POOL_SIZE || '5', 10),
+  
+  // Timeout configuration
+  serverSelectionTimeoutMS: parseInt(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS || '5000', 10),
+  socketTimeoutMS: parseInt(process.env.MONGODB_SOCKET_TIMEOUT_MS || '45000', 10),
+  
+  // Retry writes for resilience
+  retryWrites: true,
+  retryReads: true,
+  
+  // TLS/SSL is enabled by default in Atlas
+  tls: true,
+};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
