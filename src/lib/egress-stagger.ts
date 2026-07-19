@@ -25,14 +25,6 @@
  */
 
 import type { GateCrowd } from "@/types/position";
-import { PositionManager } from "@/lib/position-manager";
-
-// Re-used constants from position-manager (gate geometry + walk speed)
-const WALK_SPEED_M_PER_MIN = 80;
-
-const GATE_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
-  PositionManager.getGateIds().map((id) => [id, PositionManager.gateToPosition(id)]),
-);
 
 // ── Configuration ──────────────────────────────────────────────────────
 
@@ -56,9 +48,6 @@ export const GATE_THROUGHPUT: Record<string, number> = {
 
 /** Transit hub absorption rate: people per minute */
 export const HUB_THROUGHPUT = 300; // bodies/min
-
-/** Minimum time between users assigned to the same gate (seconds) */
-const MIN_GATE_INTERVAL_S = 1.0; // 1 person/sec = 60/min (conservative)
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -230,56 +219,3 @@ function assignUser(
   };
 }
 
-// ── Demo helpers ───────────────────────────────────────────────────────
-
-/**
- * Generate mock user positions for demo purposes.
- * Distributes users around the stadium with some clustering.
- */
-export function generateMockUsers(count: number): UserEarliest[] {
-  const users: UserEarliest[] = [];
-
-  for (let i = 0; i < count; i++) {
-    // Random position in stadium
-    const angle = Math.random() * 2 * Math.PI;
-    const radius = 50 + Math.random() * 200;
-
-    const userPos = { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
-
-    // Compute ETA to each gate
-    const etaToGate: Record<string, number> = {};
-    const earliestArrival: Record<string, number> = {};
-
-    for (const [gateId, gatePos] of Object.entries(GATE_POSITIONS)) {
-      const gx = gatePos.x;
-      const gy = gatePos.y;
-      const distM = Math.sqrt((userPos.x - gx) ** 2 + (userPos.y - gy) ** 2);
-      const etaMin = Math.ceil(distM / WALK_SPEED_M_PER_MIN);
-      etaToGate[gateId] = etaMin;
-      earliestArrival[gateId] = etaMin * 60_000; // ms
-    }
-
-    users.push({
-      userId: `user-${i}`,
-      earliestArrival,
-      etaToGate,
-      language: ["en", "es", "fr", "ar", "zh"][Math.floor(Math.random() * 5)],
-    });
-  }
-
-  return users;
-}
-
-/**
- * Generate mock gate crowd data for demo.
- */
-export function generateMockCrowd(): GateCrowd[] {
-  return Object.keys(GATE_THROUGHPUT).map((gateId) => ({
-    gateId,
-    count: Math.floor(Math.random() * 500) + 50,
-    confidence: 0.5 + Math.random() * 0.5,
-    optInCount: Math.floor(Math.random() * 1000) + 200,
-    timestamp: Date.now(),
-    capacityThreshold: 1000,
-  }));
-}

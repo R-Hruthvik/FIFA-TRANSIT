@@ -25,7 +25,10 @@ export function ProtectedRoute({
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      const path = window.location.pathname;
+      if (path !== "/login" && path !== "/admin-login" && path !== "/signup") {
+        router.push("/login");
+      }
     } else if (status === "authenticated" && session?.user?.role) {
       const userRole = session.user.role;
       if (!allowedRoles.includes(userRole)) {

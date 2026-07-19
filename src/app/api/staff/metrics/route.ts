@@ -51,6 +51,11 @@ export async function GET() {
       return "low";
     };
 
+    const totalHits = Object.values(counts).reduce((a, b) => a + b, 0);
+    if (totalHits === 0) {
+      return NextResponse.json({ metrics: null, totalLogsAnalyzed: 0 });
+    }
+
     return NextResponse.json({
       metrics: {
         gate1: getStatus(counts.gate1),
@@ -67,16 +72,7 @@ export async function GET() {
   } catch (error) {
     console.error("Metrics API error:", error);
     return NextResponse.json({
-      metrics: {
-        gate1: "low",
-        gate2: "low",
-        gate3: "low",
-        gate4: "low",
-        gate5: "low",
-        gate6: "low",
-        gate7: "low",
-        gate8: "low",
-      },
+      metrics: null,
       totalLogsAnalyzed: 0,
     });
   }

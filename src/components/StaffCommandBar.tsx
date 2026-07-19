@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Robot, ChatCenteredText, CheckCircle, Warning } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
+import { MatchStatusStrip } from "./MatchStatusStrip";
 
 interface CmdMessage {
   id: string;
@@ -25,7 +26,21 @@ const SUGGESTIONS = [
  * Lets operations staff control stadium flow via natural-language commands
  * that the LLM maps onto executable tools (gate override / steward dispatch).
  */
-export function StaffCommandBar() {
+export function StaffCommandBar({
+  match,
+  stadiumName,
+}: {
+  match?: {
+    homeTeam?: string | null;
+    awayTeam?: string | null;
+    homeScore?: number | null;
+    awayScore?: number | null;
+    status?: string | null;
+    minute?: number | null;
+    utcDate?: string | null;
+  } | null;
+  stadiumName?: string | null;
+}) {
   const [messages, setMessages] = useState<CmdMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -69,7 +84,17 @@ export function StaffCommandBar() {
 
   return (
     <Card data-section="ai-command" className="p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <MatchStatusStrip
+        stadiumName={stadiumName ?? null}
+        homeTeam={match?.homeTeam ?? null}
+        awayTeam={match?.awayTeam ?? null}
+        homeScore={match?.homeScore ?? null}
+        awayScore={match?.awayScore ?? null}
+        status={match?.status ?? null}
+        minute={match?.minute ?? null}
+        utcDate={match?.utcDate ?? null}
+      />
+      <div className="flex items-center gap-3 mt-3 mb-4">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/20 border border-amber-500/30 text-amber-400">
           <Robot size={16} weight="duotone" />
         </div>

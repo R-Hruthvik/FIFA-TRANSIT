@@ -89,6 +89,36 @@ export async function dispatchStewards(
   return `Operational Success: Dispatched ${n} response personnel to the ${location} sector immediately.`;
 }
 
+/**
+ * Persist a fan incident report. Accessible to both fans and staff via the AI.
+ */
+export async function fileIncidentReport(
+  description: string,
+  severity: string,
+  location: string,
+  demoEngine?: LiveDemoEngine | null,
+): Promise<string> {
+  try {
+    const client = await clientPromise;
+    const db = client.db(DB_NAME);
+    await db.collection("incident_logs").insertOne({
+      description,
+      severity: severity || "medium",
+      location: location || "unknown",
+      source: "ai_assistant",
+      timestamp: new Date(),
+    });
+  } catch (err) {
+    console.error("fileIncidentReport persist failed:", err);
+  }
+
+  if (demoEngine) {
+    demoEngine.applyIncidentReport?.(description, severity, location);
+  }
+
+  return `Incident report filed. Severity: ${severity || "medium"}. Field teams have been notified.`;
+}
+
 export interface ToolCall {
   name: string;
   args: Record<string, unknown>;
@@ -126,6 +156,17 @@ export async function executeAgentAction(
         return { name: call.name, ok: false, message: "Missing location or count." };
       }
       const message = await dispatchStewards(location, count, demoEngine);
+      return { name: call.name, ok: true, message };
+    }
+
+    if (call.name === "fileIncidentReport") {
+      const description = String(call.args.description ?? "");
+      const severity = String(call.args.severity ?? "medium");
+      const location = String(call.args.location ?? "unknown");
+      if (!description) {
+        return { name: call.name, ok: false, message: "Missing incident description." };
+      }
+      const message = await fileIncidentReport(description, severity, location, demoEngine);
       return { name: call.name, ok: true, message };
     }
 

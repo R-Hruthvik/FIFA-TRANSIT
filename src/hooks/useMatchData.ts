@@ -11,7 +11,6 @@ export function useMatchData() {
   const [upcomingMatches, setUpcomingMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isMock, setIsMock] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isMountedRef = useRef(true);
 
@@ -20,7 +19,6 @@ export function useMatchData() {
     setError(null);
 
     if (isDemoMode) {
-      setIsMock(true);
       setLiveMatch({
         id: "demo-match-live",
         homeTeam: "United States",
@@ -29,7 +27,8 @@ export function useMatchData() {
         awayScore: 1,
         status: "live",
         utcDate: new Date().toISOString(),
-        minute: 74
+        minute: 74,
+        stadiumName: "MetLife Stadium — FIFA World Cup 26",
       });
       setUpcomingMatches([]);
       setLoading(false);
@@ -51,13 +50,10 @@ export function useMatchData() {
 
       const allMatches: Match[] = dataMatches.matches || [];
       const scheduled: Match[] = dataSchedule.schedule || [];
-      const mockFlag = dataMatches.isMock ?? dataSchedule.isMock ?? true;
 
       setMatches(allMatches);
-      setIsMock(mockFlag);
 
-      if (mockFlag) {
-        // No real data source configured — show empty, not simulated match.
+      if (allMatches.length === 0 && scheduled.length === 0) {
         setLiveMatch(null);
         setUpcomingMatches([]);
       } else {
@@ -69,8 +65,8 @@ export function useMatchData() {
     } catch (err: any) {
       console.error("Failed to sync match data:", err);
       setError(err.message || "Match sync failed");
-      setIsMock(false);
       setLiveMatch(null);
+      setUpcomingMatches([]);
       setLoading(false);
     }
   }, [isDemoMode]);
@@ -85,17 +81,15 @@ export function useMatchData() {
   useEffect(() => {
     fetchMatches();
 
-    // Clear existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
 
-    // Only poll when NOT in demo mode, and at a reasonable interval
     if (!isDemoMode) {
       intervalRef.current = setInterval(() => {
         fetchMatches();
-      }, 30000); // 30 seconds — less frequent, reduces load
+      }, 30000);
     }
 
     return () => {
@@ -109,6 +103,7 @@ export function useMatchData() {
   const demoMatch = useMemo<Match | null>(() => {
     if (isDemoMode && getMatchState) {
       const simState = getMatchState();
+      if (!simState) return null;
       return {
         id: "demo-match",
         homeTeam: "United States",
@@ -118,6 +113,7 @@ export function useMatchData() {
         status: simState.phase === "full-time" ? "finished" : (simState.phase === "pre-match" ? "scheduled" : "live"),
         utcDate: new Date().toISOString(),
         minute: simState.minute,
+        stadiumName: "MetLife Stadium — FIFA World Cup 26",
       };
     }
     return null;
@@ -129,7 +125,6 @@ export function useMatchData() {
     upcomingMatches,
     loading,
     error,
-    isMock,
     isDemoMode,
     refetch: fetchMatches,
   };

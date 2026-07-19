@@ -6,13 +6,14 @@
  * recent fan queries into the model and enforces a strict JSON schema so
  * the UI can render insight cards safely without prompt injection risk.
  *
- * Primary: Gemini (structured output via responseSchema).
- * Fallback: NVIDIA NIM (JSON mode) when Gemini is unavailable.
+ * Provider: NVIDIA NIM only (no Gemini key available). Rate-limited to the
+ * NIM free-tier ceiling (20 req/min) via a shared in-memory token bucket.
  */
 
 import { NextResponse } from "next/server";
 import { getGateSummary } from "@/lib/crowd-aggregator";
 import { getLatestLogs, getLiveTelemetry } from "@/lib/db";
+import { nimRateLimiter } from "@/lib/rate-limiter";
 
 export const runtime = "nodejs";
 
@@ -69,83 +70,23 @@ Rules:
 }
 
 /**
- * Attempt structured generation with Gemini (primary).
- */
-async function generateWithGemini(prompt: string): Promise<AIInsight | null> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return null;
-
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "OBJECT",
-              properties: {
-                severity: {
-                  type: "STRING",
-                  enum: ["NOMINAL", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
-                },
-                tacticalDirectives: {
-                  type: "ARRAY",
-                  items: {
-                    type: "OBJECT",
-                    properties: {
-                      id: { type: "STRING" },
-                      targetGate: { type: "STRING" },
-                      message: { type: "STRING" },
-                      actionRequired: { type: "STRING" },
-                      suggestedStewardCount: { type: "NUMBER" },
-                    },
-                    required: [
-                      "id",
-                      "targetGate",
-                      "message",
-                      "actionRequired",
-                      "suggestedStewardCount",
-                    ],
-                  },
-                },
-                broadcastDraft: { type: "STRING" },
-              },
-              required: ["severity", "tacticalDirectives", "broadcastDraft"],
-            },
-          },
-        }),
-      },
-    );
-
-    if (!res.ok) return null;
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return null;
-    return { ...(JSON.parse(text) as AIInsight), generatedAt: Date.now() };
-  } catch (err) {
-    console.error("Gemini insights generation failed:", err);
-    return null;
-  }
-}
-
-/**
- * Fallback structured generation with NVIDIA NIM (JSON mode).
+ * Structured generation with NVIDIA NIM (JSON mode). Rate-limited — callers
+ * must check nimRateLimiter.acquire() before invoking.
  */
 async function generateWithNim(prompt: string): Promise<AIInsight | null> {
-  const key = process.env.NVIDIA_NIM_API_KEY;
-  if (!key) return null;
+  const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
+  if (!nvidiaKey) return null;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
     const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${nvidiaKey}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({
         model: "meta/llama-3.1-70b-instruct",
         messages: [{ role: "user", content: prompt }],
@@ -155,6 +96,7 @@ async function generateWithNim(prompt: string): Promise<AIInsight | null> {
         stream: false,
       }),
     });
+    clearTimeout(timeout);
 
     if (!res.ok) return null;
     const data = await res.json();
@@ -202,8 +144,14 @@ function deriveFallback(
   };
 }
 
-export async function GET() {
+export async function GET(request?: Request) {
   try {
+    // Manual "Refresh Analysis" bypasses the shared rate limiter — user
+    // explicitly opted in, so we spend a token even if the bucket is empty.
+    const bypass =
+      request &&
+      new URL(request.url).searchParams.get("bypass") === "1";
+
     const [gateSummary, telemetry, logs] = await Promise.all([
       getGateSummary().catch(() => [] as Awaited<ReturnType<typeof getGateSummary>>),
       getLiveTelemetry().catch(() => null),
@@ -215,8 +163,17 @@ export async function GET() {
 
     const prompt = buildCommanderPrompt(telemetry, gateSummary, fanQueries);
 
+    // Shared NIM budget — if no token (and not an explicit bypass), serve
+    // deterministic fallback and signal the client so the UI can show a
+    // "rate-limited" state.
+    if (!bypass && !nimRateLimiter.acquire()) {
+      return NextResponse.json(
+        { ...deriveFallback(gateSummary), rateLimited: true },
+        { headers: { "X-RateLimited": "true" } },
+      );
+    }
+
     const insight =
-      (await generateWithGemini(prompt)) ??
       (await generateWithNim(prompt)) ??
       deriveFallback(gateSummary);
 

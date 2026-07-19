@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { useDemoMode } from "./DemoController";
+import { useMatchData } from "@/hooks/useMatchData";
 import { LiveStatusCards } from "./LiveStatusCards";
 import { OperationalInsights } from "./OperationalInsights";
 import { LiveQueryTicker } from "./LiveQueryTicker";
@@ -32,6 +33,7 @@ const STAFF_POLL_INTERVAL = 30000; // 30 seconds to avoid frequent reloads
 
 export default function StaffHub() {
   const demo = useDemoMode();
+  const { liveMatch } = useMatchData();
 
   // All hooks declared unconditionally at the top
   // Initialize as null — no placeholder fake data
@@ -168,7 +170,7 @@ export default function StaffHub() {
                 </h2>
               </div>
               {activeMetrics ? (
-                <OperationalInsights metrics={activeMetrics} transitWaitTime={activeTelemetry?.nearestHub.waitTime ?? 0} />
+                <OperationalInsights metrics={activeMetrics} transitWaitTime={activeTelemetry?.nearestHub?.waitTime} />
               ) : (
                 <p className="text-xs text-zinc-500">Operational data unavailable</p>
               )}
@@ -240,7 +242,10 @@ export default function StaffHub() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.12 }}
         >
-          <StaffCommandBar />
+          <StaffCommandBar
+            match={liveMatch}
+            stadiumName={liveMatch?.stadiumName ?? null}
+          />
         </motion.div>
 
         {/* Heatmap + Query Stream */}

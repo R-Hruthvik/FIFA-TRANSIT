@@ -77,7 +77,6 @@ export function useOneTap() {
                   credential: response.credential,
                   redirect: false,
                 });
-                window.location.reload();
               } catch (err) {
                 console.error("NextAuth One Tap sign-in error:", err);
               }

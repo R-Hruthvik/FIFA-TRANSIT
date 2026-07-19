@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import FanHub from "@/components/FanHub";
 import StaffHub from "@/components/StaffHub";
-import { AsciiAvatar } from "@/components/AsciiAvatar";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { DemoModeButton } from "@/components/DemoController";
-import { AppTab } from "@/types/telemetry";
+import { AppTab, StadiumTelemetry } from "@/types/telemetry";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useMatchData } from "@/hooks/useMatchData";
@@ -22,7 +22,7 @@ const ALLOWED_ROLES: ("fan" | "staff" | "admin")[] = ["fan", "staff", "admin"];
 
 export default function Page() {
   const { data: session, status } = useSession();
-  const { upcomingMatches, loading: matchesLoading, isMock } = useMatchData();
+  const { upcomingMatches, loading: matchesLoading } = useMatchData();
   const [activeTab, setActiveTab] = useState<AppTab>("fan");
 
   useEffect(() => {
@@ -30,6 +30,24 @@ export default function Page() {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
   }, [session, activeTab]);
+
+  const [previewTelemetry, setPreviewTelemetry] = useState<StadiumTelemetry | null>(null);
+
+  useEffect(() => {
+    if (session?.user) return;
+    let cancelled = false;
+    fetch("/api/telemetry")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled && data && data.nearestGate) {
+          setPreviewTelemetry(data as StadiumTelemetry);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
 
   const isLoading = matchesLoading || status === "loading";
 
@@ -42,9 +60,6 @@ export default function Page() {
             <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">
               {matchesLoading ? "Loading Match Data..." : "Loading..."}
             </p>
-            {isMock && !matchesLoading && (
-              <p className="text-[9px] text-amber-500/70 font-mono">No API key configured — showing placeholder match data</p>
-            )}
           </div>
         </div>
       </main>
@@ -119,23 +134,41 @@ export default function Page() {
                 <Badge className="bg-zinc-800 text-zinc-400 text-[8px] font-mono border-none">PREVIEW</Badge>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                  <span className="text-[8px] text-zinc-500 font-mono block">NEAREST GATE</span>
-                  <span className="text-[10px] font-bold text-zinc-300 block truncate">—</span>
-                  <Badge className="bg-zinc-700/30 text-zinc-500 text-[8px] border-none px-1.5 py-0">AWAITING</Badge>
+              {previewTelemetry ? (
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
+                    <span className="text-[8px] text-zinc-500 font-mono block">NEAREST GATE</span>
+                    <span className="text-[10px] font-bold text-zinc-300 block truncate">{previewTelemetry.nearestGate.label}</span>
+                    <span className={`text-[8px] font-mono block ${
+                      previewTelemetry.nearestGate.status === "congested" ? "text-red-400" :
+                      previewTelemetry.nearestGate.status === "busy" ? "text-amber-400" :
+                      "text-emerald-400"
+                    }`}>
+                      {previewTelemetry.nearestGate.status.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
+                    <span className="text-[8px] text-zinc-500 font-mono block">MAIN HUB WAIT</span>
+                    <span className="text-[10px] font-bold text-zinc-300 block">{previewTelemetry.nearestHub.waitTime}m</span>
+                    <span className="text-[8px] text-emerald-400 block font-medium">{previewTelemetry.nearestHub.label}</span>
+                  </div>
+                  <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
+                    <span className="text-[8px] text-zinc-500 font-mono block">WEATHER COND</span>
+                    <span className="text-[10px] font-bold text-zinc-300 block">{previewTelemetry.weatherAdvisory.label}</span>
+                    <span className="text-[8px] text-zinc-400 block font-semibold">{previewTelemetry.weatherAdvisory.condition}</span>
+                  </div>
                 </div>
-                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                  <span className="text-[8px] text-zinc-500 font-mono block">MAIN HUB WAIT</span>
-                  <span className="text-[10px] font-bold text-zinc-300 block">—</span>
-                  <span className="text-[8px] text-zinc-500 block font-medium">Live sync</span>
+              ) : (
+                <div className="grid grid-cols-3 gap-3 animate-pulse">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="p-3 bg-zinc-900/60 rounded-2xl border border-zinc-800 space-y-2">
+                      <div className="h-3 w-16 bg-zinc-800 rounded" />
+                      <div className="h-4 w-20 bg-zinc-800 rounded" />
+                      <div className="h-3 w-12 bg-zinc-800 rounded" />
+                    </div>
+                  ))}
                 </div>
-                <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                  <span className="text-[8px] text-zinc-500 font-mono block">WEATHER COND</span>
-                  <span className="text-[10px] font-bold text-zinc-300 block">—</span>
-                  <span className="text-[8px] text-zinc-500 block font-semibold">Connecting</span>
-                </div>
-              </div>
+              )}
 
               <div className="space-y-3 pt-2">
                 <div className="flex gap-3 items-start">
@@ -201,15 +234,6 @@ export default function Page() {
           </div>
         </header>
 
-        <div className="px-4 md:px-6 py-4">
-          <div className="max-w-md mx-auto">
-            <AsciiAvatar
-              persona={userRole === "admin" || userRole === "staff" ? "torque" : "miri"}
-              state="idle"
-            />
-          </div>
-        </div>
-
         {visibleTabs.length > 1 && (
           <nav className="px-4 md:px-6 py-2 border-b border-zinc-800 bg-zinc-950">
             <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -228,7 +252,9 @@ export default function Page() {
 
         <div className="flex-1 p-4 md:p-6">
           {activeTab === "fan" ? (
-            <FanHub key="fan" />
+            <ErrorBoundary>
+              <FanHub key="fan" />
+            </ErrorBoundary>
           ) : (
             <ProtectedRoute allowedRoles={["staff", "admin"]}>
               <StaffHub key="staff" />

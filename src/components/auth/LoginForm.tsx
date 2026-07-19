@@ -36,7 +36,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn("admin-credentials", {
         email,
         password,
         redirect: false,
@@ -182,6 +182,14 @@ export function LoginForm() {
               className="text-amber-400 hover:text-amber-300 font-medium underline-offset-2 hover:underline"
             >
               Create Account
+            </a>
+          </p>
+          <p className="text-zinc-500 text-xs mt-2">
+            <a
+              href="/admin-login"
+              className="hover:text-zinc-300 underline-offset-2 hover:underline"
+            >
+              Staff/Admin sign in →
             </a>
           </p>
         </div>

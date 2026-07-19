@@ -1,18 +1,22 @@
-import { NextResponse } from 'next/server';
-import { getLiveTelemetry } from '@/lib/db';
+import { NextResponse } from "next/server";
+import { aggregateCrowd } from "@/lib/crowd-aggregator";
 
 export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const telemetry = await getLiveTelemetry();
-    return NextResponse.json(telemetry);
-  } catch (error) {
-    console.error("Telemetry API error:", error);
-    return NextResponse.json({
-      nearestGate: { label: "Awaiting Live Stream Scan...", status: "closed" },
-      nearestHub: { label: "Establishing connection...", waitTime: 0 },
-      weatherAdvisory: { label: "Fetching operational status...", condition: "clear" }
-    });
+    const crowd = await aggregateCrowd();
+
+    // Only return data when there are actual people present (non-zero gate counts).
+    const hasRealPresence = crowd.gateCrowds.some((g) => g.count > 0);
+    if (!hasRealPresence) {
+      return NextResponse.json(null);
+    }
+
+    // We have real crowd counts but no real gate labels, hub names, or weather data.
+    // Return null rather than fabricating labels — UI shows "unavailable" instead.
+    return NextResponse.json(null);
+  } catch {
+    return NextResponse.json(null);
   }
 }

@@ -26,8 +26,8 @@ export function ProactiveAssistantPanel({
   language = "en",
   trackingEnabled = false,
   location,
-  transitWaitTime = 0,
-  weatherCondition = "clear",
+  transitWaitTime,
+  weatherCondition,
 }: ProactiveAssistantPanelProps) {
   const [narrative, setNarrative] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

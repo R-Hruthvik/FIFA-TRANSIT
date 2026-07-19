@@ -16,6 +16,15 @@ interface MatchApi {
   cacheTTL: number;
 }
 
+interface AiProvider {
+  provider: "gemini" | "openai-compat" | "vertex";
+  model: string;
+  apiKey?: string;
+  baseUrl?: string;
+  vertexProjectId?: string;
+  vertexLocation?: string;
+}
+
 export default function DeveloperSettings() {
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
     enableRealMatchData: false,
@@ -26,6 +35,10 @@ export default function DeveloperSettings() {
     provider: "football-data",
     apiKey: null,
     cacheTTL: 300,
+  });
+  const [aiProvider, setAiProvider] = useState<AiProvider>({
+    provider: "gemini",
+    model: "gemini-2.0-flash",
   });
   const [gateOverrides, setGateOverrides] = useState<Record<string, string>>({});
   const [clearingGate, setClearingGate] = useState<string | null>(null);
@@ -53,6 +66,7 @@ export default function DeveloperSettings() {
         const data = await res.json();
         setFeatureFlags(data.featureFlags || featureFlags);
         setMatchApi(data.matchApi || matchApi);
+        setAiProvider(data.aiProvider || aiProvider);
         setGateOverrides(data.gateOverrides || {});
       } catch (err) {
         console.error('Failed to fetch admin settings:', err);
@@ -71,7 +85,7 @@ export default function DeveloperSettings() {
       const res = await fetch('/api/admin/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ featureFlags, matchApi }),
+        body: JSON.stringify({ featureFlags, matchApi, aiProvider }),
       });
       if (!res.ok) throw new Error('Failed to save settings');
       setMessage('Settings saved successfully');
@@ -201,6 +215,97 @@ export default function DeveloperSettings() {
               onChange={(e) => setMatchApi({ ...matchApi, cacheTTL: parseInt(e.target.value) || 300 })}
               className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
             />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-zinc-900/40 border border-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl text-zinc-100">
+        <h2 className="text-xl text-white font-bold mb-4">AI Provider Configuration</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-zinc-100">Provider</label>
+            <select
+              value={aiProvider.provider}
+              onChange={(e) => {
+                const p = e.target.value as AiProvider["provider"];
+                const defaults: Record<string, string> = {
+                  gemini: "gemini-2.0-flash",
+                  "openai-compat": "meta/llama-3.1-70b-instruct",
+                  vertex: "gemini-2.0-flash",
+                };
+                setAiProvider({ ...aiProvider, provider: p, model: defaults[p] || aiProvider.model });
+              }}
+              className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+            >
+              <option value="gemini">Google Gemini</option>
+              <option value="openai-compat">OpenAI-Compatible (NVIDIA NIM, vLLM, etc.)</option>
+              <option value="vertex">Google Vertex AI</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-zinc-100">Model</label>
+            <input
+              type="text"
+              value={aiProvider.model}
+              onChange={(e) => setAiProvider({ ...aiProvider, model: e.target.value })}
+              className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+              placeholder="e.g. gemini-2.0-flash"
+            />
+          </div>
+          {aiProvider.provider === "openai-compat" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-zinc-100">API Key (NVIDIA_NIM_API_KEY or OPENAI_API_KEY)</label>
+                <input
+                  type="password"
+                  value={aiProvider.apiKey || ""}
+                  onChange={(e) => setAiProvider({ ...aiProvider, apiKey: e.target.value })}
+                  className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+                  placeholder="Leave empty to use env var"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-100">Base URL (optional)</label>
+                <input
+                  type="text"
+                  value={aiProvider.baseUrl || ""}
+                  onChange={(e) => setAiProvider({ ...aiProvider, baseUrl: e.target.value })}
+                  className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+                  placeholder="https://integrate.api.nvidia.com/v1"
+                />
+              </div>
+            </>
+          )}
+          {aiProvider.provider === "vertex" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-zinc-100">Project ID (VERTEX_PROJECT_ID)</label>
+                <input
+                  type="text"
+                  value={aiProvider.vertexProjectId || ""}
+                  onChange={(e) => setAiProvider({ ...aiProvider, vertexProjectId: e.target.value })}
+                  className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+                  placeholder="Leave empty to use env var"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-100">Location</label>
+                <input
+                  type="text"
+                  value={aiProvider.vertexLocation || "us-central1"}
+                  onChange={(e) => setAiProvider({ ...aiProvider, vertexLocation: e.target.value })}
+                  className="bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-xl px-4 py-2.5 text-sm placeholder-zinc-650 focus:border-emerald-500/40 focus:ring-0 focus:outline-none transition-all"
+                />
+              </div>
+            </>
+          )}
+          <div className="flex items-center gap-2 text-xs text-zinc-500">
+            <span className="inline-flex items-center rounded-md bg-zinc-800/50 px-2 py-0.5 font-mono text-zinc-400">
+              {aiProvider.provider === "gemini" && "GEMINI_API_KEY"}
+              {aiProvider.provider === "openai-compat" && "NVIDIA_NIM_API_KEY / OPENAI_API_KEY"}
+              {aiProvider.provider === "vertex" && "VERTEX_PROJECT_ID + credentials"}
+            </span>
+            <span>env vars are used when API key field is empty</span>
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { MongoClient } from 'mongodb';
 import type { StadiumTelemetry } from '@/types/telemetry';
-import { logDiagnosticError } from '@/lib/logger';
 
 const uri = process.env.MONGODB_URI;
 if (!uri) throw new Error('Please add your Mongo URI to .env');
@@ -32,17 +31,7 @@ export const USERS_COLL = process.env.MONGODB_USERS_COLLECTION || 'users';
 
 export { clientPromise };
 
-/**
- * Canonical `_id` of the singleton global settings document in the
- * "settings" collection. Centralized so every reader/writer targets the
- * same sentinel without ad-hoc `"global" as any` casts.
- *
- * The collection uses a string sentinel rather than an ObjectId; the cast
- * here is the single sanctioned place for it so call sites stay clean.
- */
 export const GLOBAL_SETTINGS_ID = "global" as unknown as import("mongodb").ObjectId;
-
-const TELEMETRY_NOT_FOUND = new Error("No real telemetry entries exist in the collection");
 
 export type { StadiumTelemetry, StadiumTelemetry as StadiumState } from '@/types/telemetry';
 
@@ -52,35 +41,15 @@ export async function getUserCollection() {
   return db.collection(USERS_COLL);
 }
 
-export async function getLiveTelemetry(): Promise<StadiumTelemetry> {
+export async function getLiveTelemetry(): Promise<StadiumTelemetry | null> {
   try {
-    // Timeout after 500ms to prevent hanging
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => {
-        logDiagnosticError(
-          "TELEMETRY_TIMEOUT_TRIGGERED",
-          new Error("Database query execution window exceeded 500ms threshold"),
-        );
-        reject(new Error("Telemetry fetch timed out"));
-      }, 500);
-    });
-
-    const telemetryPromise = (async (): Promise<StadiumTelemetry> => {
-      const client = await clientPromise;
-      const db = client.db(DB_NAME);
-      const telemetry = db.collection(TELEMETRY_COLL);
-      const data = await telemetry.findOne({}, { sort: { _id: -1 } });
-      if (!data) throw TELEMETRY_NOT_FOUND;
-      return data as unknown as StadiumTelemetry;
-    })();
-
-    // Race: whoever resolves first wins
-    return await Promise.race([telemetryPromise, timeoutPromise]);
-  } catch (error) {
-    await logDiagnosticError("TELEMETRY_ENGINE_DB", error, {
-      isolation: "getLiveTelemetry catch block triggered",
-    });
-    throw TELEMETRY_NOT_FOUND;
+    const client = await clientPromise;
+    const db = client.db(DB_NAME);
+    const data = await db.collection(TELEMETRY_COLL).findOne({}, { sort: { _id: -1 } });
+    if (!data) return null;
+    return data as unknown as StadiumTelemetry;
+  } catch {
+    return null;
   }
 }
 
@@ -94,8 +63,7 @@ export async function getLatestLogs(limit = 5) {
       .sort({ timestamp: -1 })
       .limit(limit)
       .toArray();
-  } catch (error) {
-    console.error('getLatestLogs error:', error);
+  } catch {
     return [];
   }
 }
@@ -103,16 +71,10 @@ export async function getLatestLogs(limit = 5) {
 export async function logFanQuery(text: string) {
   try {
     const client = await clientPromise;
-
     client
       .db(DB_NAME)
       .collection(LOGS_COLL)
-      .insertOne({
-        text,
-        timestamp: new Date(),
-      })
-      .catch((err) => console.error('logFanQuery background error:', err));
-  } catch (error) {
-    console.error('logFanQuery initial connection error:', error);
-  }
+      .insertOne({ text, timestamp: new Date() })
+      .catch(() => {});
+  } catch {}
 }

@@ -10,6 +10,7 @@
  */
 
 import type { GateSummary } from "@/types/position";
+import { nimRateLimiter } from "@/lib/rate-limiter";
 
 export const ROUTES_ENDPOINT =
   "https://routes.googleapis.com/directions/v2:computeRoutes";
@@ -140,24 +141,33 @@ function buildBriefingPrompt(input: RouteBriefingInput, leg: TransitLeg): string
   ].join("\n");
 }
 
-async function generateWithGemini(prompt: string): Promise<string | null> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return null;
+async function generateWithNim(prompt: string): Promise<string | null> {
+  // Rate-limited against the shared 20 req/min NIM budget.
+  const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
+  if (!nvidiaKey || !nimRateLimiter.acquire()) return null;
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 160, temperature: 0.3 },
-        }),
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${nvidiaKey}`,
+        "Content-Type": "application/json",
       },
-    );
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: "meta/llama-3.1-70b-instruct",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 160,
+        temperature: 0.3,
+        stream: false,
+      }),
+    });
+    clearTimeout(timeout);
     if (!res.ok) return null;
-    const data = await res.json();
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+    const payload = await res.json();
+    const firstChoice = Array.isArray(payload?.choices) ? payload.choices[0] : null;
+    return firstChoice?.message?.content?.trim() || null;
   } catch {
     return null;
   }
@@ -192,7 +202,7 @@ export async function generateRouteBriefing(
 
   const prompt = buildBriefingPrompt(input, leg);
   const briefing =
-    (await generateWithGemini(prompt)) ?? fallbackBriefing(input, leg);
+    (await generateWithNim(prompt)) ?? fallbackBriefing(input, leg);
 
   return { briefing, transit: leg, generatedAt: Date.now() };
 }
@@ -316,16 +326,13 @@ export async function computeAgenticTransitRoute(
     ? await fetchRouteTelemetry(origin, targetTransitHub)
     : { durationMinutes: 0, distanceMeters: 0, live: false };
 
-  const key = process.env.GEMINI_API_KEY;
-  if (key) {
-    const prompt = buildAgenticPrompt(
-      telemetry,
-      targetTransitHub,
-      stadiumGateCongestion,
-    );
-    const generated = await generateWithGemini(prompt);
-    if (generated) return generated;
-  }
+  const prompt = buildAgenticPrompt(
+    telemetry,
+    targetTransitHub,
+    stadiumGateCongestion,
+  );
+  const generated = await generateWithNim(prompt);
+  if (generated) return generated;
 
   // Deterministic fallback guidance.
   const transitPart = telemetry.live

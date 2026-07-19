@@ -5,10 +5,9 @@ export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const { matches, isMock } = await getCachedMatches();
-    // Filter to only scheduled matches (future events)
+    const { matches } = await getCachedMatches();
     const schedule = matches.filter((m) => m.status === "scheduled");
-    return NextResponse.json({ schedule, isMock });
+    return NextResponse.json({ schedule });
   } catch (error) {
     console.error("Match schedule API route error:", error);
     return NextResponse.json({ error: "Failed to fetch match schedule" }, { status: 500 });

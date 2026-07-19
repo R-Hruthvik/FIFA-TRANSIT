@@ -8,7 +8,6 @@ import {
   GateEvent,
   AdminLogEntry,
   MatchSimulationState,
-  getLiveDemoEngine,
 } from "@/lib/live-demo-engine";
 
 interface DemoContextValue {
@@ -27,7 +26,7 @@ interface DemoContextValue {
   getRecentGateEvents: (minutesAge: number) => GateEvent[];
   getAdminLogs: () => AdminLogEntry[];
   getRecentAdminLogs: (count: number) => AdminLogEntry[];
-  getMatchState: () => MatchSimulationState;
+  getMatchState: () => MatchSimulationState | null;
   setRealUserCount: (count: number) => void;
 }
 
@@ -41,19 +40,14 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [demoElapsed, setDemoElapsed] = useState(0);
   const engineRef = useRef<LiveDemoEngine | null>(null);
-  const [crowdPositions, setCrowdPositions] = useState<CrowdPosition[]>([]);
-  const [gateEvents, setGateEvents] = useState<GateEvent[]>([]);
-  const [adminLogs, setAdminLogs] = useState<AdminLogEntry[]>([]);
 
   const toggleDemo = useCallback(() => {
     setIsDemoMode((prev) => {
       if (!prev) {
-        // Starting demo — create and start engine
         const engine = new LiveDemoEngine();
         engine.start();
         engineRef.current = engine;
       } else {
-        // Stopping demo — stop and cleanup engine
         if (engineRef.current) {
           engineRef.current.stop();
           engineRef.current = null;
@@ -66,8 +60,6 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isDemoMode]);
 
-  // Expose the live engine globally so the Admin Scenario Simulator can
-  // push Gen AI-generated drills into the running simulation.
   useEffect(() => {
     const w = window as unknown as {
       __liveDemoEngine?: LiveDemoEngine | null;
@@ -78,19 +70,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isDemoMode]);
 
-  // Update state from engine every second
   useEffect(() => {
     if (!isDemoMode || !engineRef.current) return;
 
-    const engine = engineRef.current;
-
-    // Update display state every 200ms for smooth UI
     const updateInterval = setInterval(() => {
       if (!engineRef.current) return;
       setDemoElapsed(engineRef.current.getElapsed());
-      setCrowdPositions(engineRef.current.getCrowdPositions().slice());
-      setGateEvents(engineRef.current.getGateEvents().slice());
-      setAdminLogs(engineRef.current.getRecentAdminLogs(50));
     }, 200);
 
     return () => clearInterval(updateInterval);
@@ -99,15 +84,15 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const getMetrics = useCallback((): GateMetrics | null => {
     if (!isDemoMode || !engineRef.current) return null;
     return engineRef.current.getMetrics();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getTelemetry = useCallback((): StadiumTelemetry | null => {
     if (!isDemoMode || !engineRef.current) return null;
     return engineRef.current.getTelemetry();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getDemoAiResponseFn = useCallback((input: string): string => {
-    if (!engineRef.current) return "Demo mode is off.";
+    if (!isDemoMode || !engineRef.current) return "";
     const matchState = engineRef.current.getMatchState();
     const inputLower = input.toLowerCase();
     const highestGate = getHighestDensityGateFromMetrics(engineRef.current.getMetrics());
@@ -117,13 +102,13 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       return `Gate monitoring update: G1=${metrics.gate1}, G2=${metrics.gate2}, G3=${metrics.gate3}, G4=${metrics.gate4}, G5=${metrics.gate5}, G6=${metrics.gate6}, G7=${metrics.gate7}, G8=${metrics.gate8}. Highest congestion at ${highestGate}.`;
     }
     if (inputLower.includes("match") || inputLower.includes("score") || inputLower.includes("time")) {
-      return `Match status: ${matchState.phase}, minute ${matchState.minute}, Score ${matchState.homeScore}-${matchState.awayScore}. ${matchState.phase === "half-time" ? "Crowd movement increasing through concourse." : matchState.phase === "full-time" ? "All gates actively managing exit flow." : "Crowd density stable at all gates."}`;
+      return `Match status at MetLife Stadium — FIFA World Cup 26: ${matchState.phase}, minute ${matchState.minute}, Score ${matchState.homeScore}-${matchState.awayScore}. ${matchState.phase === "half-time" ? "Crowd movement increasing through concourse." : matchState.phase === "full-time" ? "All gates actively managing exit flow." : "Crowd density stable at all gates."}`;
     }
     if (inputLower.includes("staff")) {
       return "Staff alert system active. All gates under surveillance. Gate alerts are being generated for any threshold breaches. Log entries being recorded to admin panel.";
     }
     return `Systems nominal. Current crowd: ${engineRef.current.getCrowdCount()} monitored individuals. Active gate alerts: ${engineRef.current.getGateEvents().length}. Match: ${matchState.homeScore}-${matchState.awayScore} (${matchState.phase}).`;
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const injectDemoQuery = useCallback((): string | null => {
     if (!isDemoMode) return null;
@@ -144,39 +129,37 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const getCrowdPositionsFn = useCallback((): CrowdPosition[] => {
     if (!isDemoMode || !engineRef.current) return [];
     return engineRef.current.getCrowdPositions();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getCrowdCountFn = useCallback((): number => {
     if (!isDemoMode || !engineRef.current) return 0;
     return engineRef.current.getCrowdCount();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getGateEventsFn = useCallback((): GateEvent[] => {
     if (!isDemoMode || !engineRef.current) return [];
     return engineRef.current.getGateEvents();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getRecentGateEventsFn = useCallback((minutesAge: number): GateEvent[] => {
     if (!isDemoMode || !engineRef.current) return [];
     return engineRef.current.getRecentGateEvents(minutesAge);
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getAdminLogsFn = useCallback((): AdminLogEntry[] => {
     if (!isDemoMode || !engineRef.current) return [];
     return engineRef.current.getAdminLogs();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const getRecentAdminLogsFn = useCallback((count: number): AdminLogEntry[] => {
     if (!isDemoMode || !engineRef.current) return [];
     return engineRef.current.getRecentAdminLogs(count);
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
-  const getMatchStateFn = useCallback((): MatchSimulationState => {
-    if (!isDemoMode || !engineRef.current) return {
-      minute: 0, half: 1, homeScore: 0, awayScore: 0, phase: "pre-match",
-    };
+  const getMatchStateFn = useCallback((): MatchSimulationState | null => {
+    if (!isDemoMode || !engineRef.current) return null;
     return engineRef.current.getMatchState();
-  }, [isDemoMode, demoElapsed]);
+  }, [isDemoMode]);
 
   const setRealUserCountFn = useCallback((count: number) => {
     if (engineRef.current) engineRef.current.setRealUserCount(count);
@@ -231,7 +214,6 @@ function getHighestDensityGateFromMetrics(metrics: GateMetrics): string {
   return "gate1";
 }
 
-// Demo Mode Toggle Button — runs indefinitely, user stops manually
 export function DemoModeButton() {
   const demo = useDemoMode();
   if (!demo) return null;

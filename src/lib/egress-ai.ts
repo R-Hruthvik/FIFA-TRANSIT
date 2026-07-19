@@ -23,6 +23,7 @@
  */
 
 import type { GateCrowd, EgressPlan } from "@/types/position";
+import { nimRateLimiter } from "@/lib/rate-limiter";
 
 // ── Prompt construction ────────────────────────────────────────────────
 
@@ -83,59 +84,38 @@ export async function generateAIInstruction(
   ctx: AIPlanContext,
 ): Promise<string> {
   const prompt = buildEgressPrompt(ctx);
-  const geminiKey = process.env.GEMINI_API_KEY;
+  const fallbackInstruction = `Proceed with caution to your assigned checkpoint at ${ctx.nearestGate.gateId || 'stadium exit doors'}. Est. travel window: ${ctx.nearestGate.etaMinutes || '---'} min. Follow all active steward instructions.`;
+
+  // NVIDIA NIM only — rate-limited against the shared 20 req/min budget.
   const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
+  if (!nvidiaKey || !nimRateLimiter.acquire()) return fallbackInstruction;
 
   try {
-    // Try Gemini first (faster for short prompts)
-    if (geminiKey) {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              maxOutputTokens: 120,
-              temperature: 0.3,
-            },
-          }),
-        },
-      );
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${nvidiaKey}`,
+        "Content-Type": "application/json",
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: "meta/llama-3.1-70b-instruct",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 120,
+        temperature: 0.3,
+        stream: false,
+      }),
+    });
+    clearTimeout(timeout);
 
-      if (res.ok) {
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-        if (text && text.length > 0) {
-          return text;
-        }
-      }
-    }
-
-    // Fallback to NVIDIA NIM
-    if (nvidiaKey) {
-      const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${nvidiaKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "meta/llama-3.1-70b-instruct",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 120,
-          temperature: 0.3,
-          stream: false,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const text = data.choices?.[0]?.message?.content?.trim();
-        if (text && text.length > 0) {
-          return text;
-        }
+    if (res.ok) {
+      const payload = await res.json();
+      const firstChoice = Array.isArray(payload?.choices) ? payload.choices[0] : null;
+      const text = firstChoice?.message?.content?.trim();
+      if (text && text.length > 0) {
+        return text;
       }
     }
   } catch (error) {
@@ -143,7 +123,7 @@ export async function generateAIInstruction(
   }
 
   // AI unavailable — return the structured fallback
-  return `Proceed with caution to your assigned checkpoint at ${ctx.nearestGate.gateId || 'stadium exit doors'}. Est. travel window: ${ctx.nearestGate.etaMinutes || '---'} min. Follow all active steward instructions.`;
+  return fallbackInstruction;
 }
 
 /**

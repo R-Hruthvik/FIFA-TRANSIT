@@ -1,48 +1,62 @@
-/**
- * Unit tests for egress stagger algorithm (D10).
- * Run with: npx jest src/lib/egress-stagger.test.ts
- */
-
-import {
-  staggerEgress,
-  generateMockUsers,
-  generateMockCrowd,
-  STADIUM_CAPACITY,
-} from "./egress-stagger";
+import { staggerEgress } from "./egress-stagger";
 import type { GateCrowd } from "@/types/position";
+
+// ── Helpers ────────────────────────────────────────────────────────────
+
+function buildUser(index: number, baseEtaMin: number) {
+  const gateIds = ["Gate G1", "Gate G2", "Gate G3", "Gate G4", "Gate G5", "Gate G6", "Gate G7", "Gate G8"];
+  const etaToGate: Record<string, number> = {};
+  const earliestArrival: Record<string, number> = {};
+  for (const gid of gateIds) {
+    const eta = baseEtaMin + (index % 5);
+    etaToGate[gid] = eta;
+    earliestArrival[gid] = eta * 60_000;
+  }
+  return { userId: `user-${index}`, earliestArrival, etaToGate };
+}
+
+function buildUsers(count: number) {
+  return Array.from({ length: count }, (_, i) => buildUser(i, 2 + (i % 10)));
+}
+
+const DEFAULT_CROWD: GateCrowd[] = [
+  { gateId: "Gate G1", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G2", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G3", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G4", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G5", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G6", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G7", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+  { gateId: "Gate G8", count: 200, confidence: 0.8, optInCount: 500, timestamp: Date.now(), capacityThreshold: 1000 },
+];
+
+const TIGHT_CROWD: GateCrowd[] = [
+  { gateId: "Gate G1", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G2", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G3", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G4", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G5", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G6", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G7", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+  { gateId: "Gate G8", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
+];
+
+// ── Tests ──────────────────────────────────────────────────────────────
 
 describe("staggerEgress", () => {
   test("assigns all users when capacity allows", () => {
-    const users = generateMockUsers(100);
-    const crowd = generateMockCrowd();
+    const users = buildUsers(100);
+    const result = staggerEgress(users, DEFAULT_CROWD, Date.now());
 
-    const result = staggerEgress(users, crowd, Date.now());
-
-    // 100 users across 8 gates with 1000 capacity each = 8000 total
-    // Should be able to assign all
     expect(result.deferredCount).toBe(0);
     expect(result.assignments.length).toBe(100);
     expect(result.assignments.every((a) => !a.deferred)).toBe(true);
   });
 
   test("defers users when gates are over capacity", () => {
-    // Tight capacity: 8 gates × 10 capacity = 80
-    const tightCrowd: GateCrowd[] = [
-      { gateId: "Gate G1", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G2", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G3", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G4", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G5", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G6", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G7", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-      { gateId: "Gate G8", count: 10, confidence: 0.8, optInCount: 50, timestamp: Date.now(), capacityThreshold: 10 },
-    ];
+    const users = buildUsers(100);
+    const result = staggerEgress(users, TIGHT_CROWD, Date.now());
 
-    const users = generateMockUsers(100);
-
-    const result = staggerEgress(users, tightCrowd, Date.now());
-
-    // Only 80 can be assigned, 20 deferred
     expect(result.deferredCount).toBeGreaterThan(0);
     expect(result.assignments.filter((a) => a.deferred).length).toBe(result.deferredCount);
   });
@@ -62,13 +76,11 @@ describe("staggerEgress", () => {
       },
     ];
 
-    const crowd = generateMockCrowd();
-    const result = staggerEgress(users, crowd, now);
+    const result = staggerEgress(users, DEFAULT_CROWD, now);
 
     const close = result.assignments.find((a) => a.userId === "close")!;
     const far = result.assignments.find((a) => a.userId === "far")!;
 
-    // The closer user should get an earlier leave time
     expect(close.leaveAt).toBeLessThanOrEqual(far.leaveAt);
   });
 });

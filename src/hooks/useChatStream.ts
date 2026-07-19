@@ -62,10 +62,12 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const loadingRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesRef = useRef<Message[]>(messages);
+  const lastInputRef = useRef<string | null>(null);
 
   const prevScoreRef = useRef<{ home: number | null; away: number | null }>({ home: null, away: null });
   const prevGatesRef = useRef<GateDensity>({});
@@ -84,6 +86,8 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || loadingRef.current) return;
+    lastInputRef.current = content;
+    setError(null);
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -151,12 +155,11 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
     }, STREAM_TIMEOUT_MS);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/agent/orchestrator", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: messagesForApi,
-          role: proactiveConfig?.persona === "torque" ? "staff" : "fan",
         }),
         signal: abortRef.current.signal,
       });
@@ -167,16 +170,51 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
       reader = res.body.getReader();
       const decoder = new TextDecoder();
 
+      let sseBuffer = "";
+      let toolNote = "";
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
+        sseBuffer += decoder.decode(value, { stream: true });
+        const frames = sseBuffer.split("\n\n");
+        sseBuffer = frames.pop() ?? "";
+
+        for (const frame of frames) {
+          const lines = frame.split("\n");
+          let event = "message";
+          const dataLines: string[] = [];
+          for (const line of lines) {
+            if (line.startsWith("event:")) event = line.slice(6).trim();
+            else if (line.startsWith("data:")) dataLines.push(line.slice(5).trim());
+          }
+          if (dataLines.length === 0) continue;
+          const payload = JSON.parse(dataLines.join("\n"));
+
+          if (event === "token") {
+            const text = payload.content as string;
+            if (text) {
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, content: m.content + text } : m,
+                ),
+              );
+            }
+          } else if (event === "tools") {
+            const executed = (payload.executed as Array<{ ok: boolean; message: string }>) ?? [];
+            const ok = executed.filter((e) => e.ok).map((e) => e.message);
+            if (ok.length) toolNote = `\n\n_${ok.join(" ")}_`;
+          } else if (event === "error") {
+            throw new Error(payload.message ?? "Stream error");
+          }
+        }
+      }
+
+      if (toolNote) {
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantId
-              ? { ...m, content: m.content + chunk }
-              : m,
+            m.id === assistantId ? { ...m, content: m.content + toolNote } : m,
           ),
         );
       }
@@ -186,10 +224,11 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
           setMessages((prev) =>
             prev.map((m) =>
               m.id === assistantId
-                ? { ...m, content: "⚠️ Response timed out. Please try again." }
+                ? { ...m, content: "⚠️ AI is busy right now. Please try again." }
                 : m,
             ),
           );
+          setError("AI is busy right now. Please try again.");
         }
         return;
       }
@@ -197,10 +236,11 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
-            ? { ...m, content: "⚠️ Connection lost. Please try again." }
+            ? { ...m, content: "⚠️ AI is temporarily unavailable. Please try again in a moment." }
             : m,
         ),
       );
+      setError("AI is temporarily unavailable. Please try again in a moment.");
     } finally {
       clearStreamTimeout();
       if (reader) {
@@ -211,6 +251,13 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
       abortRef.current = null;
     }
   }, [proactiveConfig?.persona, isDemoMode, demoContext]);
+
+  const retryLast = useCallback(() => {
+    if (lastInputRef.current && !loadingRef.current) {
+      setError(null);
+      sendMessage(lastInputRef.current);
+    }
+  }, [sendMessage]);
 
   const addProactiveMessage = useCallback((content: string) => {
     const msg: Message = {
@@ -287,5 +334,5 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
     prevGatesRef.current = {};
   }, []);
 
-  return { messages, isLoading, sendMessage, clearChat };
+  return { messages, isLoading, error, sendMessage, retryLast, clearChat };
 }

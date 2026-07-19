@@ -606,6 +606,11 @@ export class LiveDemoEngine {
     this.notify();
   }
 
+  applyIncidentReport(description: string, severity: string, location: string) {
+    this.log("warning", "crowd", `Incident filed: "${description}" (${severity}) at ${location}`);
+    this.notify();
+  }
+
   private log(level: "info" | "warning" | "alert", category: "crowd" | "gate" | "system", message: string) {
     const entry: AdminLogEntry = {
       timestamp: Date.now(),

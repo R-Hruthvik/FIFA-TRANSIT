@@ -111,7 +111,8 @@ export const authOptions = {
       },
     }),
     CredentialsProvider({
-      name: "Credentials",
+      id: "admin-credentials",
+      name: "Admin Login",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -134,14 +135,18 @@ export const authOptions = {
           throw new Error("Invalid password");
         }
 
+        // Admin credentials login is restricted to admin and staff roles only
+        if (user.role !== "admin" && user.role !== "staff") {
+          throw new Error("Admin login is restricted to staff accounts. Use Google sign-in for fan access.");
+        }
+
         if (user.staffStatus === "rejected") {
           throw new Error("Your staff application was rejected. Please contact an administrator.");
         }
         if (user.staffStatus === "pending") {
-          throw new Error("Your staff application is pending approval. Please wait for an administrator to review it.");
+          throw new Error("Your staff application is pending approval. Please wait for an administrator to review.");
         }
 
-        // Update lastSignIn and updatedAt on successful login
         const mongoClient = await clientPromise;
         const db = mongoClient.db(DB_NAME);
         const now = new Date();

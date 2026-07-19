@@ -29,15 +29,21 @@ export async function GET() {
           cacheTTL: 300,
         },
         gateOverrides: {},
+        aiProvider: {
+          provider: "gemini",
+          model: "gemini-2.0-flash",
+        },
       });
     }
 
     return NextResponse.json({
       featureFlags: settings.featureFlags || {},
       matchApi: settings.matchApi || {},
-      // Autonomous ops agent writes gate overrides here; default to an empty
-      // matrix so the client can always safely map over the entries.
       gateOverrides: settings.gateOverrides || {},
+      aiProvider: settings.aiProvider || {
+        provider: "gemini",
+        model: "gemini-2.0-flash",
+      },
     });
   } catch (error) {
     console.error("Failed to fetch admin settings:", error);
@@ -54,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { featureFlags, matchApi, gateOverrides, clearGateId } = body;
+    const { featureFlags, matchApi, gateOverrides, aiProvider, clearGateId } = body;
 
     const mongoClient = await clientPromise;
     const db = mongoClient.db(DB_NAME);
@@ -74,9 +80,8 @@ export async function POST(request: Request) {
     };
     if (featureFlags !== undefined) setFields.featureFlags = featureFlags;
     if (matchApi !== undefined) setFields.matchApi = matchApi;
-    // Allow admins to clear or update the full gateOverrides matrix (e.g.
-    // resetting an AI-restricted gate back to standard manual operation).
     if (gateOverrides !== undefined) setFields.gateOverrides = gateOverrides;
+    if (aiProvider !== undefined) setFields.aiProvider = aiProvider;
 
     await db.collection("settings").updateOne(
       { _id: GLOBAL_SETTINGS_ID },
