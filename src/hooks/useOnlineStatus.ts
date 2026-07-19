@@ -72,11 +72,12 @@ export function useOnlineStatus() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    checkBackend();
+    const initTimer = setTimeout(checkBackend, 0);
 
     intervalRef.current = setInterval(checkBackend, HEALTH_CHECK_INTERVAL_MS);
 
     return () => {
+      clearTimeout(initTimer);
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
       if (intervalRef.current) clearInterval(intervalRef.current);

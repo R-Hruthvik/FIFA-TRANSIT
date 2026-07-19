@@ -15,6 +15,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { useEgressPlan } from "@/hooks/useEgressPlan";
 import { motion } from "motion/react";
 import { Card } from "@/components/ui/card";
@@ -46,6 +47,7 @@ export function EgressPlanCard({
     language,
     matchEnded,
   });
+  const [now] = useState(() => Date.now());
 
   if (isLoading && !plan) {
     return (
@@ -95,9 +97,7 @@ export function EgressPlanCard({
     );
   }
 
-  // ── NORMAL: Show the egress plan ──────────────────────────────────
-
-  const leaveInMin = Math.max(0, Math.round((plan.leaveAt - Date.now()) / 60_000));
+  const leaveInMin = Math.max(0, Math.round((plan.leaveAt - now) / 60_000));
 
   return (
     <Card data-section="egress-plan" data-state="active" className="p-6">

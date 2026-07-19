@@ -106,12 +106,12 @@ export class LiveProvider implements IDataProvider {
       if (res.ok) {
         const data = await res.json();
         if (data.alerts) {
-          const mapped: GateEvent[] = (data.alerts as any[]).map((a: any) => ({
-            timestamp: a.timestamp || Date.now(),
-            gate: a.gateId || "unknown",
+          const mapped: GateEvent[] = (data.alerts as Array<Record<string, unknown>>).map((a) => ({
+            timestamp: typeof a.timestamp === "number" ? a.timestamp : Date.now(),
+            gate: String(a.gateId || "unknown"),
             type: (a.type || "alert") as "entry" | "exit" | "alert",
-            crowdCount: a.count,
-            message: a.message || `Alert at ${a.gateId || "unknown"}`,
+            crowdCount: typeof a.count === "number" ? a.count : undefined,
+            message: String(a.message || `Alert at ${a.gateId || "unknown"}`),
           }));
           this.gateEventsCache = mapped;
         }
@@ -172,7 +172,7 @@ export class LiveProvider implements IDataProvider {
     return this.adminLogsCache.slice(-count);
   }
 
-  getAiResponse(_input: string, _context?: Record<string, any>): string {
+  getAiResponse(_input: string, _context?: Record<string, unknown>): string {
     return "";
   }
 

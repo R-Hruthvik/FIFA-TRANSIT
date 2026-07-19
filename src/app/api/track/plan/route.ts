@@ -28,7 +28,7 @@ import type { EgressPlan } from "@/types/position";
 // In production, this would be tied to gate_crowd update timestamps.
 // For now, we increment it on each generation.
 
-let planVersion = 1;
+const planVersion = 1;
 
 export const runtime = "nodejs";
 

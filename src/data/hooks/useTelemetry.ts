@@ -6,7 +6,7 @@ import type { StadiumTelemetry } from "@/types/telemetry";
 
 export function useTelemetry() {
   const provider = useData();
-  const [telemetry, setTelemetry] = useState<StadiumTelemetry | null>(null);
+  const [telemetry, setTelemetry] = useState<StadiumTelemetry | null>(() => provider.getTelemetry());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -14,7 +14,6 @@ export function useTelemetry() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 30000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

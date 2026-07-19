@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         const db = mongoClient.db(DB_NAME);
         const usersCollection = db.collection('users');
 
-        let query: any = {};
+        let query: Record<string, unknown> = {};
         if (searchTerm) {
           query = {
             $or: [
@@ -51,9 +51,9 @@ export async function GET(request: Request) {
     );
 
     return Response.json(users);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Admin users fetch error:', error);
-    return Response.json({ error: error.message || 'Failed to fetch users' }, { status: 500 });
+    return Response.json({ error: error instanceof Error ? error.message : 'Failed to fetch users' }, { status: 500 });
   }
 }
 

@@ -19,6 +19,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[] }> {
   const settings = await db.collection("settings").findOne({ _id: GLOBAL_SETTINGS_ID });
   const ttlSeconds = settings?.matchApi?.cacheTTL ?? 300;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cacheDoc = await db.collection(CACHE_COLL).findOne({ _id: "current_matches" as any });
 
   const now = Date.now();
@@ -30,6 +31,7 @@ export async function getCachedMatches(): Promise<{ matches: Match[] }> {
   const fresh = await withTimeout(fetchLiveMatches(), FETCH_TIMEOUT);
 
   await db.collection(CACHE_COLL).updateOne(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { _id: "current_matches" as any },
     {
       $set: {

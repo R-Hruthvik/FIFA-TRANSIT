@@ -6,8 +6,8 @@ import type { Match } from "@/lib/match-api";
 
 export function useMatch() {
   const provider = useData();
-  const [match, setMatch] = useState<Match | null>(null);
-  const [upcoming, setUpcoming] = useState<Match[]>([]);
+  const [match, setMatch] = useState<Match | null>(() => provider.getMatch().match);
+  const [upcoming, setUpcoming] = useState<Match[]>(() => provider.getMatch().upcoming);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -17,7 +17,6 @@ export function useMatch() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 30000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

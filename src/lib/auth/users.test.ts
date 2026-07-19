@@ -3,63 +3,44 @@
  */
 import { findUserByEmail, findUserById, createUser, updateUserRole } from "@/lib/auth/users";
 
-// In-memory mock database store for isolating tests
-const mockUsersTable = new Map<string, any>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, prefer-const
+let mockUserStore: Record<string, any> = {};
 
-jest.mock("@/lib/db", () => {
-  const mockCollection = {
-    createIndex: jest.fn().mockResolvedValue("index_created"),
-    listIndexes: jest.fn().mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([]),
-    }),
-    deleteOne: jest.fn().mockImplementation(async (query) => {
-      mockUsersTable.delete(query.id);
-      return { deletedCount: 1 };
-    }),
-    insertOne: jest.fn().mockImplementation(async (userData) => {
-      mockUsersTable.set(userData.id, { ...userData, _id: "mock_object_id" });
-      return { insertedId: "mock_object_id" };
-    }),
-    findOne: jest.fn().mockImplementation(async (query) => {
-      if (query.email && query.email.$regex) {
-        // Safe regex parsing for lookup mock
-        const regexStr = query.email.$regex.source || query.email.$regex.toString();
-        const email = regexStr.replace(/^\^/, '').replace(/\$$/, '');
-        for (const user of mockUsersTable.values()) {
-          if (user.email.toLowerCase() === email.toLowerCase()) {
-            return user;
-          }
-        }
-        return null;
-      }
-      if (query.id) {
-        return mockUsersTable.get(query.id) || null;
-      }
-      return null;
-    }),
-    updateOne: jest.fn().mockImplementation(async (query, update) => {
-      const user = mockUsersTable.get(query.id);
-      if (user && update.$set) {
-        Object.assign(user, update.$set);
-      }
-      return { modifiedCount: 1 };
-    }),
-  };
+const mockUsersCollection = {
+  createIndex: jest.fn().mockResolvedValue("email_1"),
+  deleteOne: jest.fn().mockImplementation((q) => {
+    delete mockUserStore[q.id];
+    return Promise.resolve({ deletedCount: 1 });
+  }),
+  findOne: jest.fn().mockImplementation((q) => {
+    if (q.id) {
+      return Promise.resolve(mockUserStore[q.id] || null);
+    }
+    const found = Object.values(mockUserStore)[0];
+    return Promise.resolve(found || null);
+  }),
+  insertOne: jest.fn().mockImplementation((doc) => {
+    mockUserStore[doc.id] = doc;
+    return Promise.resolve({ insertedId: doc.id });
+  }),
+  updateOne: jest.fn().mockImplementation((q, update) => {
+    if (mockUserStore[q.id] && update.$set) {
+      Object.assign(mockUserStore[q.id], update.$set);
+    }
+    return Promise.resolve({ modifiedCount: 1 });
+  }),
+  listIndexes: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+};
 
-  const mockDb = {
-    collection: () => mockCollection,
-  };
+jest.mock("@/lib/db", () => ({
+  clientPromise: Promise.resolve({
+    db: () => ({
+      collection: () => mockUsersCollection,
+    }),
+  }),
+}));
 
-  const mockClient = {
-    db: () => mockDb,
-    connect: jest.fn().mockResolvedValue({}),
-  };
-
-  return {
-    clientPromise: Promise.resolve(mockClient),
-    getUserCollection: jest.fn().mockResolvedValue(mockCollection),
-  };
-});
+const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 
 describe("Auth user CRUD", () => {
   let testUserId: string;

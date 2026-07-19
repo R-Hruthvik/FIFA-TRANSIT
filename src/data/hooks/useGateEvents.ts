@@ -6,7 +6,7 @@ import type { GateEvent } from "@/data/types";
 
 export function useGateEvents() {
   const provider = useData();
-  const [events, setEvents] = useState<GateEvent[]>([]);
+  const [events, setEvents] = useState<GateEvent[]>(() => provider.getGateEvents());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -14,7 +14,6 @@ export function useGateEvents() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 15000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

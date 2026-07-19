@@ -433,7 +433,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           contents.push({ role: "user", parts: lastParts });
         }
 
-        let currentContents = contents;
+        const currentContents = contents;
         let turn = 0;
         const MAX_TURNS = 6;
         const MAX_TOOL_CALLS = 8;

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const BASE = "http://localhost:3000";
+const _BASE = "http://localhost:3000";
 
 // ─── Goal 1: Bulletproof chat — no full-screen reload on errors ────────────
 

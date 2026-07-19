@@ -94,6 +94,7 @@ export async function anonymizeAndAggregate(): Promise<void> {
 
   if (results.length === 0) return;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stats: CohortStat[] = results.map((r: any) => ({
     gateId: r.gateId,
     hourBucket: r.hourBucket,

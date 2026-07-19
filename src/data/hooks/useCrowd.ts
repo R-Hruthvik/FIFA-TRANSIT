@@ -6,8 +6,8 @@ import type { CrowdPosition } from "@/data/types";
 
 export function useCrowd() {
   const provider = useData();
-  const [positions, setPositions] = useState<CrowdPosition[]>([]);
-  const [count, setCount] = useState(0);
+  const [positions, setPositions] = useState<CrowdPosition[]>(() => provider.getCrowdPositions());
+  const [count, setCount] = useState(() => provider.getCrowdCount());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -16,7 +16,6 @@ export function useCrowd() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 10000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

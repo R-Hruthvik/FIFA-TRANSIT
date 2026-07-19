@@ -6,7 +6,7 @@ import type { AdminLogEntry } from "@/data/types";
 
 export function useAdminLogs() {
   const provider = useData();
-  const [logs, setLogs] = useState<AdminLogEntry[]>([]);
+  const [logs, setLogs] = useState<AdminLogEntry[]>(() => provider.getAdminLogs());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -14,7 +14,6 @@ export function useAdminLogs() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 20000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

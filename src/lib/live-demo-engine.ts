@@ -24,7 +24,7 @@ export interface AdminLogEntry {
   level: "info" | "warning" | "alert";
   category: "crowd" | "gate" | "system";
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export interface MatchSimulationState {
@@ -452,9 +452,9 @@ export class LiveDemoEngine {
     });
   }
 
-  private simulateGateEvents(seconds: number) {
+  private simulateGateEvents(_seconds: number) {
     for (const [gate, density] of Object.entries(this.gateDensities)) {
-      const lastTime = this.lastGateEventGates[gate] || 0;
+      const _lastTime = this.lastGateEventGates[gate] || 0;
       const lastDensity = this.gateDensities[gate] || 0;
 
       if (density >= 0.65 && lastDensity < 0.65) {
@@ -491,14 +491,14 @@ export class LiveDemoEngine {
     }
   }
 
-  private simulateCrowdFlow(seconds: number) {
+  private simulateCrowdFlow(_seconds: number) {
     // Placeholder for any additional crowd flow logic
   }
 
-  applyGateOverride(gate: string, status: "OPEN" | "CLOSED" | "LIMITED"): void {}
-  applyStewardDispatch(location: string, count: number): void {}
-  applyIncidentReport(description: string, severity: string, location: string): void {}
-  loadScenario(scenario: {
+  applyGateOverride(_gate: string, _status: "OPEN" | "CLOSED" | "LIMITED"): void {}
+  applyStewardDispatch(_location: string, _count: number): void {}
+  applyIncidentReport(_description: string, _severity: string, _location: string): void {}
+  loadScenario(_scenario: {
     title?: string;
     snapshots: Array<{
       t: number;
@@ -536,7 +536,7 @@ export class LiveDemoEngine {
     this.initializeCrowd(150);
   }
 
-  log(level: "info" | "warning" | "alert", category: "crowd" | "gate" | "system", message: string, data?: Record<string, any>) {
+  log(level: "info" | "warning" | "alert", category: "crowd" | "gate" | "system", message: string, data?: Record<string, unknown>) {
     this.adminLogs.push({
       timestamp: Date.now(),
       level,

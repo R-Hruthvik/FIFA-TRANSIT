@@ -42,8 +42,8 @@ export default function StaffRegisterPage() {
 
       // Reloading will trigger the useStaffStatus hook status update
       window.location.reload();
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsSubmitting(false);
     }

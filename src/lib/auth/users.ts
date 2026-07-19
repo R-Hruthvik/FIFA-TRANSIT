@@ -1,6 +1,5 @@
 import { clientPromise } from "@/lib/db";
 import { UserDocument, Role, StaffStatus } from "@/types/auth";
-import { ObjectId } from "mongodb";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const USERS_COLL = "users";
@@ -33,11 +32,11 @@ export async function createUser(userData: Omit<UserDocument, "_id">) {
   return { ...userData, _id: result.insertedId };
 }
 
-async function ensureUniqueIndexes(collection: any) {
+async function ensureUniqueIndexes(collection: { listIndexes: () => { toArray: () => Promise<Array<{ name?: string }>> }; createIndex: (keys: Record<string, number>, opts?: Record<string, unknown>) => Promise<string> }) {
   try {
     // Check existing indexes to avoid errors on duplicate key creation
     const existingIndexes = await collection.listIndexes().toArray();
-    const indexNames = existingIndexes.map((idx: any) => idx.name || '');
+    const indexNames = existingIndexes.map((idx) => idx.name || '');
 
     // Ensure unique sparse index on email (case-insensitive) - prevents duplicates
     if (!indexNames.includes('email_1')) {
@@ -53,8 +52,9 @@ async function ensureUniqueIndexes(collection: any) {
     }
 
   } catch (error) {
-    const errorCode = (error as any)?.code;
-    const errorMessage = (error as any)?.message || error;
+    const errRecord = error as Record<string, unknown>;
+    const errorCode = errRecord?.code;
+    const errorMessage = String(errRecord?.message || error);
 
     // Only continue if it's a duplicate key error (index already exists)
     if (errorCode === 11000 && errorMessage.includes('index already exists')) {

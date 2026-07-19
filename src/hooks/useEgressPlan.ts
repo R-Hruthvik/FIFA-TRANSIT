@@ -241,6 +241,7 @@ export function useEgressPlan(
 
   // ── Connect to SSE stream ───────────────────────────────────────────
 
+  const connectStreamRef = useRef<() => void>(() => {});
   const connectStream = useCallback(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
@@ -256,7 +257,7 @@ export function useEgressPlan(
     es.onerror = () => {
       setIsLive(false);
       // Auto-reconnect after 5s
-      setTimeout(connectStream, 5000);
+      setTimeout(() => { connectStreamRef.current(); }, 5000);
     };
 
     es.addEventListener("crowd_update", (event) => {
@@ -305,6 +306,9 @@ export function useEgressPlan(
       }
     });
   }, []);
+  useEffect(() => {
+    connectStreamRef.current = connectStream;
+  }, [connectStream]);
 
   // ── Lifecycle ───────────────────────────────────────────────────────
 
@@ -339,7 +343,8 @@ export function useEgressPlan(
 
   // Re-fetch when dependencies change
   useEffect(() => {
-    fetchPlan();
+    const timer = setTimeout(() => { void fetchPlan(); }, 0);
+    return () => clearTimeout(timer);
   }, [fetchPlan]);
 
   // Connect SSE stream on mount

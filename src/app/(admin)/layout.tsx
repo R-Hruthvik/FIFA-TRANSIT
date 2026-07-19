@@ -28,7 +28,8 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    setMobileSidebarOpen(false);
+    const timer = setTimeout(() => setMobileSidebarOpen(false), 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   useEffect(() => {

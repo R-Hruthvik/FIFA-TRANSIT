@@ -74,11 +74,14 @@ export default function AdminDashboard() {
     // Only admins trigger the background stats fetch — prevents fans/staff
     // from firing unauthorized cycles.
     if (status !== 'authenticated' || session?.user?.role !== 'admin') {
-      setLoading(false);
-      return;
+      const timer = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(timer);
     }
-    fetchStats();
-    fetchOpsStatus();
+    const timer = setTimeout(() => {
+      fetchStats();
+      fetchOpsStatus();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [status, session?.user?.role]);
 
   if (loading) {

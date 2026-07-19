@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect } from "react";
 import { Loader2, Lock } from "lucide-react";
 import { motion } from "motion/react";
@@ -100,12 +101,12 @@ export function ProtectedRoute({
                   {allowedRoles.join(" / ")}
                 </span>
               </p>
-              <a
+              <Link
                 href="/"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-800 text-white font-medium text-sm rounded-lg hover:bg-zinc-700 transition-colors"
               >
                 Go to Dashboard
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>

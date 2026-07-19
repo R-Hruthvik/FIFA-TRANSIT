@@ -15,7 +15,7 @@
  * Output is cached on-device (D8-B) and can be live-updated via SSE (D8-A).
  */
 
-import type { GateCrowd, GateSummary, EgressPlan } from "@/types/position";
+import type { GateCrowd, EgressPlan } from "@/types/position";
 import { PositionManager, parseUserPosition, gateToPosition, distanceBetween } from "@/lib/position-manager";
 
 // Re-export for backwards compatibility with existing callers (track/plan route).
@@ -31,7 +31,7 @@ const CAPACITY_CRITICAL_PCT = 80;
 const WALK_SPEED_M_PER_MIN = 80;
 
 /** Stadium dimensions (approximate) for distance calculations */
-const STADIUM_RADIUS_M = 250;
+const _STADIUM_RADIUS_M = 250;
 
 // ── Distance calculation (delegated to PositionManager) ────────────────
 
@@ -87,7 +87,7 @@ export function generateEgressPlan(input: EgressPlanInput): EgressPlanResult {
   const now = input.now ?? Date.now();
   const userPos = parseUserPosition(input.userPosition);
   const language = input.language || DEFAULT_LANGUAGE;
-  const matchEnded = input.matchEnded ?? false;
+  const _matchEnded = input.matchEnded ?? false;
 
   // 1. Compute ETAs to each gate
   const gateETAs: Array<{

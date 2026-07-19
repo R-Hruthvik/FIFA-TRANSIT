@@ -1,10 +1,9 @@
-import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { clientPromise } from "@/lib/db";
 import { findUserByEmail } from "@/lib/auth/users";
-import type { Role, StaffStatus } from "@/types/auth";
+import type { Role } from "@/types/auth";
 
 const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 
@@ -22,7 +21,7 @@ export const authOptions = {
       credentials: {
         credential: { type: "text" },
       },
-      // @ts-ignore
+      // @ts-expect-error — NextAuth v4 authorize type mismatch
       async authorize(credentials) {
         if (!credentials?.credential) {
           throw new Error("No credential provided");
@@ -96,7 +95,6 @@ export const authOptions = {
             };
           }
 
-          // @ts-ignore — module augmentation handles role compatibility at runtime
           return {
             id: user.id,
             email: user.email,
@@ -104,9 +102,9 @@ export const authOptions = {
             image: user.image,
             role: user.role,
           };
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("One Tap authorization error:", error);
-          throw new Error(error.message || "Authentication failed");
+          throw new Error(error instanceof Error ? error.message : "Authentication failed");
         }
       },
     }),
@@ -160,7 +158,6 @@ export const authOptions = {
           }
         );
 
-        // @ts-ignore — module augmentation handles the extra fields at runtime
         return {
           id: user.id,
           email: user.email,
@@ -173,8 +170,8 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" } as const,
   callbacks: {
-    // @ts-ignore — NextAuth v4 JWT callback types are strict
-    async jwt({ token, user, account, profile }: { token: any; user: any; account: any; profile?: any }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user, account, profile }: any) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -259,7 +256,7 @@ export const authOptions = {
       // Safety guarantee: Never return null or undefined to prevent library encryption crashes
       return token || {};
     },
-    // @ts-ignore
+    // @ts-expect-error — NextAuth v4 session callback types
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
@@ -291,8 +288,7 @@ export const authOptions = {
   })(),
 };
 
-export const auth = () => {
-  // Import getServerSession dynamically or from next-auth/next
-  const { getServerSession } = require("next-auth/next");
+export const auth = async () => {
+  const { getServerSession } = await import('next-auth/next');
   return getServerSession(authOptions);
 };

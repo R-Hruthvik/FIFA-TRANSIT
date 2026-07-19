@@ -32,7 +32,7 @@ export const runtime = "nodejs";
 export async function GET() {
   const encoder = new TextEncoder();
   let isActive = true;
-  let lastGateCounts: Record<string, number> = {};
+  const lastGateCounts: Record<string, number> = {};
 
   // Helper to send SSE event
   const sendEvent = (controller: ReadableStreamDefaultController, data: unknown) => {
@@ -114,8 +114,9 @@ export async function GET() {
               });
             }
           } catch (err) {
-            const errorName = err && typeof err === 'object' ? (err as any).name : '';
-            const errorMessage = err && typeof err === 'object' ? (err as any).message || '' : String(err);
+            const errObj = err as Record<string, unknown> | null;
+            const errorName = typeof errObj?.name === 'string' ? errObj.name : '';
+            const errorMessage = typeof errObj?.message === 'string' ? errObj.message : String(err);
             const isMongoError = 
               errorName === "MongoServerSelectionError" || 
               errorName === "MongoNetworkError" ||

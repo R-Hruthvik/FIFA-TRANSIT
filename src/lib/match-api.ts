@@ -41,6 +41,7 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
     }
     const data = await res.json();
     const matches = data.matches || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapped = matches.map((m: any) => {
       let status: Match["status"] = "scheduled";
       if (m.status === "IN_PLAY" || m.status === "PAUSED") status = "live";
@@ -69,21 +70,27 @@ export async function fetchLiveMatches(): Promise<MatchResponse> {
     }
     const data = await res.json();
     const fixtures = data.response || [];
-    const mapped = fixtures.map((f: any) => {
-      const shortStatus = f.fixture?.status?.short;
+    const mapped = fixtures.map((fItem: unknown) => {
+      const f = fItem as {
+        fixture?: { id?: number; date?: string; status?: { short?: string; elapsed?: number }; venue?: { name?: string } };
+        teams?: { home?: { name?: string }; away?: { name?: string } };
+        goals?: { home?: number | null; away?: number | null };
+      };
+      const shortStatus = f.fixture?.status?.short || "";
       let status: Match["status"] = "scheduled";
       if (["1H", "2H", "HT", "ET", "BT", "P"].includes(shortStatus)) status = "live";
       if (["FT", "AET", "PEN"].includes(shortStatus)) status = "finished";
 
       return {
-        id: String(f.fixture?.id),
+        id: String(f.fixture?.id ?? ""),
         homeTeam: f.teams?.home?.name || "TBD",
         awayTeam: f.teams?.away?.name || "TBD",
         homeScore: f.goals?.home ?? null,
         awayScore: f.goals?.away ?? null,
         status,
-        utcDate: f.fixture?.date,
-        minute: f.fixture?.status?.elapsed ?? null,
+        utcDate: f.fixture?.date || "",
+        minute: status === "live" ? (f.fixture?.status?.elapsed ?? null) : null,
+        stadiumName: f.fixture?.venue?.name || "Stadium",
       };
     });
     return { matches: mapped };

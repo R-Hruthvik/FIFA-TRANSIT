@@ -15,6 +15,13 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
+beforeEach(() => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ metrics: { gate1: 'low' } }),
+  } as Response);
+});
+
 test('renders dashboard layout structure', () => {
   render(<Page />);
   expect(screen.getByRole('main')).toBeInTheDocument();

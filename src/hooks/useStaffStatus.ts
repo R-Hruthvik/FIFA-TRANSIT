@@ -24,7 +24,7 @@ export function useStaffStatus() {
   }, []);
 
   useEffect(() => {
-    fetchStatus();
+    const initTimer = setTimeout(() => { void fetchStatus(); }, 0);
 
     // Only set up polling if status is pending
     let interval: NodeJS.Timeout | null = null;
@@ -53,6 +53,7 @@ export function useStaffStatus() {
     interval = setInterval(checkLoop, 5000);
 
     return () => {
+      clearTimeout(initTimer);
       if (interval) clearInterval(interval);
     };
   }, [fetchStatus]);

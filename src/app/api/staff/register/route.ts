@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       staffStatus: "pending",
       staffRequestedAt: new Date(),
       // Add custom staff application details (typed as any on mongo doc)
-      // @ts-ignore
+      // @ts-expect-error — custom staff application fields on User Document
       staffId,
       organization,
       staffRole,

@@ -72,10 +72,11 @@ export default function StaffApprovalQueue() {
 
   useEffect(() => {
     if (status !== 'authenticated' || session?.user?.role !== 'admin') {
-      setLoading(false);
-      return;
+      const timer = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(timer);
     }
-    fetchRequests();
+    const timer = setTimeout(() => { fetchRequests(); }, 0);
+    return () => clearTimeout(timer);
   }, [status, session?.user?.role]);
 
   if (loading) {

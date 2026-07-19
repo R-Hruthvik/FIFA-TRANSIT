@@ -114,7 +114,7 @@ async function persistErrorToDb(
       .catch((e) => {
         console.error("Failed to persist error to diagnostics collection:", e);
       });
-  } catch (logSystemError) {
+  } catch (_logSystemError) {
     // Silent failure to prevent infinite loops
   }
 }

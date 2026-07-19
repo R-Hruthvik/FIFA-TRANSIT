@@ -1,9 +1,8 @@
 import { MongoClient, type MongoClientOptions } from 'mongodb';
 import type { StadiumTelemetry } from '@/types/telemetry';
 
-const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/stadium_ops';
-
-const isAtlas = uri.startsWith('mongodb+srv://') || uri.includes('ssl=true') || uri.includes('tls=true');
+const uri = process.env.MONGODB_URI || (process.env.NODE_ENV === 'test' ? 'mongodb://127.0.0.1:27017/test' : '');
+if (!uri) throw new Error('MONGODB_URI environment variable is not set. Please add your MongoDB Atlas connection string to .env.local');
 
 // Production-grade MongoDB connection options
 const options: MongoClientOptions = {
@@ -15,12 +14,12 @@ const options: MongoClientOptions = {
   serverSelectionTimeoutMS: parseInt(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS || '5000', 10),
   socketTimeoutMS: parseInt(process.env.MONGODB_SOCKET_TIMEOUT_MS || '45000', 10),
   
-  // Retry writes for resilience (only on Atlas/replica-sets)
-  retryWrites: isAtlas,
+  // Retry writes for resilience
+  retryWrites: true,
   retryReads: true,
   
   // TLS/SSL is enabled by default in Atlas
-  tls: isAtlas,
+  tls: true,
 };
 
 let client: MongoClient;

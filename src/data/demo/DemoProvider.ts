@@ -130,7 +130,7 @@ export class DemoProvider implements IDataProvider {
     return engine.getRecentAdminLogs(count) as AdminLogEntry[];
   }
 
-  getAiResponse(input: string, _context?: Record<string, any>): string {
+  getAiResponse(input: string, _context?: Record<string, unknown>): string {
     const engine = this.ensureEngine();
     const matchState = engine.getMatchState();
     const inputLower = input.toLowerCase();

@@ -23,7 +23,7 @@ export interface AdminLogEntry {
   level: "info" | "warning" | "alert";
   category: "crowd" | "gate" | "system";
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export interface IDataProvider {
@@ -46,7 +46,7 @@ export interface IDataProvider {
   getAdminLogs(): AdminLogEntry[];
   getRecentAdminLogs(count: number): AdminLogEntry[];
 
-  getAiResponse(input: string, context?: Record<string, any>): string;
+  getAiResponse(input: string, context?: Record<string, unknown>): string;
   getFanQuery(): string | null;
 
   applyGateOverride(gate: string, status: "OPEN" | "CLOSED" | "LIMITED"): void;

@@ -6,7 +6,7 @@ import type { GateMetrics } from "@/types/telemetry";
 
 export function useMetrics() {
   const provider = useData();
-  const [metrics, setMetrics] = useState<GateMetrics | null>(null);
+  const [metrics, setMetrics] = useState<GateMetrics | null>(() => provider.getMetrics());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const sync = () => {
@@ -14,7 +14,6 @@ export function useMetrics() {
   };
 
   useEffect(() => {
-    sync();
     intervalRef.current = setInterval(sync, provider.isDemo ? 500 : 30000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
