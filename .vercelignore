@@ -1,0 +1,31 @@
+# Build outputs and cache
+.next/
+out/
+build/
+tsconfig.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Local environment and secret files
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+
+# Testing directories
+tests/
+*.spec.ts
+*.test.ts
+
+# Python orchestration framework (not used by Vercel serverless)
+src/framework/
+main.py
+
+# Scripts
+scripts/
