@@ -274,7 +274,21 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "",
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || (() => {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'NEXTAUTH_SECRET or AUTH_SECRET environment variable is required in production. ' +
+        'Generate one with: openssl rand -base64 32'
+      );
+    }
+    // In development, generate a temporary secret but warn the user
+    console.warn(
+      '[AUTH WARNING] No NEXTAUTH_SECRET provided. Using temporary secret. ' +
+      'Set NEXTAUTH_SECRET in .env.local for consistent sessions. ' +
+      'Generate with: openssl rand -base64 32'
+    );
+    return 'dev-secret-do-not-use-in-production';
+  })(),
 };
 
 export const auth = () => {
