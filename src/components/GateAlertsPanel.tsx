@@ -1,6 +1,6 @@
 "use client";
 
-import { useDemoMode } from "./DemoController";
+import { useGateEvents } from "@/data/hooks/useGateEvents";
 import { Badge } from "@/components/ui/badge";
 import { Warning, CheckCircle, Clock, ArrowRight } from "@phosphor-icons/react";
 
@@ -24,20 +24,8 @@ function formatTimestamp(ts: number): string {
 }
 
 export function GateAlertsPanel() {
-  const demo = useDemoMode();
-
-  if (!demo?.isDemoMode) {
-    return (
-      <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-center">
-        <p className="text-[10px] text-zinc-500 font-mono uppercase">
-          Start demo to see live gate alerts
-        </p>
-      </div>
-    );
-  }
-
-  const recentEvents = demo.getRecentGateEvents?.(10) ?? [];
-  const recentAlerts = recentEvents.filter((e) => e.type === "alert");
+  const events = useGateEvents();
+  const recentAlerts = events.filter((e) => e.type === "alert");
 
   return (
     <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin">
@@ -45,7 +33,7 @@ export function GateAlertsPanel() {
         <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-center">
           <div className="flex items-center justify-center gap-2">
             <CheckCircle size={14} weight="duotone" className="text-emerald-400" />
-            <p className="text-[10px] text-zinc-500 font-mono uppercase">
+            <p className="text-[10px] text-zinc-400 font-mono uppercase">
               All gates operating normally
             </p>
           </div>
@@ -65,7 +53,7 @@ export function GateAlertsPanel() {
                     <span className={`text-[10px] font-black tracking-wider uppercase ${severity.text}`}>
                       {GATE_LABELS[event.gate] ?? event.gate}
                     </span>
-                    <span className="text-[9px] text-zinc-500 font-mono">
+                    <span className="text-[9px] text-zinc-400 font-mono">
                       {formatTimestamp(event.timestamp)}
                     </span>
                   </div>

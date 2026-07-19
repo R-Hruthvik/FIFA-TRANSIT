@@ -131,24 +131,24 @@ export async function resolveAiConfig(
 }
 
 function autoDetectProvider(): AiProviderId {
-  if (process.env.GEMINI_API_KEY) return "gemini";
   if (process.env.NVIDIA_NIM_API_KEY || process.env.OPENAI_API_KEY) return "openai-compat";
+  if (process.env.GEMINI_API_KEY) return "gemini";
   if (process.env.VERTEX_PROJECT_ID || process.env.GOOGLE_APPLICATION_CREDENTIALS) return "vertex";
-  return "gemini"; // default
+  return "openai-compat"; // default to NVIDIA NIM
 }
 
 function autoDetectModel(provider: AiProviderId): string {
   switch (provider) {
-    case "gemini": return "gemini-2.0-flash";
     case "openai-compat": return "meta/llama-3.1-70b-instruct";
+    case "gemini": return "gemini-2.0-flash";
     case "vertex": return "gemini-2.0-flash";
   }
 }
 
 function resolveApiKey(provider: AiProviderId): string | undefined {
   switch (provider) {
-    case "gemini": return process.env.GEMINI_API_KEY;
     case "openai-compat": return process.env.NVIDIA_NIM_API_KEY ?? process.env.OPENAI_API_KEY;
+    case "gemini": return process.env.GEMINI_API_KEY;
     case "vertex": return process.env.VERTEX_API_KEY ?? process.env.GOOGLE_API_KEY;
   }
 }
@@ -287,10 +287,15 @@ class OpenAICompatProvider {
       { role: "system", content: systemInstruction },
     ];
     for (const c of contents) {
-      const text = c.parts
-        .filter((p): p is { text: string } => "text" in p)
-        .map((p) => p.text)
-        .join("");
+      const partTexts: string[] = [];
+      for (const p of c.parts) {
+        if ("text" in p && p.text) {
+          partTexts.push(p.text);
+        } else if ("functionCall" in p && p.functionCall) {
+          partTexts.push(`[Tool Call: ${p.functionCall.name}(${JSON.stringify(p.functionCall.args)})]`);
+        }
+      }
+      const text = partTexts.join("\n").trim();
       if (text) {
         messages.push({ role: c.role === "model" ? "assistant" : "user", content: text });
       }
@@ -362,6 +367,7 @@ class OpenAICompatProvider {
     const reader = res.body!.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
+    const accumulatedTools: Record<number, { name: string; argsStr: string }> = {};
 
     try {
       while (true) {
@@ -375,7 +381,21 @@ class OpenAICompatProvider {
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const data = line.slice(6).trim();
-          if (data === "[DONE]") return;
+          if (data === "[DONE]") {
+            const toolCalls = Object.values(accumulatedTools)
+              .filter((t) => t.name)
+              .map((t) => {
+                let args = {};
+                try {
+                  args = JSON.parse(t.argsStr || "{}");
+                } catch {}
+                return { name: t.name, args };
+              });
+            if (toolCalls.length > 0) {
+              yield { toolCalls };
+            }
+            return;
+          }
 
           try {
             const parsed = JSON.parse(data);
@@ -386,17 +406,32 @@ class OpenAICompatProvider {
               yield { text: delta.content };
             }
             if (delta.tool_calls) {
-              // Accumulate tool calls from streaming chunks
-              const toolCalls = delta.tool_calls.map((tc: { function?: { name?: string; arguments?: string } }) => ({
-                name: tc.function?.name ?? "",
-                args: tc.function?.arguments ? JSON.parse(tc.function.arguments) : {},
-              }));
-              yield { toolCalls };
+              for (const tc of delta.tool_calls) {
+                const idx = tc.index ?? 0;
+                if (!accumulatedTools[idx]) {
+                  accumulatedTools[idx] = { name: "", argsStr: "" };
+                }
+                if (tc.function?.name) accumulatedTools[idx].name += tc.function.name;
+                if (tc.function?.arguments) accumulatedTools[idx].argsStr += tc.function.arguments;
+              }
             }
           } catch {
             // Skip malformed chunks
           }
         }
+      }
+
+      const toolCalls = Object.values(accumulatedTools)
+        .filter((t) => t.name)
+        .map((t) => {
+          let args = {};
+          try {
+            args = JSON.parse(t.argsStr || "{}");
+          } catch {}
+          return { name: t.name, args };
+        });
+      if (toolCalls.length > 0) {
+        yield { toolCalls };
       }
     } finally {
       reader.releaseLock();
@@ -618,7 +653,7 @@ export async function generateWithFallback(
   } catch (err) {
     console.error(`[${config.provider}] failed, trying fallback:`, err);
 
-    const allProviders: AiProviderId[] = ["gemini", "openai-compat", "vertex"];
+    const allProviders: AiProviderId[] = ["openai-compat", "gemini", "vertex"];
     const fallbacks = allProviders.filter((p) => p !== config.provider);
 
     for (const fb of fallbacks) {

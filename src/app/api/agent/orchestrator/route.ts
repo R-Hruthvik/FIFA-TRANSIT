@@ -318,7 +318,7 @@ async function executeTools(
       continue;
     }
 
-    const r = await executeAgentAction(toolCall, null).catch((e) => ({
+    const r = await executeAgentAction(toolCall).catch((e) => ({
       name: call.name,
       ok: false,
       message: e instanceof Error ? e.message : "Tool execution failed.",
@@ -338,17 +338,10 @@ async function executeTools(
 // ---------------------------------------------------------------------------
 
 export async function POST(req: NextRequest): Promise<Response> {
-  // 1. SESSION GATING
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return Response.json(
-      { error: "Unauthorized. A valid session is required to access the agent." },
-      { status: 401 },
-    );
-  }
-
+  // 1. SESSION GATING (Default to "fan" role if unauthenticated)
+  const session = await getServerSession(authOptions).catch(() => null);
   const role: Role =
-    session.user.role === "staff" || session.user.role === "admin"
+    session?.user?.role === "staff" || session?.user?.role === "admin"
       ? session.user.role
       : "fan";
 
@@ -384,7 +377,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   let aiConfig;
   try {
     aiConfig = await resolveAiConfig();
-  } catch (err) {
+  } catch {
     return Response.json(
       { error: "Model provider not configured. Set GEMINI_API_KEY, NVIDIA_NIM_API_KEY, or configure Vertex AI in admin settings." },
       { status: 503 },
@@ -410,12 +403,19 @@ export async function POST(req: NextRequest): Promise<Response> {
   // 7. SSE STREAM (native ReadableStream)
   const encoder = new TextEncoder();
 
+  let isClosed = false;
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (event: string, data: unknown) => {
-        controller.enqueue(
-          encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
-        );
+        if (isClosed) return;
+        try {
+          controller.enqueue(
+            encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
+          );
+        } catch {
+          isClosed = true;
+        }
       };
 
       try {
@@ -439,6 +439,7 @@ export async function POST(req: NextRequest): Promise<Response> {
         const MAX_TOOL_CALLS = 8;
 
         while (turn < MAX_TURNS) {
+          if (isClosed) break;
           turn++;
 
           const streamResult = provider.generateStream({
@@ -452,6 +453,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           let toolCallCount = 0;
 
           for await (const chunk of streamResult) {
+            if (isClosed) break;
             if (chunk.text) {
               accumulatedText += chunk.text;
               send("token", { content: chunk.text });
@@ -462,7 +464,7 @@ export async function POST(req: NextRequest): Promise<Response> {
             }
           }
 
-          if (toolCallCount === 0) break;
+          if (isClosed || toolCallCount === 0) break;
 
           if (toolCallCount > MAX_TOOL_CALLS) {
             send("tools", {
@@ -482,12 +484,22 @@ export async function POST(req: NextRequest): Promise<Response> {
             role,
             allowedToolNames,
           );
+          if (isClosed) break;
           send("tools", { executed });
 
-          // Build next iteration contents
+          // Build next iteration contents (ensuring alternating user/model roles)
+          const modelParts: Array<{ text?: string; functionCall?: { name: string; args: Record<string, unknown> } }> = [];
           if (accumulatedText) {
-            currentContents.push({ role: "model", parts: [{ text: accumulatedText }] });
+            modelParts.push({ text: accumulatedText });
           }
+          for (const tc of accumulatedToolCalls) {
+            modelParts.push({ functionCall: { name: tc.name, args: tc.args } });
+          }
+          if (modelParts.length === 0) {
+            modelParts.push({ text: "Executing tool..." });
+          }
+          currentContents.push({ role: "model", parts: modelParts as never });
+
           currentContents.push({
             role: "user",
             parts: toolResponses.map((tr) => ({
@@ -496,15 +508,29 @@ export async function POST(req: NextRequest): Promise<Response> {
           });
         }
 
-        send("done", { persona: persona.id, role });
+        if (!isClosed) {
+          send("done", { persona: persona.id, role });
+        }
       } catch (err) {
-        console.error("Orchestrator stream error:", err);
-        send("error", {
-          message: err instanceof Error ? err.message : "Streaming failed.",
-        });
+        if (!isClosed) {
+          console.error("Orchestrator stream error:", err);
+          send("error", {
+            message: err instanceof Error ? err.message : "Streaming failed.",
+          });
+        }
       } finally {
-        controller.close();
+        if (!isClosed) {
+          isClosed = true;
+          try {
+            controller.close();
+          } catch {
+            // Ignore if already closed
+          }
+        }
       }
+    },
+    cancel() {
+      isClosed = true;
     },
   });
 

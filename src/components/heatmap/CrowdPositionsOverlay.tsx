@@ -1,7 +1,7 @@
 "use client";
 
-import { useDemoMode } from "../DemoController";
-import { GATE_POSITIONS } from "./index";
+import { useCrowd } from "@/data/hooks/useCrowd";
+import { useData } from "@/data/DataContext";
 
 interface CrowdPositionsOverlayProps {
   show: boolean;
@@ -9,11 +9,10 @@ interface CrowdPositionsOverlayProps {
 }
 
 export function CrowdPositionsOverlay({ show, className = "" }: CrowdPositionsOverlayProps) {
-  const demo = useDemoMode();
+  const provider = useData();
+  const { positions } = useCrowd();
 
-  if (!show || !demo?.isDemoMode) return null;
-
-  const positions = demo.getCrowdPositions?.() ?? [];
+  if (!show || !provider.isDemo) return null;
   if (positions.length === 0) return null;
 
   return (

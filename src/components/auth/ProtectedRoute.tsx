@@ -61,7 +61,7 @@ export function ProtectedRoute({
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-zinc-800 flex items-center justify-center">
-                <Lock className="h-8 w-8 text-zinc-500" />
+                <Lock className="h-8 w-8 text-zinc-400" />
               </div>
               <h3 className="text-xl font-black tracking-widest text-white mb-2">
                 AUTHENTICATION REQUIRED
@@ -89,7 +89,7 @@ export function ProtectedRoute({
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-zinc-800 flex items-center justify-center">
-                <Lock className="h-8 w-8 text-zinc-500" />
+                <Lock className="h-8 w-8 text-zinc-400" />
               </div>
               <h3 className="text-xl font-black tracking-widest text-white mb-2">
                 ACCESS DENIED

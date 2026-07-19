@@ -75,7 +75,7 @@ export function ProactiveAssistantPanel({
           <h2 className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic">
             AI Proactive Assistant
           </h2>
-          <p className="text-[9px] text-zinc-500 font-mono">
+          <p className="text-[9px] text-zinc-400 font-mono">
             {trackingEnabled ? "LIVE · PERSONALIZED" : "GENERIC MODE"}
           </p>
         </div>
@@ -83,7 +83,7 @@ export function ProactiveAssistantPanel({
       </div>
 
       {loading ? (
-        <p className="text-xs text-zinc-500 leading-relaxed font-mono">
+        <p className="text-xs text-zinc-400 leading-relaxed font-mono">
           Generating your personalized briefing…
         </p>
       ) : narrative ? (

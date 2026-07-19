@@ -19,6 +19,11 @@ const DB_NAME = process.env.MONGODB_DB || "stadium_ops";
 const EVENTS_COLL = "position_events";
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    console.error("Refusing to seed — NODE_ENV is production");
+    process.exit(1);
+  }
+
   const count = parseInt(process.argv[2] || "200", 10);
   console.log(`Seeding ${count} position events...`);
 

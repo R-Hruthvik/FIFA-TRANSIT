@@ -1,6 +1,6 @@
 "use client";
 
-import { useDemoMode } from "./DemoController";
+import { useAdminLogs } from "@/data/hooks/useAdminLogs";
 import { Badge } from "@/components/ui/badge";
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string }> = {
@@ -24,25 +24,13 @@ function formatLogTimestamp(ts: number): string {
 }
 
 export function AdminLogsPanel() {
-  const demo = useDemoMode();
-
-  if (!demo?.isDemoMode) {
-    return (
-      <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-center">
-        <p className="text-[10px] text-zinc-500 font-mono uppercase">
-          Start demo to view server logs
-        </p>
-      </div>
-    );
-  }
-
-  const logs = demo.getRecentAdminLogs?.(30) ?? [];
+  const logs = useAdminLogs();
 
   return (
     <div className="space-y-1.5 max-h-80 overflow-y-auto scrollbar-thin font-mono text-[9px]">
       {logs.length === 0 ? (
         <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-center">
-          <p className="text-zinc-500 text-[9px] uppercase">No log entries yet</p>
+          <p className="text-zinc-400 text-[9px] uppercase">No log entries yet</p>
         </div>
       ) : (
         logs.slice().reverse().map((entry, i) => (
@@ -57,7 +45,7 @@ export function AdminLogsPanel() {
             }`}
           >
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-zinc-600 text-[9px]">
+              <span className="text-zinc-400 text-[9px]">
                 [{formatLogTimestamp(entry.timestamp)}]
               </span>
               <span className={`font-bold uppercase ${LEVEL_STYLES[entry.level]}`}>

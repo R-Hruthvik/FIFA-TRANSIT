@@ -32,7 +32,7 @@ export function LiveStatusCards({ data }: LiveStatusCardsProps) {
         icon={<Bus size={24} weight="duotone" />}
         footer={
           nearestHub.waitTime > 0 ? (
-            <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-medium">
+            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-medium">
               <ClockClockwise size={12} />
               WAIT TIME
             </div>
@@ -69,7 +69,7 @@ function Card({ label, title, value, status, icon, footer }: CardProps) {
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase mb-1">{label}</p>
+          <p className="text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase mb-1">{label}</p>
           <h3 className="text-lg font-bold text-white tracking-tight">{title}</h3>
         </div>
         <div className={`p-2.5 rounded-xl border ${COLOR_MAP[status]} transition-colors group-hover:border-white/20`}>

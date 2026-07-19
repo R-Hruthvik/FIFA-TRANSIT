@@ -124,12 +124,13 @@ export function SignupForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-            <p className="text-xs text-zinc-500">Minimum 8 characters</p>
+            <p className="text-xs text-zinc-400">Minimum 8 characters</p>
           </div>
 
           <Button

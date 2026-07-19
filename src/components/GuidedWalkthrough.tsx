@@ -124,13 +124,14 @@ export function GuidedWalkthrough() {
                 <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
                   <Trophy size={14} weight="duotone" className="text-emerald-400" />
                 </div>
-                <span className="text-[9px] font-black tracking-[0.2em] text-zinc-500 uppercase">
+                <span className="text-[9px] font-black tracking-[0.2em] text-zinc-400 uppercase">
                   Step {currentStep + 1} of {STEPS.length}
                 </span>
               </div>
               <button
                 onClick={handleComplete}
-                className="text-zinc-500 hover:text-white transition-colors"
+                aria-label="Close walkthrough"
+                className="text-zinc-400 hover:text-white transition-colors"
               >
                 <X size={16} weight="bold" />
               </button>
@@ -164,7 +165,7 @@ export function GuidedWalkthrough() {
               <div className="flex gap-2">
                 <button
                   onClick={handleComplete}
-                  className="px-3 py-1.5 text-[10px] font-black tracking-widest text-zinc-500 hover:text-white transition-colors uppercase"
+                  className="px-3 py-1.5 text-[10px] font-black tracking-widest text-zinc-400 hover:text-white transition-colors uppercase"
                 >
                   Skip
                 </button>

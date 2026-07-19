@@ -222,7 +222,7 @@ export default function StaffRegisterPage() {
             )}
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+              <label className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                 Staff ID (issued by Stadium Department)
               </label>
               <input
@@ -237,7 +237,7 @@ export default function StaffRegisterPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                <label className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                   Organization / Department
                 </label>
                 <input
@@ -251,7 +251,7 @@ export default function StaffRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                <label className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                   Assigned Role
                 </label>
                 <select
@@ -268,7 +268,7 @@ export default function StaffRegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+              <label className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                 Access Justification / Reason
               </label>
               <textarea

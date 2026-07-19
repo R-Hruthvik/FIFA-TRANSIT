@@ -152,7 +152,7 @@ export default function DeveloperSettings() {
       <div className="bg-zinc-900/40 border border-amber-800/30 backdrop-blur-md rounded-2xl p-6 shadow-xl text-zinc-100">
         <h2 className="text-xl text-white font-bold mb-4">Active AI Gate Overrides</h2>
         {Object.keys(gateOverrides).length === 0 ? (
-          <p className="text-sm text-zinc-500 font-mono">
+          <p className="text-sm text-zinc-400 font-mono">
             No active AI overrides. All gates are under standard manual operation.
           </p>
         ) : (
@@ -299,7 +299,7 @@ export default function DeveloperSettings() {
               </div>
             </>
           )}
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <div className="flex items-center gap-2 text-xs text-zinc-400">
             <span className="inline-flex items-center rounded-md bg-zinc-800/50 px-2 py-0.5 font-mono text-zinc-400">
               {aiProvider.provider === "gemini" && "GEMINI_API_KEY"}
               {aiProvider.provider === "openai-compat" && "NVIDIA_NIM_API_KEY / OPENAI_API_KEY"}

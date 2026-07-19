@@ -136,7 +136,7 @@ export function EgressPlanCard({
         <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
           <div className="flex items-center gap-2 mb-1">
             <Clock size={12} className="text-emerald-400" />
-            <span className="text-[9px] text-zinc-500 uppercase tracking-wide">Leave In</span>
+            <span className="text-[9px] text-zinc-400 uppercase tracking-wide">Leave In</span>
           </div>
           <span className="text-[16px] font-bold text-white">
             {leaveInMin === 0 ? "Now" : `${leaveInMin}m`}
@@ -146,7 +146,7 @@ export function EgressPlanCard({
         <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
           <div className="flex items-center gap-2 mb-1">
             <MapPin size={12} className="text-emerald-400" />
-            <span className="text-[9px] text-zinc-500 uppercase tracking-wide">Gate</span>
+            <span className="text-[9px] text-zinc-400 uppercase tracking-wide">Gate</span>
           </div>
           <span className="text-[16px] font-bold text-white">{plan.gateId}</span>
         </div>
@@ -154,7 +154,7 @@ export function EgressPlanCard({
         <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
           <div className="flex items-center gap-2 mb-1">
             <Clock size={12} className="text-emerald-400" />
-            <span className="text-[9px] text-zinc-500 uppercase tracking-wide">Walk ETA</span>
+            <span className="text-[9px] text-zinc-400 uppercase tracking-wide">Walk ETA</span>
           </div>
           <span className="text-[16px] font-bold text-white">{plan.etaMinutes}m</span>
         </div>
@@ -162,7 +162,7 @@ export function EgressPlanCard({
         <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5">
           <div className="flex items-center gap-2 mb-1">
             <Bus size={12} className="text-emerald-400" />
-            <span className="text-[9px] text-zinc-500 uppercase tracking-wide">Transit</span>
+            <span className="text-[9px] text-zinc-400 uppercase tracking-wide">Transit</span>
           </div>
           <span className="text-[16px] font-bold text-white">{plan.transitEtaMinutes}m</span>
         </div>
@@ -171,7 +171,7 @@ export function EgressPlanCard({
       {/* Capacity indicator */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-1">
-          <span className="text-[9px] text-zinc-500 uppercase tracking-wide">
+          <span className="text-[9px] text-zinc-400 uppercase tracking-wide">
             Gate Capacity
           </span>
           <span

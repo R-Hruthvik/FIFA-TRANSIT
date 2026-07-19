@@ -105,7 +105,7 @@ export function StaffCommandBar({
 
       <div className="space-y-2 max-h-48 overflow-y-auto mb-3 scrollbar-thin">
         {messages.length === 0 && (
-          <p className="text-[11px] text-zinc-500 italic">
+          <p className="text-[11px] text-zinc-400 italic">
             Issue commands like &ldquo;Close Gate G3&rdquo; or &ldquo;Dispatch 4 stewards to main-hub&rdquo;.
           </p>
         )}
@@ -172,6 +172,7 @@ export function StaffCommandBar({
         <button
           type="submit"
           disabled={loading || !input.trim()}
+          aria-label="Send command"
           className="absolute right-2 top-2 bottom-2 px-3 bg-amber-600 hover:bg-amber-500 disabled:opacity-30 rounded-lg text-white transition-all flex items-center"
         >
           <ChatCenteredText size={16} weight="bold" />

@@ -19,9 +19,18 @@ export function UserMenu() {
         setIsOpen(false);
       }
     }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   if (status === "loading") {
     return (
@@ -60,6 +69,8 @@ export function UserMenu() {
         variant="ghost"
         className="relative h-9 w-9 rounded-full p-0 transition-colors hover:bg-zinc-800"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
       >
         <div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center font-black text-sm">
           {initials}
@@ -74,6 +85,7 @@ export function UserMenu() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             className="absolute right-0 mt-2 w-56 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-xl py-2 z-50"
+            role="menu"
           >
             <Card className="border-none bg-transparent shadow-none p-3">
               <CardContent className="pt-0">
@@ -96,6 +108,7 @@ export function UserMenu() {
 
             <Button
               variant="ghost"
+              role="menuitem"
               className="w-full justify-start gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-800"
               onClick={() => {
                 setIsOpen(false);
@@ -109,6 +122,7 @@ export function UserMenu() {
             {user.role === "admin" && (
               <Button
                 variant="ghost"
+                role="menuitem"
                 className="w-full justify-start gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-800"
                 asChild
                 onClick={() => setIsOpen(false)}
@@ -123,6 +137,7 @@ export function UserMenu() {
             {(user.role === "staff" || user.role === "admin") && (
               <Button
                 variant="ghost"
+                role="menuitem"
                 className="w-full justify-start gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-800"
                 asChild
                 onClick={() => setIsOpen(false)}

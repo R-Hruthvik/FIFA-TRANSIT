@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useDemoMode } from "@/components/DemoController";
+import { useData } from "@/data/DataContext";
 
 export interface Message {
   id: string;
@@ -57,8 +57,8 @@ function pick<T>(arr: T[]): T {
 }
 
 export function useChatStream(proactiveConfig?: ProactiveConfig) {
-  const demoContext = useDemoMode();
-  const isDemoMode = demoContext?.isDemoMode ?? false;
+  const provider = useData();
+  const isDemoMode = provider.isDemo;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,12 +111,12 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
 
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
 
-    if (isDemoMode && demoContext) {
+    if (isDemoMode) {
       loadingRef.current = true;
       setIsLoading(true);
 
       setTimeout(() => {
-        const responseText = demoContext.getDemoAiResponse(content);
+        const responseText = provider.getAiResponse(content);
         let currentText = "";
         const words = responseText.split(" ");
         let wordIndex = 0;
@@ -250,7 +250,7 @@ export function useChatStream(proactiveConfig?: ProactiveConfig) {
       setIsLoading(false);
       abortRef.current = null;
     }
-  }, [proactiveConfig?.persona, isDemoMode, demoContext]);
+  }, [proactiveConfig?.persona, isDemoMode, provider]);
 
   const retryLast = useCallback(() => {
     if (lastInputRef.current && !loadingRef.current) {

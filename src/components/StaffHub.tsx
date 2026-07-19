@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { useDemoMode } from "./DemoController";
-import { useMatchData } from "@/hooks/useMatchData";
+import { useMatch } from "@/data/hooks/useMatch";
+import { useMetrics } from "@/data/hooks/useMetrics";
+import { useTelemetry } from "@/data/hooks/useTelemetry";
+import { useCrowd } from "@/data/hooks/useCrowd";
 import { LiveStatusCards } from "./LiveStatusCards";
 import { OperationalInsights } from "./OperationalInsights";
 import { LiveQueryTicker } from "./LiveQueryTicker";
@@ -15,7 +17,7 @@ import { HeatmapVariant } from "./heatmap";
 import { EnforcementPanel } from "./EnforcementPanel";
 import { StaffCommandBar } from "./StaffCommandBar";
 import { ChartLineUp } from "@phosphor-icons/react";
-import { GateMetrics, StadiumTelemetry } from "@/types/telemetry";
+import { GateMetrics } from "@/types/telemetry";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -29,103 +31,18 @@ const HEATMAP_COMPONENTS: Record<HeatmapVariant, React.ComponentType<{ metrics: 
   "stadium-map": StadiumMap,
 };
 
-const STAFF_POLL_INTERVAL = 30000; // 30 seconds to avoid frequent reloads
-
 export default function StaffHub() {
-  const demo = useDemoMode();
-  const { liveMatch } = useMatchData();
+  const { match: liveMatch } = useMatch();
+  const metrics = useMetrics();
+  const telemetry = useTelemetry();
+  const { count: crowdCount } = useCrowd();
 
-  // All hooks declared unconditionally at the top
-  // Initialize as null — no placeholder fake data
-  const [metrics, setMetrics] = useState<GateMetrics | null>(null);
-  const [telemetry, setTelemetry] = useState<StadiumTelemetry | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [heatmapVariant, setHeatmapVariant] = useState<HeatmapVariant>("stadium-svg");
+  const [selectedGate, setSelectedGate] = useState<string | null>(null);
   const HeatmapComponent = HEATMAP_COMPONENTS[heatmapVariant];
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const mountedRef = useRef(true);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!demo) {
-      return;
-    }
-
-    if (demo.isDemoMode) {
-      setLoading(false);
-      setError(null);
-      if (demo.getMetrics) setMetrics(demo.getMetrics());
-      if (demo.getTelemetry) setTelemetry(demo.getTelemetry() || null);
-      return;
-    }
-
-    const sync = async () => {
-      try {
-        setError(null);
-        const [metricsRes, telemetryRes] = await Promise.all([
-          fetch("/api/staff/metrics"),
-          fetch("/api/telemetry"),
-        ]);
-
-        if (!mountedRef.current) return;
-
-        if (metricsRes.ok) {
-          const data = await metricsRes.json();
-          if (data.metrics) setMetrics(data.metrics);
-        }
-
-        if (telemetryRes.ok) {
-          const data = await telemetryRes.json();
-          setTelemetry(data);
-        }
-      } catch (err: any) {
-        if (mountedRef.current) {
-          setError(err.message || "Failed to sync staff data");
-          console.error("Failed to sync telemetry:", err);
-        }
-      } finally {
-        if (mountedRef.current) setLoading(false);
-      }
-    };
-
-    sync();
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(sync, STAFF_POLL_INTERVAL);
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [demo, demo?.isDemoMode]);
-
-  // Loading state (conditional render after all hooks)
-  if (loading && !demo?.isDemoMode) {
-    return (
-      <ConnectionGuard>
-        <div className="flex-1 w-full flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">
-              Loading Staff Dashboard...
-            </p>
-          </div>
-        </div>
-      </ConnectionGuard>
-    );
-  }
-
-  // Get active data - in demo mode use demo engine, otherwise use local state
-  const activeMetrics = demo?.isDemoMode && demo.getMetrics ? demo.getMetrics() : metrics;
-  const activeTelemetry = demo?.isDemoMode && demo.getTelemetry ? demo.getTelemetry() : telemetry;
-  const hasError = !!error;
+  const hasMetrics = metrics && Object.keys(metrics).length > 0;
+  const [hasError, setHasError] = useState(false);
 
   return (
     <ConnectionGuard>
@@ -133,7 +50,7 @@ export default function StaffHub() {
         {/* Error banner when sync fails */}
         {hasError && (
           <div className="p-4 rounded-xl bg-red-950/20 border border-red-900/40 text-red-400 text-xs">
-            {error}
+            Sync error
           </div>
         )}
 
@@ -150,10 +67,10 @@ export default function StaffHub() {
                   Live Status
                 </h2>
               </div>
-              {activeTelemetry ? (
-                <LiveStatusCards data={activeTelemetry} />
+              {telemetry ? (
+                <LiveStatusCards data={telemetry} />
               ) : (
-                <p className="text-xs text-zinc-500">Live telemetry unavailable</p>
+                <p className="text-xs text-zinc-400">Live telemetry unavailable</p>
               )}
             </Card>
           </motion.div>
@@ -169,10 +86,10 @@ export default function StaffHub() {
                   Tactical Insights
                 </h2>
               </div>
-              {activeMetrics ? (
-                <OperationalInsights metrics={activeMetrics} transitWaitTime={activeTelemetry?.nearestHub?.waitTime} />
+              {metrics ? (
+                <OperationalInsights metrics={metrics} transitWaitTime={telemetry?.nearestHub?.waitTime} />
               ) : (
-                <p className="text-xs text-zinc-500">Operational data unavailable</p>
+                <p className="text-xs text-zinc-400">Operational data unavailable</p>
               )}
             </Card>
           </motion.div>
@@ -192,32 +109,32 @@ export default function StaffHub() {
                 </h3>
                 <Badge className="text-[9px] bg-emerald-500/20 text-emerald-400">LIVE</Badge>
               </div>
-              {metrics ? (
+              {hasMetrics ? (
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Total Crowd</p>
+                    <p className="text-[9px] text-zinc-400 uppercase tracking-wider mb-1">Total Crowd</p>
                     <p className="text-lg font-black text-emerald-400">
-                      {demo?.getCrowdCount ? demo.getCrowdCount() : 0}
+                      {crowdCount}
                     </p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Active Gates</p>
+                    <p className="text-[9px] text-zinc-400 uppercase tracking-wider mb-1">Active Gates</p>
                     <p className="text-lg font-black text-red-400">
-                      {Object.values(metrics).filter(v => v !== "low").length}
+                      {Object.values(metrics!).filter(v => v !== "low").length}
                     </p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Crowd Density</p>
+                    <p className="text-[9px] text-zinc-400 uppercase tracking-wider mb-1">Crowd Density</p>
                     <p className="text-lg font-black text-amber-400">
-                      {Math.round((Object.values(metrics).filter(v => v === "high").length / 8) * 100)}%
+                      {Math.round((Object.values(metrics!).filter(v => v === "high").length / 8) * 100)}%
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center gap-3 py-6 text-zinc-500">
+                <div className="flex items-center justify-center gap-3 py-6 text-zinc-400">
                   <div className="w-6 h-6 border-2 border-emerald-500/40 border-t-transparent rounded-full animate-spin" />
                   <p className="text-xs font-mono tracking-wider uppercase italic">
-                    {demo?.isDemoMode ? "Initializing Demo Scan..." : "Awaiting Inbound Crowd Scan..."}
+                    Awaiting Inbound Crowd Scan...
                   </p>
                 </div>
               )}
@@ -255,7 +172,7 @@ export default function StaffHub() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <Card className="p-6">
+            <Card className="p-6" data-section="heatmap">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <ChartLineUp size={20} weight="duotone" className="text-emerald-400" />
@@ -265,15 +182,15 @@ export default function StaffHub() {
                 </div>
                 <HeatmapSelector current={heatmapVariant} onChange={setHeatmapVariant} />
               </div>
-              <div className="h-[350px]">
-                {activeMetrics && HeatmapComponent ? (
+              <div className="h-[350px] overflow-hidden">
+                {hasMetrics && HeatmapComponent ? (
                   <HeatmapComponent
-                    metrics={activeMetrics}
+                    metrics={metrics!}
                     gateFilter={null}
-                    onGateClick={() => {}}
+                    onGateClick={(gate) => setSelectedGate(gate)}
                   />
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center gap-3 text-zinc-500">
+                  <div className="h-full flex flex-col items-center justify-center gap-3 text-zinc-400">
                     <div className="w-8 h-8 border-2 border-emerald-500/40 border-t-transparent rounded-full animate-spin" />
                     <p className="text-xs font-mono tracking-wider uppercase italic">
                       Awaiting Inbound Crowd Scan...

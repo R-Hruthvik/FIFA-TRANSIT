@@ -227,7 +227,7 @@ export default function AdminDashboard() {
           {opsRun ? (
             <div className="rounded-xl border border-white/5 bg-zinc-950/40 p-4 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-zinc-500">Last decision</span>
+                <span className="text-xs font-mono text-zinc-400">Last decision</span>
                 <span className="text-xs font-black tracking-wider text-emerald-300 uppercase">
                   {opsRun.recommendedAction ?? 'NOMINAL'}
                 </span>
@@ -244,11 +244,11 @@ export default function AdminDashboard() {
                 <p className="text-xs text-zinc-400">{opsRun.automatedSystemLog}</p>
               )}
               <div className="flex items-center justify-between pt-1">
-                <span className="text-[10px] font-mono text-zinc-600">
+                <span className="text-[10px] font-mono text-zinc-400">
                   {opsRun.source ?? 'engine'}
                 </span>
                 {opsRun.createdAt && (
-                  <span className="text-[10px] font-mono text-zinc-600">
+<span className="text-[10px] font-mono text-zinc-400">
                     {new Date(opsRun.createdAt).toLocaleString()}
                   </span>
                 )}
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-zinc-800 p-4">
-              <p className="text-xs text-zinc-500 font-mono">
+              <p className="text-xs text-zinc-400 font-mono">
                 No autonomous runs recorded yet. The agent will log its first
                 decision on the next cycle.
               </p>
@@ -265,7 +265,7 @@ export default function AdminDashboard() {
 
           {opsDeployment && (
             <div className="rounded-xl border border-white/5 bg-zinc-950/40 p-4">
-              <p className="text-xs font-mono text-zinc-500 mb-1">
+              <p className="text-xs font-mono text-zinc-400 mb-1">
                 Latest steward deployment
               </p>
               <p className="text-xs text-zinc-300">

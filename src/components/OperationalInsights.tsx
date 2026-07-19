@@ -110,13 +110,8 @@ const SEVERITY_META: Record<string, { color: string; bg: string; label: string }
   CRITICAL: { color: "text-rose-400", bg: "bg-rose-500/10", label: "CRITICAL" },
 };
 
-import { useDemoMode } from "./DemoController";
-
 export const OperationalInsights = ({ metrics, transitWaitTime = 0 }: OperationalInsightsProps) => {
-  const demoContext = useDemoMode();
-  const isDemoMode = demoContext?.isDemoMode ?? false;
-  // Demo mode reuses the SAME shell as real mode — only the data source differs.
-  const effectiveMetrics: GateMetrics = ((isDemoMode && demoContext?.getMetrics) ? demoContext.getMetrics() : metrics) ?? {} as GateMetrics;
+  const effectiveMetrics = metrics ?? {} as GateMetrics;
   const insights = useMemo(() => generateInsights(effectiveMetrics, transitWaitTime), [effectiveMetrics, transitWaitTime]);
 
   const [aiInsight, setAiInsight] = useState<AIInsight | null>(null);
@@ -163,7 +158,7 @@ export const OperationalInsights = ({ metrics, transitWaitTime = 0 }: Operationa
       {/* Raw Telemetry Overview */}
       {hasMetrics ? (
         <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 space-y-3">
-          <h4 className="text-[9px] font-black tracking-widest text-zinc-500 uppercase">
+          <h4 className="text-[9px] font-black tracking-widest text-zinc-400 uppercase">
             Raw Gate Telemetry
           </h4>
           <div className="grid grid-cols-2 gap-2">
@@ -184,7 +179,7 @@ export const OperationalInsights = ({ metrics, transitWaitTime = 0 }: Operationa
         </div>
       ) : (
         <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-center py-6">
-          <p className="text-xs text-zinc-500">Gate telemetry data unavailable</p>
+          <p className="text-xs text-zinc-400">Gate telemetry data unavailable</p>
         </div>
       )}
 
@@ -196,7 +191,7 @@ export const OperationalInsights = ({ metrics, transitWaitTime = 0 }: Operationa
           </p>
         )}
         {aiLoading && (
-          <p className="text-xs text-zinc-500 leading-relaxed font-mono">
+          <p className="text-xs text-zinc-400 leading-relaxed font-mono">
             AI Commander analyzing telemetry…
           </p>
         )}
@@ -212,7 +207,7 @@ export const OperationalInsights = ({ metrics, transitWaitTime = 0 }: Operationa
           </div>
         )}
         {!aiLoading && !aiInsight && (
-          <p className="text-xs text-zinc-500 leading-relaxed">
+          <p className="text-xs text-zinc-400 leading-relaxed">
             Live analysis will appear here when operational data is available.
           </p>
         )}

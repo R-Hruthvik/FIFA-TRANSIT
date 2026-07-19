@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sparkle, Play, Warning } from "@phosphor-icons/react";
+import { useData } from "@/data/DataContext";
 import type { ScenarioPayload } from "@/app/api/admin/scenario/route";
 
 const EXAMPLE_PROMPTS = [
@@ -10,14 +11,8 @@ const EXAMPLE_PROMPTS = [
   "Pre-match rush: 30k fans arrive in 10 minutes at Gate G1 and G2.",
 ];
 
-/**
- * Admin Prompt-to-Scenario Simulator.
- *
- * Lets an administrator describe a scenario in natural language; the Gen AI
- * Scenario Engine generates a structured drill timeline that is pushed into
- * the LiveDemoEngine for staff training.
- */
 export default function ScenarioSimulator() {
+  const provider = useData();
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [scenario, setScenario] = useState<ScenarioPayload | null>(null);
@@ -38,11 +33,9 @@ export default function ScenarioSimulator() {
       const data = (await res.json()) as ScenarioPayload;
       setScenario(data);
 
-      // Push into the live demo engine if demo is running.
-      const w = window as unknown as {
-        __liveDemoEngine?: { loadScenario: (s: ScenarioPayload) => void };
-      };
-      w.__liveDemoEngine?.loadScenario(data);
+      if (provider.loadScenario) {
+        provider.loadScenario(data);
+      }
     } catch (err) {
       setError("Failed to generate scenario. Check AI provider configuration.");
       console.error("Scenario simulator error:", err);
@@ -104,7 +97,7 @@ export default function ScenarioSimulator() {
           <div className="grid grid-cols-3 gap-2">
             {scenario.snapshots.map((s) => (
               <div key={s.t} className="p-2 rounded-lg bg-zinc-950/60 border border-zinc-800 text-[9px] font-mono">
-                <div className="text-zinc-500 mb-1">t={s.t}s</div>
+                <div className="text-zinc-400 mb-1">t={s.t}s</div>
                 {Object.entries(s.gateDensities).map(([g, d]) => (
                   <div key={g} className="flex justify-between">
                     <span className="text-zinc-400">{g.replace("Gate ", "G")}</span>

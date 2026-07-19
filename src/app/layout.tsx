@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/auth/SessionProvider";
-import { DemoProvider } from "@/components/DemoController";
+import { DataProvider } from "@/data/DataContext";
 
 import GoogleOneTap from "@/components/auth/GoogleOneTap";
 import { getAllBgImages } from "@/lib/bg-images";
@@ -113,14 +113,20 @@ export default function RootLayout({
           backgroundRepeat: "no-repeat",
         }}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-[9999] focus:bg-white focus:text-black focus:p-4 focus:rounded"
+        >
+          Skip to main content
+        </a>
         {/* Dark overlay so content stays readable */}
         <div className="fixed inset-0 bg-zinc-950/80 dark:bg-zinc-950/90 pointer-events-none" />
         <SessionProvider>
-          <DemoProvider>
+          <DataProvider>
             {children}
 
             <GoogleOneTap />
-          </DemoProvider>
+          </DataProvider>
         </SessionProvider>
       </body>
     </html>

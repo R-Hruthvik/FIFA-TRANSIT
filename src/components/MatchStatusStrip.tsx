@@ -46,7 +46,7 @@ export function MatchStatusStrip({
 
         <div className="flex-1 min-w-0">
           {stadiumName && (
-            <p className="text-[9px] font-mono tracking-wider text-zinc-500 uppercase truncate">
+            <p className="text-[9px] font-mono tracking-wider text-zinc-400 uppercase truncate">
               {stadiumName}
             </p>
           )}
@@ -56,7 +56,7 @@ export function MatchStatusStrip({
               <span className="font-black text-white tracking-tight truncate">
                 {homeTeam ?? "Home"}
               </span>
-              <span className="text-[11px] font-mono text-zinc-500">
+              <span className="text-[11px] font-mono text-zinc-400">
                 {homeScore ?? 0}–{awayScore ?? 0}
               </span>
               <span className="font-black text-white tracking-tight truncate">
@@ -75,8 +75,8 @@ export function MatchStatusStrip({
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
-              <Clock size={12} weight="duotone" className="text-zinc-500" />
+            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
+              <Clock size={12} weight="duotone" className="text-zinc-400" />
               {kickoff ? (
                 <span className="font-mono">Kickoff {kickoff}</span>
               ) : (

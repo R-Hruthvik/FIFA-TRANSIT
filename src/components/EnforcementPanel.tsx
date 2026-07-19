@@ -121,13 +121,13 @@ export function EnforcementPanel() {
         </AnimatePresence>
 
         {data?.alerts.length === 0 && (
-          <div className="text-[11px] text-zinc-500 italic">No active alerts</div>
+          <div className="text-[11px] text-zinc-400 italic">No active alerts</div>
         )}
       </div>
 
       {/* Gate enforcement controls */}
       <div className="space-y-2">
-        <h3 className="text-[9px] font-black tracking-[0.15em] text-zinc-500 uppercase mb-2">
+        <h3 className="text-[9px] font-black tracking-[0.15em] text-zinc-400 uppercase mb-2">
           Gate Capacity Enforcement
         </h3>
 
@@ -152,8 +152,8 @@ export function EnforcementPanel() {
                   }`}
                 />
                 <span className="text-[12px] font-semibold text-white">{gate.gateId}</span>
-                <span className="text-[10px] text-zinc-500">{pct}% capacity</span>
-                <span className="text-[9px] text-zinc-600">
+                <span className="text-[10px] text-zinc-400">{pct}% capacity</span>
+                <span className="text-[9px] text-zinc-400">
                   conf: {(gate.confidence * 100).toFixed(0)}%
                 </span>
               </div>
@@ -166,7 +166,7 @@ export function EnforcementPanel() {
                     ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
                     : isCritical
                       ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
-                      : "bg-white/5 text-zinc-600 cursor-not-allowed"
+                      : "bg-white/5 text-zinc-400 cursor-not-allowed"
                 }`}
               >
                 {isEnforced ? "Enforced" : "Enforce"}
@@ -186,7 +186,7 @@ export function EnforcementPanel() {
               Egress Stagger Active
             </span>
           </div>
-          <p className="text-[9px] text-zinc-500 mt-1">
+          <p className="text-[9px] text-zinc-400 mt-1">
             {data.staggerStatus.totalTrackedUsers} users tracked •{" "}
             {data.staggerStatus.egressWindowMinutes}min window
           </p>

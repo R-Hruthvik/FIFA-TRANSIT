@@ -26,7 +26,7 @@ export function MatchCard({ match }: MatchCardProps) {
               LIVE {match.minute ? `'${match.minute}` : ""}
             </Badge>
           ) : isFinished ? (
-            <Badge variant="secondary" className="text-[9px] font-black tracking-widest uppercase text-zinc-500 bg-zinc-800/50">
+            <Badge variant="secondary" className="text-[9px] font-black tracking-widest uppercase text-zinc-400 bg-zinc-800/50">
               FINISHED
             </Badge>
           ) : (
@@ -35,7 +35,7 @@ export function MatchCard({ match }: MatchCardProps) {
             </Badge>
           )}
         </div>
-        <span className="text-[10px] font-mono text-zinc-500">
+        <span className="text-[10px] font-mono text-zinc-400">
           {new Date(match.utcDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>

@@ -1,195 +1,18 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Broadcast, Clock, Funnel } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDemoMode } from "./DemoController";
-
-interface Log {
-  _id: string;
-  text: string;
-  timestamp: string;
-}
+import { useFanQueries } from "@/data/hooks/useFanQueries";
 
 interface LiveQueryTickerProps {
   gateFilter?: string | null;
 }
 
 export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
-  const demoContext = useDemoMode();
-  const isDemoMode = demoContext?.isDemoMode ?? false;
-
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [connectionType, setConnectionType] = useState<"sse" | "polling">("polling");
-  const connectionTypeRef = useRef(connectionType);
-  useEffect(() => {
-    connectionTypeRef.current = connectionType;
-  }, [connectionType]);
-
-  // Clear logs when starting demo mode
-  useEffect(() => {
-    if (isDemoMode) {
-      setLogs([]);
-    }
-  }, [isDemoMode]);
-
-  // Initial fetch
-  useEffect(() => {
-    if (isDemoMode) return;
-    let mounted = true;
-    const fetchLogs = async () => {
-      try {
-        const res = await fetch("/api/fan/queries");
-        const data = await res.json();
-        if (mounted && data.logs) {
-          setLogs(data.logs);
-        }
-      } catch (error) {
-        console.error("Failed to fetch logs:", error);
-      }
-    };
-    fetchLogs();
-    return () => { mounted = false; };
-  }, [isDemoMode]);
-
-  // SSE connection with polling fallback
-  useEffect(() => {
-    if (isDemoMode) return;
-    let mounted = true;
-    let eventSource: EventSource | null = null;
-    let pollInterval: ReturnType<typeof setInterval> | null = null;
-    let sseSettled = false;
-
-    const startPolling = () => {
-      if (pollInterval) return;
-      setConnectionType("polling");
-      pollInterval = setInterval(async () => {
-        if (!mounted) return;
-        try {
-          const res = await fetch("/api/fan/queries");
-          const data = await res.json();
-          if (mounted && data.logs) {
-            setLogs(data.logs);
-          }
-        } catch {}
-      }, 5000);
-
-      setTimeout(() => {
-        if (mounted && connectionTypeRef.current === "polling") {
-          if (pollInterval) {
-            clearInterval(pollInterval);
-            pollInterval = null;
-          }
-          sseSettled = false;
-          startSSE();
-        }
-      }, 30000);
-    };
-
-    const startSSE = () => {
-      try {
-        eventSource = new EventSource("/api/fan/queries/stream");
-
-        eventSource.onmessage = (event) => {
-          if (!mounted) return;
-          try {
-            const data = JSON.parse(event.data);
-            if (data.logs) {
-              setLogs((prev) => {
-                const existingIds = new Set(prev.map((l) => l._id));
-                const newLogs = data.logs.filter((l: Log) => !existingIds.has(l._id));
-                if (newLogs.length === 0) return prev;
-                return [...newLogs, ...prev].slice(0, 100);
-              });
-            }
-          } catch {}
-        };
-
-        eventSource.onerror = () => {
-          if (sseSettled) return;
-          sseSettled = true;
-          if (eventSource) {
-            eventSource.close();
-            eventSource = null;
-          }
-          startPolling();
-        };
-
-        eventSource.onopen = () => {
-          sseSettled = true;
-          if (mounted) setConnectionType("sse");
-        };
-      } catch {
-        sseSettled = true;
-        startPolling();
-      }
-    };
-
-    startSSE();
-
-    const fallbackTimer = setTimeout(() => {
-      if (mounted && !sseSettled) {
-        startPolling();
-      }
-    }, 3000);
-
-    return () => {
-      mounted = false;
-      clearTimeout(fallbackTimer);
-      if (eventSource) {
-        eventSource.close();
-      }
-      if (pollInterval) {
-        clearInterval(pollInterval);
-      }
-    };
-  }, [isDemoMode]);
-
-  // Demo queries injection — random intervals, no fixed schedule
-  useEffect(() => {
-    if (!isDemoMode || !demoContext) return;
-
-    // Inject initial query immediately
-    const initialQuery = demoContext.injectDemoQuery();
-    if (initialQuery) {
-      setLogs((prev) => {
-        const newLog: Log = {
-          _id: `demo-${Date.now()}-${Math.random()}`,
-          text: initialQuery,
-          timestamp: new Date().toISOString(),
-        };
-        return [newLog, ...prev];
-      });
-    }
-
-    // Schedule next log at a random interval (1.5s–5s)
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const scheduleNext = () => {
-      const delay = 1500 + Math.random() * 3500;
-      timeoutId = setTimeout(() => {
-        const text = demoContext.injectDemoQuery();
-        if (text) {
-          setLogs((prev) => {
-            const newLog: Log = {
-              _id: `demo-${Date.now()}-${Math.random()}`,
-              text,
-              timestamp: new Date().toISOString(),
-            };
-            return [newLog, ...prev].slice(0, 100);
-          });
-        }
-        scheduleNext();
-      }, delay);
-    };
-
-    scheduleNext();
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [isDemoMode, demoContext]);
+  const logs = useFanQueries();
 
   const GATE_LABELS: Record<string, string> = {
     gate1: "Gate G1",
@@ -228,8 +51,8 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
             {gateFilter}
           </Badge>
         )}
-        <Badge variant="secondary" className="text-[8px] font-mono text-zinc-500">
-          {connectionType === "sse" ? "SSE" : "POLL"}
+        <Badge variant="secondary" className="text-[8px] font-mono text-zinc-400">
+          LIVE
         </Badge>
       </div>
 
@@ -266,13 +89,13 @@ export const LiveQueryTicker = ({ gateFilter }: LiveQueryTickerProps) => {
                   </div>
 
                   <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Clock size={16} weight="duotone" className="text-zinc-600" />
+                    <Clock size={16} weight="duotone" className="text-zinc-400" />
                   </div>
                 </motion.div>
               ))
             ) : (
               <div className="p-8 border border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center opacity-50 h-32">
-                <p className="text-[10px] font-black tracking-widest text-zinc-600 uppercase italic text-center">
+                <p className="text-[10px] font-black tracking-widest text-zinc-400 uppercase italic text-center">
                   {gateFilter
                     ? `No active logs for ${gateFilter}`
                     : "Awaiting inbound queries..."}

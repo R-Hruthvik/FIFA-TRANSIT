@@ -1,4 +1,3 @@
-```
 # Environment variables
 .env
 .env.local
@@ -11,6 +10,9 @@ node_modules/
 dist/
 build/
 .next/
+out/
+tsconfig.tsbuildinfo
+.vercel/
 
 # Logs
 *.log
@@ -34,6 +36,10 @@ coverage/
 htmlcov/
 *.coverage
 
-# Local configuration
-.env.example
-```
+# Ignore all markdown files except README.md
+*.md
+!README.md
+
+# Project specific ignores
+.opencode/
+screenshots/

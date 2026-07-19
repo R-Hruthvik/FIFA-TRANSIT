@@ -31,7 +31,7 @@ export function MatchScoreboard({ match, isMock, matchError }: MatchScoreboardPr
         {/* Matchday context */}
         <div className="flex items-center gap-2 flex-wrap justify-center">
           <Trophy size={14} weight="duotone" className="text-amber-500" />
-          <span className="text-[9px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">
+          <span className="text-[9px] font-black tracking-[0.2em] text-zinc-400 uppercase italic">
             2026 FIFA World Cup™ Group Stage
           </span>
           {isLive && (
@@ -51,7 +51,7 @@ export function MatchScoreboard({ match, isMock, matchError }: MatchScoreboardPr
             <h3 className="text-sm font-black text-white uppercase tracking-wider">
               {match.homeTeam}
             </h3>
-            <span className="text-[10px] text-zinc-500 font-mono">HOME</span>
+            <span className="text-[10px] text-zinc-400 font-mono">HOME</span>
           </div>
 
           {/* Scores */}
@@ -59,7 +59,7 @@ export function MatchScoreboard({ match, isMock, matchError }: MatchScoreboardPr
             <span className="text-xl font-black text-white">
               {match.homeScore !== null ? match.homeScore : "0"}
             </span>
-            <span className="text-zinc-600 text-xs font-black">:</span>
+            <span className="text-zinc-400 text-xs font-black">:</span>
             <span className="text-xl font-black text-white">
               {match.awayScore !== null ? match.awayScore : "0"}
             </span>
@@ -70,12 +70,12 @@ export function MatchScoreboard({ match, isMock, matchError }: MatchScoreboardPr
             <h3 className="text-sm font-black text-white uppercase tracking-wider">
               {match.awayTeam}
             </h3>
-            <span className="text-[10px] text-zinc-500 font-mono">AWAY</span>
+            <span className="text-[10px] text-zinc-400 font-mono">AWAY</span>
           </div>
         </div>
 
         {/* Footer info */}
-        <div className="flex items-center gap-2 text-zinc-500 text-[10px] font-medium">
+        <div className="flex items-center gap-2 text-zinc-400 text-[10px] font-medium">
           <SoccerBall size={14} weight="duotone" className="animate-spin-slow" />
           <span>{isMock ? "Demo mode • LIVE simulation" : "Stadium Ops sync active • Real-time gate routing calculated"}</span>
         </div>

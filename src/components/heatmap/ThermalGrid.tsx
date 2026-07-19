@@ -73,7 +73,7 @@ export function ThermalGrid({ metrics, gateFilter, onGateClick }: HeatmapBasePro
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+              <span className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                 {label}
               </span>
               <motion.div

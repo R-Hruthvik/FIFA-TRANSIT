@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PaperPlaneRight, User, Robot, Sparkle } from "@phosphor-icons/react";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
-import { useDemoMode } from "./DemoController";
+import { useData } from "@/data/DataContext";
 import { QueryBubbles } from "./QueryBubbles";
 import { MatchStatusStrip } from "./MatchStatusStrip";
 
@@ -98,29 +98,11 @@ export function AICopilotChat({
       : undefined,
   );
   const { isOnline } = useOnlineStatus();
-  const demoContext = useDemoMode();
-  const isDemoMode = demoContext?.isDemoMode ?? false;
+  const provider = useData();
+  const isDemoMode = provider.isDemo;
 
-  // Resolve match display: demo engine in demo mode, else real liveMatch.
-  const demoMatch = isDemoMode && demoContext?.getMatchState
-    ? demoContext.getMatchState()
-    : null;
-  const stripMatch = isDemoMode
-    ? demoMatch
-      ? {
-          homeTeam: "United States",
-          awayTeam: "England",
-          homeScore: demoMatch.homeScore,
-          awayScore: demoMatch.awayScore,
-          status: demoMatch.phase === "full-time" ? "finished" : demoMatch.phase === "pre-match" ? "scheduled" : "live",
-          minute: demoMatch.minute,
-          utcDate: liveMatch?.utcDate ?? null,
-        }
-      : null
-    : liveMatch ?? null;
-  const stripStadium = isDemoMode
-    ? "MetLife Stadium — FIFA World Cup 26"
-    : (stadiumName ?? null);
+  const stripMatch = liveMatch ?? null;
+  const stripStadium = stadiumName ?? null;
 
   const [inputValue, setInputValue] = useState("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -242,7 +224,7 @@ export function AICopilotChat({
             <h2 className="text-[11px] font-black tracking-[0.25em] text-violet-400 uppercase">
               {personaLabel}
             </h2>
-            <span className="text-[9px] font-mono tracking-wider text-zinc-500 border border-zinc-800 px-2 py-0.5 rounded-md">
+            <span className="text-[9px] font-mono tracking-wider text-zinc-400 border border-zinc-800 px-2 py-0.5 rounded-md">
               ENCRYPTED
             </span>
           </div>
@@ -250,7 +232,7 @@ export function AICopilotChat({
             key={avatarState}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-[10px] text-zinc-500 font-mono ml-5"
+            className="text-[10px] text-zinc-400 font-mono ml-5"
           >
             {avatarState === "idle" && "ready for your questions"}
             {avatarState === "thinking" && `processing${".".repeat((frame % 3) + 1)}`}
@@ -288,7 +270,7 @@ export function AICopilotChat({
             className="relative p-3 rounded-xl bg-violet-950/20 border border-violet-500/15"
           >
             {briefingLoading ? (
-              <p className="text-xs text-zinc-500 font-mono">Generating briefing...</p>
+              <p className="text-xs text-zinc-400 font-mono">Generating briefing...</p>
             ) : (
               <>
                 <div className="flex items-center gap-2 mb-1.5">
@@ -300,7 +282,8 @@ export function AICopilotChat({
                 <p className="text-[13px] text-zinc-300 leading-relaxed pr-6">{briefing}</p>
                 <button
                   onClick={() => setBriefingDismissed(true)}
-                  className="absolute top-2 right-2 text-zinc-600 hover:text-zinc-300 text-xs px-1.5 py-0.5 rounded"
+                  aria-label="Dismiss briefing"
+                  className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-300 text-xs px-1.5 py-0.5 rounded"
                 >
                   ×
                 </button>
@@ -316,7 +299,7 @@ export function AICopilotChat({
         className="flex-1 overflow-y-auto px-6 py-3 space-y-5 scrollbar-hide"
       >
         {messages.length === 0 && !canChat && (
-          <div className="flex items-center justify-center h-32 text-zinc-500 text-xs">
+          <div className="flex items-center justify-center h-32 text-zinc-400 text-xs">
             You are offline — AI assistant unavailable
           </div>
         )}
@@ -383,6 +366,7 @@ export function AICopilotChat({
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading || !canChat}
+            aria-label="Send message"
             className="absolute right-2 top-2 bottom-2 px-5 bg-violet-600 hover:bg-violet-500 disabled:opacity-30 disabled:hover:bg-violet-600 text-white rounded-xl transition-all flex items-center justify-center group-focus-within:shadow-[0_0_20px_rgba(139,92,246,0.3)]"
           >
             <PaperPlaneRight size={20} weight="bold" />

@@ -55,6 +55,7 @@ export function HeatmapSelector({ current, onChange }: HeatmapSelectorProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Select heatmap view"
         className="flex items-center gap-2 px-3 py-2 rounded-xl border border-zinc-800 hover:border-emerald-500/50 bg-zinc-900/40 text-zinc-400 hover:text-white transition-all text-[10px] font-black tracking-widest uppercase"
       >
         <Gear size={14} weight="duotone" className={isOpen ? "animate-spin" : ""} />
@@ -72,7 +73,7 @@ export function HeatmapSelector({ current, onChange }: HeatmapSelectorProps) {
               transition={{ duration: 0.15 }}
               className="absolute right-0 top-full mt-2 z-50 w-72 p-2 rounded-xl bg-zinc-900 border border-zinc-800 shadow-2xl shadow-black/50"
             >
-              <p className="px-3 py-2 text-[9px] font-black tracking-[0.2em] text-zinc-500 uppercase">
+              <p className="px-3 py-2 text-[9px] font-black tracking-[0.2em] text-zinc-400 uppercase">
                 Select Heatmap View
               </p>
               {VARIANTS.map((v) => (
@@ -88,7 +89,7 @@ export function HeatmapSelector({ current, onChange }: HeatmapSelectorProps) {
                   <div className="flex-shrink-0">{v.icon}</div>
                   <div>
                     <p className="text-xs font-bold">{v.label}</p>
-                    <p className="text-[10px] text-zinc-500">{v.description}</p>
+                    <p className="text-[10px] text-zinc-400">{v.description}</p>
                   </div>
                   {current === v.key && (
                     <div className="ml-auto w-2 h-2 rounded-full bg-emerald-500" />

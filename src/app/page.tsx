@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import FanHub from "@/components/FanHub";
 import StaffHub from "@/components/StaffHub";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { DemoModeButton } from "@/components/DemoController";
+import { DemoModeButton } from "@/components/DemoModeButton";
 import { AppTab, StadiumTelemetry } from "@/types/telemetry";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -53,11 +53,11 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
+      <main id="main-content" className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
         <div className="min-h-screen flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">
+            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase italic">
               {matchesLoading ? "Loading Match Data..." : "Loading..."}
             </p>
           </div>
@@ -68,7 +68,7 @@ export default function Page() {
 
   if (!session?.user) {
     return (
-      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
+      <main id="main-content" className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
         <header className="flex items-center justify-between px-6 py-5 border-b border-zinc-800 bg-zinc-950">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-600/20 rounded-xl border border-emerald-500/30">
@@ -76,7 +76,7 @@ export default function Page() {
             </div>
             <div>
               <h1 className="text-base font-black tracking-widest text-white uppercase">StadiumFlow</h1>
-              <p className="text-[8px] text-zinc-500 tracking-widest uppercase">2026 WORLD CUP</p>
+              <p className="text-[8px] text-zinc-400 tracking-widest uppercase">2026 WORLD CUP</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -137,7 +137,7 @@ export default function Page() {
               {previewTelemetry ? (
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                    <span className="text-[8px] text-zinc-500 font-mono block">NEAREST GATE</span>
+                    <span className="text-[8px] text-zinc-400 font-mono block">NEAREST GATE</span>
                     <span className="text-[10px] font-bold text-zinc-300 block truncate">{previewTelemetry.nearestGate.label}</span>
                     <span className={`text-[8px] font-mono block ${
                       previewTelemetry.nearestGate.status === "congested" ? "text-red-400" :
@@ -148,12 +148,12 @@ export default function Page() {
                     </span>
                   </div>
                   <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                    <span className="text-[8px] text-zinc-500 font-mono block">MAIN HUB WAIT</span>
+                    <span className="text-[8px] text-zinc-400 font-mono block">MAIN HUB WAIT</span>
                     <span className="text-[10px] font-bold text-zinc-300 block">{previewTelemetry.nearestHub.waitTime}m</span>
                     <span className="text-[8px] text-emerald-400 block font-medium">{previewTelemetry.nearestHub.label}</span>
                   </div>
                   <div className="p-3 bg-zinc-950/40 rounded-2xl border border-zinc-800 space-y-1">
-                    <span className="text-[8px] text-zinc-500 font-mono block">WEATHER COND</span>
+                    <span className="text-[8px] text-zinc-400 font-mono block">WEATHER COND</span>
                     <span className="text-[10px] font-bold text-zinc-300 block">{previewTelemetry.weatherAdvisory.label}</span>
                     <span className="text-[8px] text-zinc-400 block font-semibold">{previewTelemetry.weatherAdvisory.condition}</span>
                   </div>
@@ -195,13 +195,13 @@ export default function Page() {
         </div>
 
         <div className="max-w-6xl mx-auto w-full px-6 py-12 border-t border-zinc-800 bg-zinc-950">
-          <h2 className="text-xs font-black tracking-[0.2em] text-zinc-500 uppercase italic mb-6">
+          <h2 className="text-xs font-black tracking-[0.2em] text-zinc-400 uppercase italic mb-6">
             Upcoming Tournament Fixtures
           </h2>
           <MatchSchedule matches={upcomingMatches} />
         </div>
 
-        <footer className="py-8 border-t border-zinc-800 text-center text-zinc-500 text-xs">
+        <footer className="py-8 border-t border-zinc-800 text-center text-zinc-400 text-xs">
           <p>© 2026 StadiumFlow Transit Management. All rights reserved.</p>
         </footer>
       </main>
@@ -217,7 +217,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute allowedRoles={ALLOWED_ROLES}>
-      <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
+      <main id="main-content" className="min-h-screen w-full overflow-y-auto flex flex-col bg-zinc-950 text-zinc-100 font-mono antialiased relative">
         <header className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-zinc-800 bg-zinc-950">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-emerald-600/20 rounded-xl border border-emerald-500/30">
@@ -225,7 +225,7 @@ export default function Page() {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-widest text-white uppercase">StadiumFlow</h1>
-              <p className="text-[10px] text-zinc-500 tracking-widest uppercase">2026 WORLD CUP OPERATIONS</p>
+              <p className="text-[10px] text-zinc-400 tracking-widest uppercase">2026 WORLD CUP OPERATIONS</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -236,10 +236,11 @@ export default function Page() {
 
         {visibleTabs.length > 1 && (
           <nav className="px-4 md:px-6 py-2 border-b border-zinc-800 bg-zinc-950">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <div role="tablist" className="flex items-center gap-2 overflow-x-auto pb-2">
               {visibleTabs.map((tab) => (
                 <TabButton
                   key={tab.id}
+                  tabId={tab.id}
                   icon={tab.icon}
                   label={tab.label}
                   active={activeTab === tab.id}
@@ -252,12 +253,16 @@ export default function Page() {
 
         <div className="flex-1 p-4 md:p-6">
           {activeTab === "fan" ? (
-            <ErrorBoundary>
-              <FanHub key="fan" />
-            </ErrorBoundary>
+            <div role="tabpanel" id="panel-fan" aria-labelledby="tab-fan">
+              <ErrorBoundary>
+                <FanHub key="fan" />
+              </ErrorBoundary>
+            </div>
           ) : (
             <ProtectedRoute allowedRoles={["staff", "admin"]}>
-              <StaffHub key="staff" />
+              <div role="tabpanel" id="panel-staff" aria-labelledby="tab-staff">
+                <StaffHub key="staff" />
+              </div>
             </ProtectedRoute>
           )}
         </div>
@@ -273,11 +278,13 @@ const tabs = [
 ];
 
 function TabButton({
+  tabId,
   icon: Icon,
   label,
   active,
   onClick,
 }: {
+  tabId: string;
   icon: React.ComponentType<Record<string, unknown>>;
   label: string;
   active: boolean;
@@ -285,11 +292,16 @@ function TabButton({
 }) {
   return (
     <button
+      role="tab"
+      id={`tab-${tabId}`}
+      aria-selected={active}
+      aria-controls={`panel-${tabId}`}
+      data-tab={tabId}
       onClick={onClick}
       className={`relative px-4 md:px-6 py-3 rounded-2xl text-[10px] md:text-[11px] font-black tracking-[0.15em] flex items-center gap-3 transition-all duration-300 ${
         active
           ? "text-white bg-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
-          : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+          : "text-zinc-400 hover:text-zinc-300 hover:bg-white/5"
       }`}
     >
       <span className={active ? "text-emerald-400 scale-110 transition-transform" : ""}>

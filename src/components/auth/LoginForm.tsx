@@ -113,6 +113,7 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -141,7 +142,7 @@ export function LoginForm() {
             <span className="w-full border-t border-zinc-800" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-zinc-950/50 px-4 text-zinc-500 font-medium tracking-wider">
+            <span className="bg-zinc-950/50 px-4 text-zinc-400 font-medium tracking-wider">
               Or continue with
             </span>
           </div>
@@ -184,7 +185,7 @@ export function LoginForm() {
               Create Account
             </a>
           </p>
-          <p className="text-zinc-500 text-xs mt-2">
+          <p className="text-zinc-400 text-xs mt-2">
             <a
               href="/admin-login"
               className="hover:text-zinc-300 underline-offset-2 hover:underline"

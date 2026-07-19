@@ -11,7 +11,7 @@ export function MatchSchedule({ matches }: MatchScheduleProps) {
   if (matches.length === 0) {
     return (
       <div className="p-6 border border-dashed border-zinc-800 rounded-2xl text-center opacity-65">
-        <p className="text-xs text-zinc-500 font-medium">No upcoming matches scheduled.</p>
+        <p className="text-xs text-zinc-400 font-medium">No upcoming matches scheduled.</p>
       </div>
     );
   }

@@ -12,6 +12,7 @@ export interface GateMetrics {
 }
 
 export interface StadiumTelemetry {
+  timestamp?: number;
   nearestGate: { label: string; status: 'open' | 'busy' | 'congested' };
   nearestHub: { label: string; waitTime: number };
   weatherAdvisory: { label: string; condition: 'clear' | 'rain' };
